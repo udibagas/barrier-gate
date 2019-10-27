@@ -12,11 +12,12 @@
 */
 Route::post('login', 'AuthController@login');
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('checkAuth', 'AppController@checkAuth');
     Route::get('getNavigation', 'AppController@getNavigation');
     Route::post('logout', 'AuthController@logout');
-    Route::resource('user', 'UserController')->except(['create', 'edit']);
+    Route::resource('department', 'DepartmentController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');
