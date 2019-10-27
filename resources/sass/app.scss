@@ -1,8 +1,117 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-
-// Variables
 @import 'variables';
+@import '~element-ui/lib/theme-chalk/index.css';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@font-face {
+    font-family: "MyriadMM";
+    src: url("../assets/fonts/MyriadMM.ttf");
+}
+
+* {
+    font-family: "MyriadMM", sans-serif;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: "MyriadMM", sans-serif;
+    min-height: 100%;
+    color: #505050;
+    margin: 0;
+    padding: 0;
+}
+
+.el-dialog__header, .el-dialog__footer {
+    background-color: #005c73;
+    padding: 15px;
+}
+
+.el-dialog__title {
+    color: #fff;
+}
+
+.el-icon-more {
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+}
+
+.el-table {
+    width:100%;
+    border-top:1px solid #eee;
+}
+
+.no-padding-dialog > .el-dialog__body {
+    padding: 0px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-white, .text-white:hover, .text-white:active, .text-white:focus {
+    color: #fff !important;
+}
+
+.el-form-item__label {
+    font-weight: bold;
+}
+
+.bg-blue {
+    background-color: $blue !important;
+}
+.bg-indigo {
+    background-color: $indigo !important;
+}
+.bg-purple {
+    background-color: $purple !important;
+}
+.bg-pink {
+    background-color: $pink !important;
+}
+.bg-red {
+    background-color: $red !important;
+}
+.bg-orange {
+    background-color: $orange !important;
+}
+.bg-yellow {
+    background-color: $yellow !important;
+}
+.bg-green {
+    background-color: $green !important;
+}
+.bg-teal {
+    background-color: $teal !important;
+}
+.bg-cyan {
+    background-color: $cyan !important;
+}
+
+.el-table th {
+    background-color: #005c73;
+    color: #fff;
+}
+
+.table {
+    width: 100%;
+    border-top: 2px solid #ddd;
+}
+
+.table th, .table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.el-button--primary {
+    background-color: #00a1bf;
+    border-color: #00a1bf;
+}
