@@ -281,7 +281,7 @@ def start_app():
     global GATE
 
     try:
-        r = requests.get(API_URL + '/barrierGate/search', params={'type': 'OUT'}, timeout=3)
+        r = requests.get(API_URL + '/barrierGate/search', params={'jenis': 'OUT'}, timeout=3)
     except Exception as e:
         logging.error('Failed to get gate ' + str(e))
         sys.exit()
