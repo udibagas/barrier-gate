@@ -54,8 +54,8 @@ class BarrierGateController extends Controller
      */
     public function search(Request $request)
     {
-        $gate = BarrierGate::when($request->type, function($q) use ($request) {
-                return $q->where('type', $request->type);
+        $gate = BarrierGate::when($request->jenis, function($q) use ($request) {
+                return $q->where('jenis', $request->jenis);
             })->first();
 
         if (!$gate) {

@@ -30,7 +30,7 @@ def get_setting():
 
 def get_gate():
     try:
-        r = requests.get(API_URL + '/barrierGate/search', params={'type': 'IN'}, timeout=3)
+        r = requests.get(API_URL + '/barrierGate/search', params={'jenis': 'IN'}, timeout=3)
     except Exception as e:
         logging.error('Failed to get gates ' + str(e))
         return False
