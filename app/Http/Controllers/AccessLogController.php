@@ -16,7 +16,18 @@ class AccessLogController extends Controller
      */
     public function index(Request $request)
     {
-        return AccessLog::paginate();
+        $sort = $request->sort ? $request->sort : 'updated_at';
+        $order = $request->order == 'ascending' ? 'asc' : 'desc';
+
+        return AccessLog::when($request->dateRange, function($q) use ($request) {
+            return $q->whereRaw('DATE(updated_at) BETWEEN "'.$request->dateRange[0].'" AND "'.$request->dateRange[1].'"');
+        })->when($request->keyword, function ($q) use ($request) {
+            return $q->where('nomor_barcode', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('plat_nomor', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('nomor_kartu', 'LIKE', '%' . $request->keyword . '%');
+        })->when($request->is_member, function ($q) use ($request) {
+            return $q->whereIn('is_member', $request->is_member);
+        })->orderBy($sort, $order)->paginate($request->pageSize);
     }
 
     /**

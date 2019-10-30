@@ -70,7 +70,7 @@ def get_last_access(field, value):
 
     return False
 
-async def ws(websocket, path):
+def gate_out_thread():
     while True:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(3)
@@ -248,34 +248,65 @@ async def ws(websocket, path):
                     'snapshot_out': take_snapshot()
                 }
 
-                saved_data = save_data(access_log['id'], data)
+                save_data(access_log['id'], data)
 
-                if saved_data is not False:
-                    # kalau staff langsung buka
-                    if access_log['is_staff'] == 1:
-                        try:
-                            s.sendall(b'\xa6OPEN1\xa9')
-                        except Exception as e:
-                            logging.error('Failed to open gate ' + str(e))
-                            send_notification(GATE['nama'] + 'Gagal membuka gate')
-                            # sambung ulang controller
-                            break
+                # kalau staff langsung buka
+                if access_log['is_staff'] == 1 or access_log['is_staff'] == 0:
+                    try:
+                        s.sendall(b'\xa6OPEN1\xa9')
+                    except Exception as e:
+                        logging.error('Failed to open gate ' + str(e))
+                        send_notification(GATE['nama'] + 'Gagal membuka gate')
+                        # sambung ulang controller
+                        break
 
-                        logging.info('Gate Opened')
+                    logging.info('Gate Opened')
 
-                    if access_log['is_staff'] == 0:
-                        await websocket.send(saved_data)
-                        cmd = await websocket.recv()
-                        if cmd == 'open':
-                            try:
-                                s.sendall(b'\xa6OPEN1\xa9')
-                            except Exception as e:
-                                logging.error('Failed to open gate ' + str(e))
-                                send_notification(GATE['nama'] + 'Gagal membuka gate')
-                                # sambung ulang controller
-                                break
+                # if access_log['is_staff'] == 0:
+                #     await websocket.send(saved_data)
+                #     cmd = await websocket.recv()
+                #     if cmd == 'open':
+                #         try:
+                #             s.sendall(b'\xa6OPEN1\xa9')
+                #         except Exception as e:
+                #             logging.error('Failed to open gate ' + str(e))
+                #             send_notification(GATE['nama'] + 'Gagal membuka gate')
+                #             # sambung ulang controller
+                #             break
 
-                            logging.info('Gate Opened')
+                #         logging.info('Gate Opened')
+
+                # wait until vehicle in
+                counter = 0
+
+                while True:
+                    # 5x cek aja biar ga kelamaan
+                    if counter > 5:
+                        logging.info('Waiting too long')
+                        break
+
+                    counter += 1
+
+                    try:
+                        s.sendall(b'\xa6STAT\xa9')
+                        vehicle_in = s.recv(64)
+                        logging.debug(str(vehicle_in))
+                    except Exception as e:
+                        logging.error('Failed to sense loop 2 ' + str(e))
+                        send_notification(GATE['nama'] + ' : Gagal deteksi kendaraan sudah masuk')
+                        error = True
+                        # break sensing loop 2
+                        break
+
+                    if b'IN3OFF' in vehicle_in:
+                        logging.info('Vehicle in')
+                        break
+
+                    time.sleep(3)
+
+                if error:
+                    # break loop cek kendaraan, sambung ulang controller
+                    break
 
 def start_app():
     global GATE
@@ -295,10 +326,11 @@ def start_app():
 
     logging.info('Gate set : ' + GATE['nama'])
     logging.info('Starting application...')
+    gate_out_thread()
 
-    start_server = websockets.serve(ws, "127.0.0.1", 5678)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+    # start_server = websockets.serve(ws, "127.0.0.1", 5678)
+    # asyncio.get_event_loop().run_until_complete(start_server)
+    # asyncio.get_event_loop().run_forever()
 
 if __name__ == "__main__":
     log_file = '/var/log/gate_out.log'
