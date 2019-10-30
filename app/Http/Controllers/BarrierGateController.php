@@ -188,7 +188,7 @@ class BarrierGateController extends Controller
                 'auth' => [
                     $barrierGate->camera_username,
                     $barrierGate->camera_password,
-                    $barrierGate->camera_auth_type == 'digest' ? 'digest' : null
+                    'digest'
                 ]
             ]);
 
