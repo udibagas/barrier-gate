@@ -128,7 +128,7 @@ def gate_out_thread():
 
                     # ada input wiegand (w1 = card, w2 = barcode)
                     if b'W1' in r:
-                        nomor_kartu = str(r).split('W')[1].split('\\xa9')[0]
+                        nomor_kartu = str(r).split('W1')[1].split('\\xa9')[0]
                         staff = check_card(str(int(nomor_kartu, 16)))
                         time.sleep(.1)
 
@@ -186,7 +186,7 @@ def gate_out_thread():
 
                     elif b'W2' in r:
                         # TODO: sesuaikan line ini
-                        nomor_barcode = str(r).split('W')[1].split('\\xa9')[0]
+                        nomor_barcode = str(r).split('W2')[1].split('\\xa9')[0]
                         access_log = get_last_access('nomor_barcode', nomor_barcode)
 
                         if not access_log:
