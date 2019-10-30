@@ -1,15 +1,15 @@
 # taruh di /etc/systemd/system
 # systemctl daemon-reload
-# systemctl enable parking
-# systemctl start parking
+# systemctl enable gate_out
+# systemctl start gate_out
 
 [Unit]
-Description=Parking controller service
+Description=Gate Out controller service
 Requires=network.target
 
 [Service]
 User=root
-ExecStart=/home/yogya/apps/parking-system/parking.py
+ExecStart=/home/serverop/apps/barrier-gate/gate_out.py
 Restart=always
 RestartSec=3
 

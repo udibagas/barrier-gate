@@ -1,0 +1,17 @@
+# taruh di /etc/systemd/system
+# systemctl daemon-reload
+# systemctl enable gate_in
+# systemctl start gate_in
+
+[Unit]
+Description=Gate In controller service
+Requires=network.target
+
+[Service]
+User=root
+ExecStart=/home/serverop/apps/barrier-gate/gate_in.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
