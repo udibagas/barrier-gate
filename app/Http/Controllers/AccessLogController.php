@@ -52,4 +52,15 @@ class AccessLogController extends Controller
         $accessLog->delete();
         return ['message' => 'Data berhasil dihapus'];
     }
+
+    // untuk di gate out
+    public function search(Request $request)
+    {
+        $data = AccessLog::where(function($q) use ($request) {
+            return $q->where('nomor_kartu', $request->nomor_kartu)
+                ->orWhere('nomor_barcode');
+        })->where('time_out', null)->latest()->first();
+
+        return ($data) ? $data : response(['message' => 'Data tidak ditemukan'], 404);
+    }
 }

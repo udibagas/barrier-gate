@@ -29,7 +29,6 @@ class UserRequest extends FormRequest
             'password' => 'sometimes|required|alpha_num|confirmed|min:6',
             'nip' => 'required',
             'department_id' => 'required',
-            'alamat' => 'required',
             'jenis_kelamin' => 'required|in:L,P',
             'tanggal_lahir' => 'date',
             'role' => 'required|numeric',
