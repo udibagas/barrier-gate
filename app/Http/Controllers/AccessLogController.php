@@ -58,7 +58,7 @@ class AccessLogController extends Controller
     {
         $data = AccessLog::where(function($q) use ($request) {
             return $q->where('nomor_kartu', $request->nomor_kartu)
-                ->orWhere('nomor_barcode');
+                ->orWhere('nomor_barcode', $request->nomor_barcode);
         })->where('time_out', null)->latest()->first();
 
         return ($data) ? $data : response(['message' => 'Data tidak ditemukan'], 404);
