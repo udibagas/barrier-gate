@@ -64,7 +64,7 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $user = User::where('nomor_kartu', $request->nomor_kartu)
+        $user = User::where('nomor_kartu', 'LIKE',  '%'.$request->nomor_kartu)
             ->where('status', $request->status)
             ->first();
 

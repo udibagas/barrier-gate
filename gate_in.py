@@ -12,7 +12,7 @@ from escpos.printer import Network
 import os
 import logging
 
-API_URL = 'http://localhost/api'
+API_URL = 'http://localhost/pln/api'
 SETTING = False
 GATE = False
 

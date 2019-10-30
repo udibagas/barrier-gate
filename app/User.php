@@ -40,7 +40,10 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'expired' => 'boolean'
     ];
+
+    protected $appends = ['expired', 'expired_in'];
 
     public function getJWTIdentifier()
     {
@@ -50,5 +53,15 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function getExpiredInAttribute()
+    {
+        return (int) (new DateTime($this->masa_aktif_kartu))->diff(new DateTime(date('Y-m-d')))->format('%a');
+    }
+
+    public function getExpiredAttribute()
+    {
+        return strtotime(date('Y-m-d')) > strtotime($this->masa_aktif_kartu);
     }
 }
