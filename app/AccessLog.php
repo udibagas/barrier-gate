@@ -13,7 +13,12 @@ class AccessLog extends Model
         'keterangan'
     ];
 
-    protected $appends = ['durasi'];
+    protected $appends = ['durasi', 'user'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function getDurasiAttribute()
     {
