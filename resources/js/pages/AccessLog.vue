@@ -35,7 +35,7 @@
             <el-table-column prop="nomor_barcode" label="No. Tiket" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="plat_nomor" label="Plat Nomor" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
-            <el-table-column prop="user" label="Nama Staff" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
+            <el-table-column prop="user.name" label="Nama Staff" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="time_in" label="Waktu Masuk" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="time_out" label="Waktu Keluar" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="durasi" label="Durasi" show-overflow-tooltip min-width="100px"></el-table-column>
@@ -50,7 +50,7 @@
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item @click.native.prevent="() => { trx = scope.row; showTrxDetail = true }"><i class="el-icon-zoom-in"></i> Lihat Detail</el-dropdown-item>
-                            <el-dropdown-item v-if="!scope.row.time_out" @click.native.prevent="setSudahKeluar(scope.row.id)"><i class="el-icon-check"></i> Set Sudah Keluar</el-dropdown-item>
+                            <!-- <el-dropdown-item v-if="!scope.row.time_out" @click.native.prevent="setSudahKeluar(scope.row.id)"><i class="el-icon-check"></i> Set Sudah Keluar</el-dropdown-item> -->
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
@@ -75,8 +75,8 @@
                         <tbody>
                             <tr><td class="td-label">Nomor Barcode</td><td class="td-value">{{trx.nomor_barcode}}</td></tr>
                             <tr><td class="td-label">Plat Nomor</td><td class="td-value">{{trx.plat_nomor}}</td></tr>
-                            <tr><td class="td-label">Staff</td><td class="td-value">{{trx.is_staff ? 'Ya' : 'Tidak'}}</td></tr>
-                            <tr><td class="td-label">Nomor Kartu</td><td class="td-value">{{trx.nomor_kartu}}</td></tr>
+                            <tr v-if="trx.is_staff"><td class="td-label">Nama Staff</td><td class="td-value">{{trx.user.name}}</td></tr>
+                            <tr v-if="trx.is_staff"><td class="td-label">Nomor Kartu</td><td class="td-value">{{trx.nomor_kartu}}</td></tr>
                             <tr><td class="td-label">Waktu Masuk</td><td class="td-value">{{trx.time_in}}</td></tr>
                             <tr><td class="td-label">Waktu Keluar</td><td class="td-value">{{trx.time_out}}</td></tr>
                             <tr><td class="td-label">Durasi</td><td class="td-value">{{trx.durasi}}</td></tr>

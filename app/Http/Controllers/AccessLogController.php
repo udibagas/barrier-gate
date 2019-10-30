@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\AccessLog;
+use App\BarrierGate;
+use App\User;
 use Illuminate\Http\Request;
 
 class AccessLogController extends Controller
@@ -62,6 +64,21 @@ class AccessLogController extends Controller
             return $q->where('nomor_barcode', $request->nomor_barcode);
         })->where('time_out', null)->latest()->first();
 
-        return ($data) ? $data : response(['message' => 'Data tidak ditemukan'], 404);
+        if ($data) {
+            return $data;
+        }
+
+        // ini sudah lewat pengecekan member aktif atau tidak
+        if ($request->nomor_kartu) {
+            return AccessLog::create([
+                'time_in' => now(),
+                'nomor_barcode' => 'NOTAPIN',
+                'is_staff' => 1,
+                'nomor_kartu' => $request->nomor_kartu,
+                'user_id' => User::where('nomor_kartu', '%'.$request->nomor_kartu)->first()
+            ]);
+        }
+
+        return response(['message' => 'Data tidak ditemukan'], 500);
     }
 }
