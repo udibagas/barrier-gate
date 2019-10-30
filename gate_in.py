@@ -145,6 +145,7 @@ def check_card(nomor_kartu):
     return False
 
 def save_data(data):
+    logging.debug(str(data))
     try:
         r = requests.post(API_URL + '/accessLog', data=data, timeout=3)
     except Exception as e:
