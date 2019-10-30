@@ -120,15 +120,18 @@ def gate_out_thread():
                 # LOOP untuk baca kartu / barcode
                 while True:
                     try:
+                        time.sleep(.1)
                         s.sendall(b'\xa6STAT\xa9')
                         r = s.recv(1024)
                     except Exception as e:
                         error = True
                         break
 
-                    # ada input wiegand (w1 = card, w2 = barcode)
-                    if b'W1' in r:
-                        nomor_kartu = str(r).split('W1')[1].split('\\xa9')[0]
+                    logging.debug('Detecting barcode or card ' + str(r))
+
+                    # ada input wiegand (W = card, X = barcode)
+                    if b'W' in r:
+                        nomor_kartu = str(r).split('W')[1].split('\\xa9')[0]
                         staff = check_card(str(int(nomor_kartu, 16)))
                         time.sleep(.1)
 
@@ -184,10 +187,11 @@ def gate_out_thread():
 
                         break
 
-                    elif b'W2' in r:
+                    elif b'X' in r:
                         # TODO: sesuaikan line ini
-                        nomor_barcode = str(r).split('W2')[1].split('\\xa9')[0]
-                        access_log = get_last_access('nomor_barcode', nomor_barcode)
+                        nomor_barcode = str(r).split('X')[1].split('\\xa9')[0]
+                        access_log = get_last_access('nomor_barcode', str(int(nomor_barcode, 16)))
+                        logging.info('Barcode detected' + str(int(nomor_barcode, 16)))
 
                         if not access_log:
                             # Play tiket invalid
