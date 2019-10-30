@@ -8,7 +8,6 @@ use App\BarrierGate;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
-use PhpSerial\PhpSerial;
 use GuzzleHttp\Client;
 
 class BarrierGateController extends Controller
@@ -43,7 +42,7 @@ class BarrierGateController extends Controller
     public function store(BarrierGateRequest $request)
     {
         $gate = BarrierGate::create($request->all());
-        shell_exec('sudo systemctl restart barrier_gate');
+        // shell_exec('sudo systemctl restart barrier_gate');
         return $gate;
     }
 
@@ -78,7 +77,7 @@ class BarrierGateController extends Controller
         $barrierGate->update($request->all());
 
         if (!!$barrierGate->getChanges()) {
-            shell_exec('sudo systemctl restart barrier_gate');
+            // shell_exec('sudo systemctl restart barrier_gate');
         }
 
         return $barrierGate;
@@ -107,7 +106,7 @@ class BarrierGateController extends Controller
         $client = new Client(['timeout' => 3]);
 
         try {
-            $response = $client->request('GET', $barrierGate->camera_image_snapshot_url, [
+            $response = $client->request('GET', $barrierGate->camera_snapshot_url, [
                 'auth' => [
                     $barrierGate->camera_username,
                     $barrierGate->camera_password,
@@ -177,7 +176,7 @@ class BarrierGateController extends Controller
 
     public function takeSnapshot(BarrierGate $barrierGate)
     {
-        if (!$barrierGate->camera_status || !$barrierGate->camera_image_snapshot_url) {
+        if (!$barrierGate->camera_status || !$barrierGate->camera_snapshot_url) {
             return response(['message' => 'GAGAL MENGAMBIL GAMBAR. TIDAK ADA KAMERA.'], 404);
         }
 
@@ -185,7 +184,7 @@ class BarrierGateController extends Controller
         $fileName = 'snapshot/'.date('YmdHis').'.jpg';
 
         try {
-            $response = $client->request('GET', $barrierGate->camera_image_snapshot_url, [
+            $response = $client->request('GET', $barrierGate->camera_snapshot_url, [
                 'auth' => [
                     $barrierGate->camera_username,
                     $barrierGate->camera_password,

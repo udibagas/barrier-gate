@@ -13,7 +13,7 @@ class AppController extends Controller
 
     public function checkAuth(Request $request)
     {
-        $operatorPath = [ '/home', '/parking-transaction', '/member' ];
+        $operatorPath = [ '/home', '/access-log' ];
 
         if ($request->user()->role == 0 && !in_array($request->route, $operatorPath)) {
             return response(['message' => 'Anda tidak berhak mengakses halaman ini'], 401);
@@ -27,7 +27,7 @@ class AppController extends Controller
     {
         $nav = [
             ['label' => 'Home', 'icon' => 'el-icon-s-home', 'path' => 'home' ],
-            ['label' => 'Transaksi', 'icon' => 'el-icon-document-copy', 'path' => 'parking-transaction' ],
+            ['label' => 'Log Akses', 'icon' => 'el-icon-document-copy', 'path' => 'access-log' ],
         ];
 
         $adminNav = [

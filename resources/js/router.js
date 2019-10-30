@@ -2,12 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { Message } from 'element-ui';
 import Home from './pages/Home'
-import ParkingTransaction from './pages/ParkingTransaction'
-import User from './pages/User'
+import AccessLog from './pages/AccessLog'
 import Report from './pages/Report'
-import Snapshot from './pages/Snapshot'
 import Setting from './pages/Setting'
-import Member from './pages/Member'
 import Notification from './pages/Notification'
 
 Vue.use(VueRouter)
@@ -15,12 +12,9 @@ Vue.use(VueRouter)
 const router = new VueRouter({
     routes: [
         { path: '/', component: Home, name: 'home' },
-        { path: '/user', component: User, name: 'user' },
-        { path: '/parking-transaction', component: ParkingTransaction, name: 'parking-transaction' },
+        { path: '/access-log', component: AccessLog, name: 'access-log' },
         { path: '/report', component: Report, name: 'report' },
-        { path: '/snapshot', component: Snapshot, name: 'snapshot' },
         { path: '/setting', component: Setting, name: 'setting' },
-        { path: '/member', component: Member, name: 'member' },
         { path: '/notification', component: Notification, name: 'notification' },
         { path: '*', component: Home },
     ]

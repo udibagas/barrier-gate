@@ -21,7 +21,7 @@ class User extends Authenticatable implements JWTSubject
         'nomor_kartu', 'department_id',
         'alamat', 'jenis_kelamin', 'tempat_lahir',
         'tanggal_lahir', 'role', 'status', 'foto',
-        'masa_aktif_kartu'
+        'masa_aktif_kartu', 'nomor_hp', 'plat_nomor'
     ];
 
     /**

@@ -26,18 +26,31 @@ class UserRequest extends FormRequest
         return [
             'name' => 'required',
             'email' => 'required|email',
-            'password' => 'required_if',
+            'password' => 'sometimes|required|alpha_num|confirmed|min:6',
             'nip' => 'required',
-            'nomor_kartu' => 'required',
             'department_id' => 'required',
             'alamat' => 'required',
-            'jenis_kelamin' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
-            'role' => 'required',
-            'status' => 'required',
+            'jenis_kelamin' => 'required|in:L,P',
+            'tanggal_lahir' => 'date',
+            'role' => 'required|numeric',
+            'status' => 'required|boolean',
+            'masa_aktif_kartu' => 'date'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'name' => 'Nama',
+            'email' => 'Email',
+            'password' => 'Password',
+            'nip' => 'NIP',
+            'department_id' => 'Departemen',
+            'jenis_kelamin' => 'Jenis Kelamin',
+            'role' => 'Level',
+            'status' => 'Status',
             'foto' => 'required',
-            'masa_aktif_kartu'
+            'masa_aktif_kartu' => 'Masa Aktif Kartu'
         ];
     }
 }

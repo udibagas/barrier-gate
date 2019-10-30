@@ -16,15 +16,19 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('checkAuth', 'AppController@checkAuth');
     Route::get('getNavigation', 'AppController@getNavigation');
     Route::post('logout', 'AuthController@logout');
+
+    Route::get('department/getList', 'DepartmentController@getList');
     Route::resource('department', 'DepartmentController')->only(['index', 'store', 'update', 'destroy']);
 
-    Route::post('parkingGate/openGate/{parkingGate}', 'BarrierGateController@openGate');
-    Route::post('parkingGate/testPrinter/{parkingGate}', 'BarrierGateController@testPrinter');
-    Route::post('parkingGate/testCamera/{parkingGate}', 'BarrierGateController@testCamera');
-    Route::get('parkingGate/getList', 'BarrierGateController@getList');
+    Route::post('barrierGate/openGate/{barrierGate}', 'BarrierGateController@openGate');
+    Route::post('barrierGate/testPrinter/{barrierGate}', 'BarrierGateController@testPrinter');
+    Route::post('barrierGate/testCamera/{barrierGate}', 'BarrierGateController@testCamera');
+    Route::get('barrierGate/getList', 'BarrierGateController@getList');
     Route::resource('barrierGate', 'BarrierGateController')->only(['index', 'store', 'update', 'destroy']);
 
     Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('setting', 'SettingController')->only(['index', 'store', 'update']);
+    Route::resource('accessLog', 'AccessLogController')->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');

@@ -7,19 +7,17 @@
             <el-tab-pane lazy label="Global Setting" v-loading="loading">
                 <el-card style="height:calc(100vh - 235px);overflow:auto;">
                     <el-form label-position="left" label-width="250px">
-                        <el-form-item label="Nama Lokasi" :class="formErrors.location_name ? 'is-error' : ''">
-                            <el-input placeholder="Nama Lokasi" v-model="formModel.location_name"></el-input>
-                            <div class="el-form-item__error" v-if="formErrors.location_name">{{formErrors.location_name[0]}}</div>
+                        <el-form-item label="Nama Lokasi" :class="formErrors.nama_lokasi ? 'is-error' : ''">
+                            <el-input placeholder="Nama Lokasi" v-model="formModel.nama_lokasi"></el-input>
+                            <div class="el-form-item__error" v-if="formErrors.nama_lokasi">{{formErrors.nama_lokasi[0]}}</div>
                         </el-form-item>
 
-                        <el-form-item label="Alamat Lokasi" :class="formErrors.location_address ? 'is-error' : ''">
-                            <el-input placeholder="Alamat Lokasi" type="textarea" rows="3" v-model="formModel.location_address"></el-input>
-                            <div class="el-form-item__error" v-if="formErrors.location_address">{{formErrors.location_address[0]}}</div>
+                        <el-form-item label="Alamat Lokasi">
+                            <el-input placeholder="Alamat Lokasi" type="textarea" rows="3" v-model="formModel.alamat_lokasi"></el-input>
                         </el-form-item>
 
-                        <el-form-item label="Info Tambahan Tiket" :class="formErrors.additional_info_ticket ? 'is-error' : ''">
-                            <el-input placeholder="Info Tambahan Tiket" type="textarea" rows="3" v-model="formModel.additional_info_ticket"></el-input>
-                            <div class="el-form-item__error" v-if="formErrors.additional_info_ticket">{{formErrors.additional_info_ticket[0]}}</div>
+                        <el-form-item label="Info Tambahan Tiket">
+                            <el-input placeholder="Info Tambahan Tiket" type="textarea" rows="3" v-model="formModel.info_tambahan_tiket"></el-input>
                         </el-form-item>
 
                         <!-- <el-form-item label="Mode Transaksi Member" :class="formErrors.must_checkout ? 'is-error' : ''">
@@ -93,9 +91,7 @@ export default {
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
-                }
-
-                if (e.response.status == 500) {
+                } else {
                     this.formErrors = {}
                     this.$message({
                         message: e.response.data.message,
@@ -119,9 +115,7 @@ export default {
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
-                }
-
-                if (e.response.status == 500) {
+                } else {
                     this.formErrors = {}
                     this.$message({
                         message: e.response.data.message,

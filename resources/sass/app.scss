@@ -115,3 +115,10 @@ body {
     background-color: #00a1bf;
     border-color: #00a1bf;
 }
+
+.el-button--primary:active,
+.el-button--primary:hover,
+.el-button--primary:focus {
+    background-color: #00adcc;
+    border-color: #00a1bf;
+}

@@ -58,4 +58,9 @@ class DepartmentController extends Controller
         $department->delete();
         return ['message' => 'Data telah dihapus'];
     }
+
+    public function getList()
+    {
+        return Department::orderBy('nama', 'asc')->get();
+    }
 }

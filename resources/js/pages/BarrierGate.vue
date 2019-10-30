@@ -52,7 +52,6 @@
                             <i class="el-icon-more"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item icon="el-icon-zoom-in" @click.native.prevent="() => { selectedData = scope.row; showDetail = true; }">Lihat Detail</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-camera" @click.native.prevent="testDevice('testCamera', scope.row.id)">Test Kamera</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-printer" @click.native.prevent="testDevice('testPrinter', scope.row.id)">Test Printer</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-minus" @click.native.prevent="testDevice('openGate', scope.row.id)">Test Gate</el-dropdown-item>
