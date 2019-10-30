@@ -13,7 +13,9 @@ class AccessLog extends Model
         'keterangan'
     ];
 
-    protected $appends = ['durasi', 'user'];
+    protected $appends = ['durasi'];
+
+    protected $with = ['user'];
 
     public function user()
     {
