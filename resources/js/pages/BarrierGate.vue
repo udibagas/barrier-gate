@@ -28,7 +28,7 @@
                     {{scope.row.printer_type == 'network' ? scope.row.printer_ip_address : scope.row.printer_device }}
                 </template>
             </el-table-column>
-            <el-table-column prop="camera_snapshot_url" label="URL Snapshot Kamera" min-width="150px" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="camera_snapshot_url" label="URL Snapshot Kamera" min-width="180px" show-overflow-tooltip></el-table-column>
             <el-table-column label="User/Pass Kamera" min-width="150px" show-overflow-tooltip>
                 <template slot-scope="scope">
                     {{scope.row.camera_username }}/{{ scope.row.camera_password }}
