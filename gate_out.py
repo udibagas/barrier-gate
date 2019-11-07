@@ -1,49 +1,81 @@
 #!/usr/bin/env python3
 
 import time
-import asyncio
-import websockets
 import socket
 import logging
 import requests
 import sys
 
-API_URL = 'http://localhost/pln/api'
+API_URL = 'http://localhost/api'
 GATE = False
+SETTING = False
+
+def get_setting():
+    try:
+        r = requests.get(API_URL + '/setting', timeout=3)
+    except Exception as e:
+        logging.error('Failed to get setting ' + str(e))
+        return False
+
+    if r.status_code == 200:
+        return r.json()
+
+    return False
+
+def get_gate():
+    try:
+        r = requests.get(API_URL + '/barrierGate/search', params={'jenis': 'OUT'}, timeout=3)
+    except Exception as e:
+        logging.error('Failed to get gate ' + str(e))
+        return False
+
+    if r.status_code == 200:
+        return r.json()
+
+    return False
 
 def send_notification(message):
     notification = { 'barrier_gate_id': GATE['id'], 'message': message }
     try:
         requests.post(API_URL + '/notification', data=notification, timeout=3)
     except Exception as e:
-        logging.error(GATE['name'] + ' : Failed to send notification ' + str(e))
+        logging.error(GATE['nama'] + ' : Failed to send notification ' + str(e))
         return False
 
     return True
+
+def notify_vehicle_detected():
+    pass
 
 def save_data(id, data):
     try:
         r = requests.put(API_URL + '/accessLog/' + str(id), data=data, timeout=3)
     except Exception as e:
-        logging.info(GATE['name'] + ' : Failed to save data ' + str(e))
-        send_notification('Pengunjung di ' + GATE['name'] + ' membutuhkan bantuan Anda (gagal menyimpan data)')
+        logging.info(GATE['nama'] + ' : Failed to save data ' + str(e))
+        send_notification('Pengunjung di ' + GATE['nama'] + ' membutuhkan bantuan Anda (gagal menyimpan data)')
         return False
 
     return r.json()
 
 def take_snapshot():
     if GATE['camera_status'] == 0:
+        logging.info('Not taking snapshot. Camera not active')
         return ''
 
     try:
         r = requests.get(API_URL + '/barrierGate/takeSnapshot/' + str(GATE['id']))
-    except Exception as e:
-        logging.error(GATE['name'] + ' : Failed to take snapshot ' + str(e))
-        send_notification("Gagal mengambil snapshot di gate " + GATE['name'] + " (" + str(e) + ")")
-        return ''
 
-    respons = r.json()
-    return respons['filename']
+        if r.status_code != 200:
+            logging.error('Failed to take snapshot. Status code : ' + str(r.status_code))
+            send_notification("Gagal mengambil snapshot di gate " + GATE['nama'] + ". Status Code : " + str(r.status_code))
+            return ''
+
+        respons = r.json()
+        return respons['filename']
+    except Exception as e:
+        logging.error('Failed to take snapshot ' + str(e))
+        send_notification("Gagal mengambil snapshot di gate " + GATE['nama'] + " (" + str(e) + ")")
+        return ''
 
 def check_card(nomor_kartu):
     payload = { 'nomor_kartu': nomor_kartu, 'status': 1 }
@@ -188,14 +220,13 @@ def gate_out_thread():
                         break
 
                     elif b'X' in r:
-                        # TODO: sesuaikan line ini
                         nomor_barcode = str(r).split('X')[1].split('\\xa9')[0]
                         access_log = get_last_access('nomor_barcode', str(int(nomor_barcode, 16)))
                         logging.info('Barcode detected' + str(int(nomor_barcode, 16)))
 
                         if not access_log:
                             # Play tiket invalid
-                            # TODO: sesuaikan command-nya
+                            # TODO: sesuaikan audio-nya
                             try:
                                 time.sleep(.1)
                                 s.sendall(b'\xa6MT00012\xa9')
@@ -254,8 +285,8 @@ def gate_out_thread():
 
                 save_data(access_log['id'], data)
 
-                # kalau staff langsung buka
-                if access_log['is_staff'] == 1 or access_log['is_staff'] == 0:
+                # buka gate sesuai setingan
+                if (access_log['is_staff'] == 1 and SETTING['staff_buka_otomatis'] == 1) or (access_log['is_staff'] == 0 and SETTING['pengunjung_buka_otomatis'] == 1):
                     try:
                         s.sendall(b'\xa6OPEN1\xa9')
                     except Exception as e:
@@ -266,26 +297,12 @@ def gate_out_thread():
 
                     logging.info('Gate Opened')
 
-                # if access_log['is_staff'] == 0:
-                #     await websocket.send(saved_data)
-                #     cmd = await websocket.recv()
-                #     if cmd == 'open':
-                #         try:
-                #             s.sendall(b'\xa6OPEN1\xa9')
-                #         except Exception as e:
-                #             logging.error('Failed to open gate ' + str(e))
-                #             send_notification(GATE['nama'] + 'Gagal membuka gate')
-                #             # sambung ulang controller
-                #             break
-
-                #         logging.info('Gate Opened')
-
                 # wait until vehicle in
                 counter = 0
 
                 while True:
                     # 5x cek aja biar ga kelamaan
-                    if counter > 5:
+                    if counter > 10:
                         logging.info('Waiting too long')
                         break
 
@@ -297,7 +314,7 @@ def gate_out_thread():
                         logging.debug(str(vehicle_in))
                     except Exception as e:
                         logging.error('Failed to sense loop 2 ' + str(e))
-                        send_notification(GATE['nama'] + ' : Gagal deteksi kendaraan sudah masuk')
+                        send_notification(GATE['nama'] + ' : Gagal deteksi kendaraan sudah keluar')
                         error = True
                         # break sensing loop 2
                         break
@@ -306,40 +323,35 @@ def gate_out_thread():
                         logging.info('Vehicle in')
                         break
 
-                    time.sleep(3)
+                    time.sleep(1)
 
                 if error:
                     # break loop cek kendaraan, sambung ulang controller
                     break
 
 def start_app():
+    global SETTING
     global GATE
 
-    try:
-        r = requests.get(API_URL + '/barrierGate/search', params={'jenis': 'OUT'}, timeout=3)
-    except Exception as e:
-        logging.error('Failed to get gate ' + str(e))
+    SETTING = get_setting()
+
+    if SETTING == False:
+        logging.info('Location not set. Exit application.')
         sys.exit()
 
-    if r.status_code == 200:
-        GATE = r.json()
+    logging.info('Location set: ' + SETTING['nama_lokasi'])
 
-    else:
-        logging.error('Gate not set. Exit application.')
+    GATE = get_gate()
+
+    if GATE == False:
+        logging.info('Gate not set. Exit application.')
         sys.exit()
 
     logging.info('Gate set : ' + GATE['nama'])
     logging.info('Starting application...')
     gate_out_thread()
 
-    # start_server = websockets.serve(ws, "127.0.0.1", 5678)
-    # asyncio.get_event_loop().run_until_complete(start_server)
-    # asyncio.get_event_loop().run_forever()
-
 if __name__ == "__main__":
     log_file = '/var/log/gate_out.log'
     logging.basicConfig(filename=log_file, filemode='a', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     start_app()
-
-# buat test web socket
-# python3 -m websockets wss://echo.websocket.org/

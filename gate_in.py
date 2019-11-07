@@ -12,7 +12,7 @@ from escpos.printer import Network
 import os
 import logging
 
-API_URL = 'http://localhost/pln/api'
+API_URL = 'http://localhost/api'
 SETTING = False
 GATE = False
 
@@ -32,7 +32,7 @@ def get_gate():
     try:
         r = requests.get(API_URL + '/barrierGate/search', params={'jenis': 'IN'}, timeout=3)
     except Exception as e:
-        logging.error('Failed to get gates ' + str(e))
+        logging.error('Failed to get gate ' + str(e))
         return False
 
     if r.status_code == 200:
