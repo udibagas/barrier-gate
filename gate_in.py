@@ -280,8 +280,10 @@ def gate_in_thread():
                         break
 
                     elif b'IN4ON' in push_button_or_card:
+                        logging.info('Help button pressed')
                         reset = True
                         try:
+                            time.sleep(.1)
                             s.sendall(b'\xa6MT00011\xa9')
                             time.sleep(10)
                         except Exception as e:
@@ -290,7 +292,6 @@ def gate_in_thread():
                             error = True
                             break
 
-                        logging.info('Help button pressed')
                         send_notification(GATE['nama'] + ': Pengunjung membutuhkan bantuan Anda')
                         break
 
