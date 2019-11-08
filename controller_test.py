@@ -13,7 +13,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         sys.exit()
 
     while True:
-        print('>')
-        cmd = input()
-        s.sendall('\xa6' + cmd + '\xa9')
+        cmd = input('> ')
+        s.sendall(b"".join([b'\xa6', cmd.encode(), b'\xa9']))
         print(':' + str(s.recv(64)))
