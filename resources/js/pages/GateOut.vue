@@ -8,7 +8,7 @@
                             <div class="label-big">GATE IN</div>
                         </el-col>
                         <el-col :span="14">
-                            <select :disabled="formModel.barcode_number.toLowerCase() != 'xxxxx'" v-model="formModel.gate_in_id" id="gate-in" class="my-input">
+                            <select :disabled="formModel.nomor_barcode.toLowerCase() != 'xxxxx'" v-model="formModel.gate_in_id" id="gate-in" class="my-input">
                                 <option v-for="g in parkingGateList" :value="g.id" :key="g.id">{{g.name}}</option>
                             </select>
                         </el-col>
@@ -30,7 +30,7 @@
                             <div class="label-big">[-] NO. PLAT</div>
                         </el-col>
                         <el-col :span="14">
-                            <input id="plate-number" autocomplete="off" @keyup.enter="checkPlate" type="text" placeholder="NO. PLAT" v-model="formModel.plate_number" class="my-input">
+                            <input id="plat-nomor" autocomplete="off" @keyup.enter="checkPlate" type="text" placeholder="NO. PLAT" v-model="formModel.plat_nomor" class="my-input">
                         </el-col>
                     </el-row>
 
@@ -39,7 +39,7 @@
                             <div class="label-big">[+] NO. TIKET/KARTU</div>
                         </el-col>
                         <el-col :span="14">
-                            <input id="ticket-number" autocomplete="off" @keyup.enter="checkTicket" type="text" placeholder="NO. TIKET/KARTU" v-model="formModel.barcode_number" class="my-input">
+                            <input id="nomor-barcode" autocomplete="off" @keyup.enter="checkTicket" type="text" placeholder="NO. TIKET/KARTU" v-model="formModel.nomor_barcode" class="my-input">
                         </el-col>
                     </el-row>
 
@@ -57,41 +57,8 @@
                         </el-col>
                     </el-row>
 
-                    <el-row :gutter="10" style="margin-bottom:10px;">
-                        <el-col :span="10">
-                            <div class="label-big">TARIF</div>
-                        </el-col>
-                        <el-col :span="14">
-                            <input disabled v-model="formModel.fare" class="my-input tarif-input">
-                        </el-col>
-                    </el-row>
-
-                    <el-row :gutter="10">
-                        <el-col :span="8">
-                            <div class="label">[/] IN</div>
-                            <input @keyup.enter="submit" @change="setDuration" id="time-in" v-mask="'####-##-## ##:##:##'" :disabled="formModel.barcode_number.toLowerCase() != 'xxxxx'" v-model="formModel.time_in" class="my-input-time text-center">
-                        </el-col>
-                        <el-col :span="8">
-                            <div class="label">OUT</div>
-                            <input disabled v-model="formModel.time_out" class="my-input-time text-center">
-                        </el-col>
-                        <el-col :span="8">
-                            <div class="label">DURASI</div>
-                            <input disabled v-model="formModel.duration" class="my-input-time text-center">
-                        </el-col>
-                    </el-row>
-
                     <button id="submit-btn" @keyup.right="nextBtn" @keyup.down="nextBtn" @keydown.enter="submit(false)" class="my-big-btn" @click="submit(false)">BUKA GATE</button>
-                    <button id="submit-btn1" @keyup.left="prevBtn" @keyup.up="prevBtn" @keydown.enter="printLastTrx" class="my-big-btn" @click="printLastTrx">[F2] PRINT STRUK TRANSAKSI TERAKHIR</button>
 
-                    <!-- <el-row :gutter="10">
-                        <el-col :span="12">
-                            <button id="submit-btn" @keyup.right="nextBtn" @keydown.enter="submit(false)" class="my-big-btn" @click="submit(false)">BUKA GATE TANPA PRINT TIKET</button>
-                        </el-col>
-                        <el-col :span="12">
-                            <button id="submit-btn1" @keyup.left="prevBtn" @keydown.enter="submit(true)" class="my-big-btn" @click="submit(true)">PRINT TIKET & BUKA GATE</button>
-                        </el-col>
-                    </el-row> -->
                 </el-card>
             </el-col>
             <el-col :span="10">
@@ -121,7 +88,7 @@ export default {
     data() {
         return {
             showTicketLostForm: false,
-            formModel: { barcode_number: '' },
+            formModel: { nomor_barcode: '' },
             formErrors: {},
             snapshot_in: null,
             snapshot_out: null,
@@ -137,34 +104,26 @@ export default {
         prevBtn() {
             document.getElementById('submit-btn').focus()
         },
-        setDuration() {
-            var date1 = moment(this.formModel.time_in)
-            var date2 = moment(this.formModel.time_out);
-            var duration = moment.duration(date2.diff(date1));
-            this.formModel.duration = moment.utc(duration.asMilliseconds()).format('HH:mm:ss')
-            // console.log(this.formModel.duration)
-            this.$forceUpdate()
-        },
         checkPlate() {
-            let params = { plate_number: this.formModel.plate_number }
+            let params = { plat_nomor: this.formModel.plat_nomor }
             axios.get('/parkingMember/search', { params: params }).then(r => {
                 this.formModel.is_member = 1
                 this.formModel.fare = 0
             }).catch(e => {
                 this.formModel.is_member = 0
             }).finally(() => {
-                document.getElementById('ticket-number').focus()
+                document.getElementById('nomor-barcode').focus()
                 this.$forceUpdate()
             })
         },
         checkTicket() {
             let now = moment().format('YYYY-MM-DD HH:mm:ss')
 
-            if (this.formModel.barcode_number.toLowerCase() == 'xxxxx') {
+            if (this.formModel.nomor_barcode.toLowerCase() == 'xxxxx') {
                 this.formModel.time_out = now;
                 document.getElementById('vehicle-type').focus()
             } else {
-                let params = { barcode_number: this.formModel.barcode_number }
+                let params = { nomor_barcode: this.formModel.nomor_barcode }
                 axios.get('/parkingTransaction/search', { params: params }).then(r => {
                     if (r.data.is_member) {
                         if (r.data.member.expired) {
@@ -188,11 +147,11 @@ export default {
                             })
                         }
 
-                        let vehicle = r.data.member.vehicles.find(v => v.plate_number == this.formModel.plate_number)
+                        let vehicle = r.data.member.vehicles.find(v => v.plat_nomor == this.formModel.plat_nomor)
 
                         if (!vehicle) {
                             this.$alert('Nomor plat tidak cocok dengan kartu. Nomor plat yang terdaftar adalah '
-                            + r.data.member.vehicles.map(v => v.plate_number).join(', '), 'Notifikasi', {
+                            + r.data.member.vehicles.map(v => v.plat_nomor).join(', '), 'Notifikasi', {
                                 type: 'warning',
                                 center: true,
                                 roundButton: true,
@@ -231,35 +190,11 @@ export default {
                 })
             }
         },
-        setFare() {
-            let vehicle = this.vehicleTypeList.find(vt => vt.name == this.formModel.vehicle_type)
-            if (vehicle) {
-                document.getElementById('vehicle-type').blur()
-
-                if (!this.formModel.is_member)
-                {
-                    this.formModel.fare = vehicle.tarif_flat
-                    if (this.formModel.barcode_number.toLowerCase() == 'xxxxx') {
-                        this.formModel.fare += vehicle.denda_tiket_hilang
-                    }
-                } else {
-                    this.formModel.fare = 0
-                }
-
-                this.$forceUpdate()
-
-                if (this.formModel.barcode_number.toLowerCase() == 'xxxxx') {
-                    document.getElementById('time-in').focus()
-                } else {
-                    document.getElementById('submit-btn').focus()
-                }
-            }
-        },
         resetForm() {
             let default_vehicle = this.vehicleTypeList.find(v => v.is_default == 1)
             this.formModel.gate_in_id = null
-            this.formModel.plate_number = this.setting.default_plate_number
-            this.formModel.barcode_number = ''
+            this.formModel.plat_nomor = this.setting.default_plat_nomor
+            this.formModel.nomor_barcode = ''
             this.formModel.time_out = ''
             this.formModel.time_in = ''
             this.formModel.duration = ''
@@ -274,11 +209,11 @@ export default {
                 this.formModel.fare = ''
             }
 
-            document.getElementById('plate-number').focus()
+            document.getElementById('plat-nomor').focus()
         },
         submit(ticket) {
             // kalau tiket hilang harus isi time in dulu
-            if (this.formModel.barcode_number.toLowerCase() == 'xxxxx' && !this.formModel.time_in) {
+            if (this.formModel.nomor_barcode.toLowerCase() == 'xxxxx' && !this.formModel.time_in) {
                 document.getElementById('time-in').focus()
                 return
             } else {
@@ -294,19 +229,10 @@ export default {
                 return
             }
 
-            if (!this.formModel.barcode_number
-            || !this.formModel.gate_out_id
-            || !this.formModel.plate_number
-            || !this.formModel.vehicle_type
-            || !this.formModel.time_out
-            || !this.formModel.time_in) {
-                return
-            }
-
             if (!!this.formModel.id) {
-                this.update(ticket)
+                this.update()
             } else {
-                this.store(ticket)
+                this.store()
             }
         },
         store(ticket) {
@@ -353,21 +279,6 @@ export default {
                 })
             })
         },
-        printTicket(id) {
-            axios.post('/parkingTransaction/printTicket/' + id, { trx: 'OUT' }).then(r => {
-                this.$message({
-                    message: r.data.message,
-                    type: 'success',
-                    showClose: true
-                })
-            }).catch(e => {
-                this.$message({
-                    message: e.response.data.message,
-                    type: 'error',
-                    showClose: true
-                })
-            })
-        },
         openGate() {
             axios.post('/parkingGate/openGate/' + this.formModel.gate_out_id).then(r => {
                 this.$message({
@@ -385,82 +296,10 @@ export default {
                 this.resetForm()
             })
         },
-        getParkingGateList() {
-            axios.get('/parkingGate/getList').then(r => {
-                this.parkingGateList = r.data
-
-                if (r.data.filter(g => g.type == 'IN').length == 0) {
-                    this.$message({
-                        message: 'MOHON SET GATE IN',
-                        type: 'error',
-                        showClose: true
-                    })
-                    return
-                }
-
-                if (r.data.filter(g => g.type == 'OUT').length == 0) {
-                    this.$message({
-                        message: 'MOHON SET GATE OUT',
-                        type: 'error',
-                        showClose: true
-                    })
-                    return
-                }
-            }).catch(e => {
-                this.$message({
-                    message: 'MOHON SET GATE',
-                    type: 'error',
-                    showClose: true
-                })
-            })
-        },
-        printLastTrx() {
-            if (!this.formModel.gate_out_id) {
-                return
-            }
-
-            let params = { gate_out_id: this.formModel.gate_out_id }
-            axios.get('/parkingTransaction/search', { params: params }).then(r => {
-                this.printTicket(r.data.id)
-            }).catch(e => {
-                this.$message({
-                    message: 'BELUM ADA TRANSAKSI',
-                    type: 'error',
-                    showClose: true
-                })
-            })
-        },
-        getVehicleTypeList() {
-            axios.get('/vehicleType/getList').then(r => {
-                if (r.data.length == 0) {
-                    this.$message({
-                        message: 'MOHON SET JENIS KENDARAAN',
-                        type: 'error',
-                        showClose: true
-                    })
-                    return
-                }
-
-                this.vehicleTypeList = r.data
-                let default_vehicle = r.data.find(v => v.is_default == 1)
-
-                if (default_vehicle) {
-                    this.formModel.vehicle_type = default_vehicle.name
-                    this.formModel.fare = default_vehicle.tarif_flat
-                    this.$forceUpdate()
-                }
-            }).catch(e => {
-                this.$message({
-                    message: 'MOHON SET JENIS KENDARAAN',
-                    type: 'error',
-                    showClose: true
-                })
-            })
-        },
         getSetting(state) {
             axios.get('/setting').then(r => {
                 this.setting = r.data
-                this.formModel.plate_number = r.data.default_plate_number
+                this.formModel.plat_nomor = r.data.default_plat_nomor
             }).catch(e => {
                 this.$message({
                     message: 'BELUM ADA SETTING',
@@ -473,9 +312,7 @@ export default {
     },
     mounted() {
         this.getSetting()
-        this.getParkingGateList()
-        this.getVehicleTypeList()
-        document.getElementById('plate-number').focus()
+        document.getElementById('plat-nomor').focus()
 
         document.getElementById('gate-out-app').onkeydown = (e) => {
             // console.log(e.key)
@@ -489,40 +326,9 @@ export default {
             // ke field nomor tiket
             if (e.key == '+') {
                 e.preventDefault()
-                let default_vehicle = this.vehicleTypeList.find(v => v.is_default == 1)
-                this.formModel.barcode_number = ''
+                this.formModel.nomor_barcode = ''
                 this.formModel.time_out = ''
-
-                if (default_vehicle) {
-                    this.formModel.vehicle_type = default_vehicle.name
-                    this.formModel.fare = default_vehicle.tarif_flat
-                } else {
-                    this.formModel.vehicle_type = ''
-                    this.formModel.fare = ''
-                }
-
-                document.getElementById('ticket-number').focus()
-            }
-
-            // ke field jenis kendaraan
-            if (e.key == '*') {
-                e.preventDefault()
-                this.formModel.vehicle_type = ''
-                this.formModel.fare = ''
-                document.getElementById('vehicle-type').focus()
-            }
-
-            // ke field time in
-            if (e.key == '/') {
-                e.preventDefault()
-                this.formModel.time_in = ''
-                document.getElementById('time-in').focus()
-            }
-
-            if (e.key == 'F12') {
-                e.preventDefault()
-                // alert('F12')
-                this.printLastTrx()
+                document.getElementById('nomor-barcode').focus()
             }
         }
     }

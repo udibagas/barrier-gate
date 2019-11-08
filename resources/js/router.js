@@ -6,14 +6,18 @@ import AccessLog from './pages/AccessLog'
 import Report from './pages/Report'
 import Setting from './pages/Setting'
 import Notification from './pages/Notification'
+import GateOut from './pages/GateOut'
+import Snapshot from './pages/Snapshot'
 
 Vue.use(VueRouter)
 
 const router = new VueRouter({
     routes: [
         { path: '/', component: Home, name: 'home' },
+        { path: '/gate-out', component: GateOut, name: 'gate-put' },
         { path: '/access-log', component: AccessLog, name: 'access-log' },
         { path: '/report', component: Report, name: 'report' },
+        { path: '/snapshot', component: Snapshot, name: 'snapshot' },
         { path: '/setting', component: Setting, name: 'setting' },
         { path: '/notification', component: Notification, name: 'notification' },
         { path: '*', component: Home },

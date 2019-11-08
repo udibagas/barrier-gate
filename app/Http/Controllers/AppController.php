@@ -26,12 +26,14 @@ class AppController extends Controller
     public function getNavigation(Request $request)
     {
         $nav = [
-            ['label' => 'Home', 'icon' => 'el-icon-s-home', 'path' => 'home' ],
+            ['label' => 'Dashboard', 'icon' => 'el-icon-s-home', 'path' => 'home' ],
+            ['label' => 'Pos Keluar', 'icon' => 'el-icon-minus', 'path' => 'gate-out' ],
             ['label' => 'Log Akses', 'icon' => 'el-icon-document-copy', 'path' => 'access-log' ],
         ];
 
         $adminNav = [
             ['label' => 'Laporan', 'icon' => 'el-icon-data-analysis', 'path' => 'report' ],
+            ['label' => 'Snapshot', 'icon' => 'el-icon-camera', 'path' => 'snapshot' ],
             ['label' => 'Notifikasi', 'icon' => 'el-icon-bell', 'path' => 'notification' ],
             ['label' => 'Setting', 'icon' => 'el-icon-setting', 'path' => 'setting' ],
         ];

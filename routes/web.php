@@ -20,6 +20,15 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('department/getList', 'DepartmentController@getList');
     Route::resource('department', 'DepartmentController')->only(['index', 'store', 'update', 'destroy']);
 
+    Route::get('snapshots', 'SnapshotsController@index');
+    Route::delete('snapshots', 'SnapshotsController@delete');
+
+    Route::post('backup', 'BackupController@store');
+    Route::get('backup', 'BackupController@index');
+    Route::delete('backup', 'BackupController@destroy');
+    Route::post('restoreDatabase', 'BackupController@restoreDatabase');
+    Route::post('restoreSnapshot', 'BackupController@restoreSnapshot');
+
     Route::post('barrierGate/openGate/{barrierGate}', 'BarrierGateController@openGate');
     Route::post('barrierGate/testPrinter/{barrierGate}', 'BarrierGateController@testPrinter');
     Route::post('barrierGate/testCamera/{barrierGate}', 'BarrierGateController@testCamera');

@@ -7,37 +7,39 @@
             <el-tab-pane lazy label="Global Setting" v-loading="loading">
                 <el-card style="height:calc(100vh - 235px);overflow:auto;">
                     <el-form label-position="left" label-width="250px">
-                        <el-form-item label="Nama Lokasi" :class="formErrors.nama_lokasi ? 'is-error' : ''">
-                            <el-input placeholder="Nama Lokasi" v-model="formModel.nama_lokasi"></el-input>
-                            <div class="el-form-item__error" v-if="formErrors.nama_lokasi">{{formErrors.nama_lokasi[0]}}</div>
-                        </el-form-item>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="Nama Lokasi" :class="formErrors.nama_lokasi ? 'is-error' : ''">
+                                    <el-input placeholder="Nama Lokasi" v-model="formModel.nama_lokasi"></el-input>
+                                    <div class="el-form-item__error" v-if="formErrors.nama_lokasi">{{formErrors.nama_lokasi[0]}}</div>
+                                </el-form-item>
 
-                        <el-form-item label="Alamat Lokasi">
-                            <el-input placeholder="Alamat Lokasi" type="textarea" rows="3" v-model="formModel.alamat_lokasi"></el-input>
-                        </el-form-item>
+                                <el-form-item label="Alamat Lokasi">
+                                    <el-input placeholder="Alamat Lokasi" type="textarea" rows="3" v-model="formModel.alamat_lokasi"></el-input>
+                                </el-form-item>
 
-                        <el-form-item label="Info Tambahan Tiket">
-                            <el-input placeholder="Info Tambahan Tiket" type="textarea" rows="3" v-model="formModel.info_tambahan_tiket"></el-input>
-                        </el-form-item>
+                                <el-form-item label="Info Tambahan Tiket">
+                                    <el-input placeholder="Info Tambahan Tiket" type="textarea" rows="3" v-model="formModel.info_tambahan_tiket"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="Mode Buka Gate Untuk Staff" :class="formErrors.staff_buka_otomatis ? 'is-error' : ''">
+                                    <el-select placeholder="Mode Buka Gate Untuk Staff" v-model="formModel.staff_buka_otomatis" style="width:100%">
+                                        <el-option v-for="(l, i) in ['Ketik Plat Nomor (Buka oleh operator)', 'Tempel Kartu (Otomatis)']" :key="i" :value="i" :label="l"></el-option>
+                                    </el-select>
+                                    <div class="el-form-item__error" v-if="formErrors.staff_buka_otomatis">{{formErrors.staff_buka_otomatis[0]}}</div>
+                                </el-form-item>
 
-                        <!-- <el-form-item label="Mode Transaksi Member" :class="formErrors.must_checkout ? 'is-error' : ''">
-                            <el-select placeholder="Mode Transaksi Member" v-model="formModel.must_checkout" style="width:100%">
-                                <el-option v-for="(l, i) in ['Tidak harus check out', 'Harus check out']" :key="i" :value="i" :label="l"></el-option>
-                            </el-select>
-                            <div class="el-form-item__error" v-if="formErrors.must_checkout">{{formErrors.must_checkout[0]}}</div>
-                        </el-form-item>
-
-                        <el-form-item label="Mode Buka Gate Untuk Member" :class="formErrors.member_auto_open ? 'is-error' : ''">
-                            <el-select placeholder="Mode Buka Gate Untuk Member" v-model="formModel.member_auto_open" style="width:100%">
-                                <el-option v-for="(l, i) in ['Ketik Plat Nomor (Buka oleh operator)', 'Tempel Kartu (Otomatis)']" :key="i" :value="i" :label="l"></el-option>
-                            </el-select>
-                            <div class="el-form-item__error" v-if="formErrors.member_auto_open">{{formErrors.member_auto_open[0]}}</div>
-                        </el-form-item> -->
-
-                        <el-form-item>
-                            <el-button type="primary" @click="() => { !!formModel.id ? update() : store(); }" icon="el-icon-success">SIMPAN</el-button>
-                        </el-form-item>
+                                <el-form-item label="Mode Buka Gate Untuk Pengunjung" :class="formErrors.pengunjung_buka_otomatis ? 'is-error' : ''">
+                                    <el-select placeholder="Mode Buka Gate Untuk Pengunjung" v-model="formModel.pengunjung_buka_otomatis" style="width:100%">
+                                        <el-option v-for="(l, i) in ['Ketik Plat Nomor (Buka oleh operator)', 'Tempel Tiket (Otomatis)']" :key="i" :value="i" :label="l"></el-option>
+                                    </el-select>
+                                    <div class="el-form-item__error" v-if="formErrors.pengunjung_buka_otomatis">{{formErrors.pengunjung_buka_otomatis[0]}}</div>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-form>
+                    <el-button type="primary" style="width:100%" @click="() => { !!formModel.id ? update() : store(); }" icon="el-icon-success">SIMPAN</el-button>
                 </el-card>
             </el-tab-pane>
             <el-tab-pane lazy label="Gate">
@@ -49,6 +51,9 @@
             <el-tab-pane lazy label="User">
                 <User />
             </el-tab-pane>
+            <el-tab-pane lazy label="Backup &amp; Restore Database">
+                <Backup />
+            </el-tab-pane>
         </el-tabs>
     </div>
 </template>
@@ -57,9 +62,10 @@
 import BarrierGate from './BarrierGate'
 import Department from './Department'
 import User from './User'
+import Backup from './Backup'
 
 export default {
-    components: { BarrierGate, Department, User },
+    components: { BarrierGate, Department, User, Backup },
     data() {
         return {
             formModel: {},
