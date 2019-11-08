@@ -223,7 +223,8 @@ def gate_in_thread():
 
                         if not staff:
                             try:
-                                s.sendall(b'\xa6MT00003\xa9')
+                                # kartu tidak dapat digunakan
+                                s.sendall(b'\xa6MT00009\xa9')
                             except Exception as e:
                                 logging.error('Failed to respon invalid card ' + str(e))
                                 send_notification(GATE['nama'] + ' : Gagal merespon kartu invalid')
@@ -234,7 +235,8 @@ def gate_in_thread():
 
                         if staff['expired']:
                             try:
-                                s.sendall(b'\xa6MT00013\xa9')
+                                # masa aktif habis
+                                s.sendall(b'\xa6MT00003\xa9')
                             except Exception as e:
                                 logging.error('Failed to respon card expired ' + str(e))
                                 send_notification(GATE['nama'] + ' : Gagal merespon kartu expired')
@@ -245,7 +247,7 @@ def gate_in_thread():
 
                         if not staff['expired'] and staff['expired_in'] == 5:
                             try:
-                                s.sendall(b'\xa6MT00011\xa9')
+                                s.sendall(b'\xa6MT00001\xa9')
                                 time.sleep(6)
                             except Exception as e:
                                 logging.error('Failed to respon card expired in 5 days ' + str(e))
@@ -255,7 +257,7 @@ def gate_in_thread():
 
                         if not staff['expired'] and staff['expired_in'] == 1:
                             try:
-                                s.sendall(b'\xa6MT00012\xa9')
+                                s.sendall(b'\xa6MT00002\xa9')
                                 time.sleep(6)
                             except Exception as e:
                                 logging.error('Failed to respon card expired in 1 day ' + str(e))
@@ -311,7 +313,7 @@ def gate_in_thread():
 
                     # play silakan ambil tiket
                     try:
-                        s.sendall(b'\xa6MT00002\xa9')
+                        s.sendall(b'\xa6MT00008\xa9')
                         logging.debug(str(s.recv(64)))
                     except Exception as e:
                         logging.error('Failed to play silakan ambil tiket' + str(e))
@@ -320,7 +322,7 @@ def gate_in_thread():
 
                 # play terimakasih
                 try:
-                    s.sendall(b'\xa6MT00006\xa9')
+                    s.sendall(b'\xa6MT00012\xa9')
                     logging.debug(str(s.recv(64)))
                 except Exception:
                     logging.error('Failed to play terimakasih' + str(e))
