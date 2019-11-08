@@ -349,7 +349,7 @@ def gate_in_thread():
 
                 # open gate
                 try:
-                    s.sendall(b'\xa6OPEN1\xa9')
+                    s.sendall(b'\xa6TRIG1\xa9')
                     logging.debug(str(s.recv(64)))
                 except Exception as e:
                     logging.error('Failed to open gate ' + str(e))

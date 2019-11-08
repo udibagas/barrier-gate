@@ -288,7 +288,7 @@ def gate_out_thread():
                 # buka gate sesuai setingan
                 if (access_log['is_staff'] == 1 and SETTING['staff_buka_otomatis'] == 1) or (access_log['is_staff'] == 0 and SETTING['pengunjung_buka_otomatis'] == 1):
                     try:
-                        s.sendall(b'\xa6OPEN1\xa9')
+                        s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
                         logging.error('Failed to open gate ' + str(e))
                         send_notification(GATE['nama'] + 'Gagal membuka gate')
