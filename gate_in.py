@@ -279,6 +279,21 @@ def gate_in_thread():
                         reset = True
                         break
 
+                    elif b'IN4ON' in push_button_or_card:
+                        reset = True
+                        try:
+                            s.sendall(b'\xa6MT00011\xa9')
+                            time.sleep(10)
+                        except Exception as e:
+                            logging.error('Failed to respon help button ' + str(e))
+                            send_notification(GATE['nama'] + ': Gagal merespon tombol bantuan')
+                            error = True
+                            break
+
+                        logging.info('Help button pressed')
+                        send_notification(GATE['nama'] + ': Pengunjung membutuhkan bantuan Anda')
+                        break
+
                     elif b'IN1OFF' in push_button_or_card:
                         logging.info('Vehicle turn back')
                         reset = True
