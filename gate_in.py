@@ -265,8 +265,8 @@ def gate_in_thread():
                                 error = True
                                 break
 
-                        data = {'is_staff': 1, 'nomor_kartu': staff['nomor_kartu'], 'user_id': staff['id']}
-                        logging.info('Card detected :' + staff['nomor_kartu'])
+                        data = {'is_staff': 1, 'nomor_kartu': staff['nomor_kartu'], 'user_id': staff['id'], 'plat_nomor': staff['plat_nomor']}
+                        logging.info('Card detected : ' + staff['nomor_kartu'])
                         break
 
                     elif b'IN2ON' in push_button_or_card or b'STAT11' in push_button_or_card:
@@ -332,7 +332,7 @@ def gate_in_thread():
                         s.sendall(b'\xa6MT00008\xa9')
                         logging.debug(str(s.recv(64)))
                     except Exception as e:
-                        logging.error('Failed to play silakan ambil tiket' + str(e))
+                        logging.error('Failed to play silakan ambil tiket. ' + str(e))
                         send_notification(GATE['nama'] + ' : Gagal play silakan ambil tiket')
                         break
 
@@ -341,7 +341,7 @@ def gate_in_thread():
                     s.sendall(b'\xa6MT00012\xa9')
                     logging.debug(str(s.recv(64)))
                 except Exception:
-                    logging.error('Failed to play terimakasih' + str(e))
+                    logging.error('Failed to play terimakasih. ' + str(e))
                     send_notification(GATE['nama'] + ' : Gagal play terimakasih')
                     break
 
