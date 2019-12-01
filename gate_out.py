@@ -209,7 +209,7 @@ def gate_out_thread():
                                 error = True
                                 break
 
-                        logging.info('Card detected :' + staff['nomor_kartu'])
+                        logging.info('Card detected : ' + staff['nomor_kartu'])
                         # cari data transaksi terakhir, kalau ada nanti buat update, kalau gak ada create baru di backend
                         access_log = get_last_access('nomor_kartu', staff['nomor_kartu'])
 
@@ -222,7 +222,7 @@ def gate_out_thread():
                     elif b'X' in r:
                         nomor_barcode = str(r).split('X')[1].split('\\xa9')[0]
                         access_log = get_last_access('nomor_barcode', str(int(nomor_barcode, 16)))
-                        logging.info('Barcode detected' + str(int(nomor_barcode, 16)))
+                        logging.info('Barcode detected : ' + str(int(nomor_barcode, 16)))
 
                         if not access_log:
                             # Play tiket invalid
@@ -283,10 +283,10 @@ def gate_out_thread():
                     'snapshot_out': take_snapshot()
                 }
 
-                save_data(access_log['id'], data)
-
                 # buka gate sesuai setingan
                 if (access_log['is_staff'] == 1 and SETTING['staff_buka_otomatis'] == 1) or (access_log['is_staff'] == 0 and SETTING['pengunjung_buka_otomatis'] == 1):
+                    save_data(access_log['id'], data)
+
                     try:
                         s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
@@ -310,6 +310,7 @@ def gate_out_thread():
                             break
 
                         if b'IN2ON' in open_gate:
+                            save_data(access_log['id'], data)
                             try:
                                 s.sendall(b'\xa6TRIG1\xa9')
                             except Exception as e:
@@ -320,7 +321,18 @@ def gate_out_thread():
 
                         time.sleep(1)
 
-                # wait until vehicle in
+                # play terimakasih
+                try:
+                    s.sendall(b'\xa6MT00012\xa9')
+                    logging.debug(str(s.recv(64)))
+                except Exception:
+                    logging.error('Failed to play terimakasih. ' + str(e))
+                    send_notification(GATE['nama'] + ' : Gagal play terimakasih')
+                    break
+
+                time.sleep(1)
+
+                # wait until vehicle out
                 counter = 0
 
                 while True:
