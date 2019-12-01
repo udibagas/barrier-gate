@@ -98,7 +98,7 @@ class BarrierGateController extends Controller
 
     public function getList()
     {
-        return BarrierGate::orderBy('nama', 'asc')->where('active', 1)->get();
+        return BarrierGate::orderBy('nama', 'asc')->get();
     }
 
     public function testCamera(BarrierGate $barrierGate)

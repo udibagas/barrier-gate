@@ -11,9 +11,9 @@
                 format="dd/MMM/yyyy"
                 value-format="yyyy-MM-dd"
                 type="daterange"
-                range-separator="To"
-                start-placeholder="Start date"
-                end-placeholder="End date">
+                range-separator="-"
+                start-placeholder="Dari Tanggal"
+                end-placeholder="Sampai Tanggal">
                 </el-date-picker>
             </el-form-item>
             <!-- <el-form-item>

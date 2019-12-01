@@ -35,9 +35,19 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('barrierGate/getList', 'BarrierGateController@getList');
     Route::resource('barrierGate', 'BarrierGateController')->only(['index', 'store', 'update', 'destroy']);
 
+    Route::get('user/search', 'UserController@search');
     Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('setting', 'SettingController')->only(['index', 'store', 'update']);
     Route::resource('accessLog', 'AccessLogController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('karcisHilang', 'KarcisHilangController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('bukaManual', 'BukaManualController')->only(['index', 'store', 'update', 'destroy']);
+
+    // Report
+    Route::get('report', 'ReportController@index');
+    Route::get('report/terparkir', 'ReportController@terparkir');
+    Route::get('report/bukaManual', 'ReportController@bukaManual');
+    Route::get('report/tanpaKartu', 'ReportController@tanpaKartu');
+    Route::get('report/karcisHilang', 'ReportController@karcisHilang');
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');

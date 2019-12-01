@@ -34,6 +34,10 @@ class BarrierGateRequest extends FormRequest
             'printer_type' => 'required|in:network,local',
             'printer_device' => 'required_if:printer_type,local',
             'printer_ip_address' => 'required_if:printer_type,network|ipv4',
+            'cmd_open' => 'required',
+            'cmd_close' => 'required',
+            'serial_device' => 'required',
+            'serial_baudrate' => 'required|numeric',
         ];
     }
 
@@ -50,6 +54,10 @@ class BarrierGateRequest extends FormRequest
             'camera_username' => 'Username Kamera',
             'camera_password' => 'Password Kamera',
             'camera_snapshot_url' => 'URL Snapshot Kamera',
+            'cmd_open' => 'Perintah Buka',
+            'cmd_close' => 'Perintah Tutup',
+            'serial_device' => 'Device',
+            'serial_baudrate' => 'Baudrate',
         ];
     }
 

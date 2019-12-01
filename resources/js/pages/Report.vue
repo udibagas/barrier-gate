@@ -90,13 +90,6 @@ export default {
                 this.transaction.push({ vehicle_type: 'TOTAL', total })
             })
         },
-        getIncome() {
-            axios.get('getIncome', { params: { dateRange: this.dateRange } }).then(r => {
-                this.income = r.data
-                let total = r.data.map(d => d.total).reduce((sum, total) => sum + parseInt(total), 0)
-                this.income.push({ vehicle_type: 'TOTAL', total })
-            })
-        },
         getParkedVehicle() {
             axios.get('getParkedVehicle', { params: { dateRange: this.dateRange } }).then(r => {
                 this.parkedVehicle = r.data
@@ -111,7 +104,6 @@ export default {
         },
         requestData() {
             this.getTransaction();
-            this.getIncome();
             this.getParkedVehicle();
             this.getReport();
         }

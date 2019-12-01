@@ -297,6 +297,29 @@ def gate_out_thread():
 
                     logging.info('Gate Opened')
 
+                # sensing INP2 (buka dari operator)
+                else:
+                    while True:
+                        try:
+                            s.sendall(b'\xa6STAT\xa9')
+                            open_gate = s.recv(64)
+                            logging.debug(str(open_gate))
+                        except Exception as e:
+                            logging.error('Failed to sense loop 2 ' + str(e))
+                            send_notification(GATE['nama'] + ' : Gagal deteksi open manual')
+                            break
+
+                        if b'IN2ON' in open_gate:
+                            try:
+                                s.sendall(b'\xa6TRIG1\xa9')
+                            except Exception as e:
+                                logging.error('Failed to open gate ' + str(e))
+                                send_notification(GATE['nama'] + 'Gagal membuka gate')
+                                # sambung ulang controller
+                            break
+
+                        time.sleep(1)
+
                 # wait until vehicle in
                 counter = 0
 

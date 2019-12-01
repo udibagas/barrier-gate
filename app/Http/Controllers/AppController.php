@@ -27,12 +27,14 @@ class AppController extends Controller
     {
         $nav = [
             ['label' => 'Dashboard', 'icon' => 'el-icon-s-home', 'path' => 'home' ],
-            ['label' => 'Pos Keluar', 'icon' => 'el-icon-minus', 'path' => 'gate-out' ],
+            ['label' => 'Pos', 'icon' => 'el-icon-discount', 'path' => 'pos' ],
+            ['label' => 'Karcis Hilang', 'icon' => 'el-icon-s-ticket', 'path' => 'karcis-hilang' ],
+            ['label' => 'Buka Manual', 'icon' => 'el-icon-unlock', 'path' => 'buka-manual' ],
             ['label' => 'Log Akses', 'icon' => 'el-icon-document-copy', 'path' => 'access-log' ],
         ];
 
         $adminNav = [
-            ['label' => 'Laporan', 'icon' => 'el-icon-data-analysis', 'path' => 'report' ],
+            // ['label' => 'Laporan', 'icon' => 'el-icon-data-analysis', 'path' => 'report' ],
             ['label' => 'Snapshot', 'icon' => 'el-icon-camera', 'path' => 'snapshot' ],
             ['label' => 'Notifikasi', 'icon' => 'el-icon-bell', 'path' => 'notification' ],
             ['label' => 'Setting', 'icon' => 'el-icon-setting', 'path' => 'setting' ],

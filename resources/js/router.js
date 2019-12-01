@@ -3,10 +3,12 @@ import VueRouter from 'vue-router'
 import { Message } from 'element-ui';
 import Home from './pages/Home'
 import AccessLog from './pages/AccessLog'
+import KarcisHilang from './pages/KarcisHilang'
+import BukaManual from './pages/BukaManual'
 import Report from './pages/Report'
 import Setting from './pages/Setting'
 import Notification from './pages/Notification'
-import GateOut from './pages/GateOut'
+import Pos from './pages/Pos'
 import Snapshot from './pages/Snapshot'
 
 Vue.use(VueRouter)
@@ -14,8 +16,10 @@ Vue.use(VueRouter)
 const router = new VueRouter({
     routes: [
         { path: '/', component: Home, name: 'home' },
-        { path: '/gate-out', component: GateOut, name: 'gate-put' },
+        { path: '/pos', component: Pos, name: 'pos' },
         { path: '/access-log', component: AccessLog, name: 'access-log' },
+        { path: '/karcis-hilang', component: KarcisHilang, name: 'karcis-hilang' },
+        { path: '/buka-manual', component: BukaManual, name: 'buka-manual' },
         { path: '/report', component: Report, name: 'report' },
         { path: '/snapshot', component: Snapshot, name: 'snapshot' },
         { path: '/setting', component: Setting, name: 'setting' },

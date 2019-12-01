@@ -64,9 +64,11 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $user = User::where('nomor_kartu', 'like', '%'.$request->nomor_kartu)
-            ->where('status', $request->status)
-            ->first();
+        $user = User::when($request->nomor_kartu, function($q) use ($request) {
+                return $q->where('nomor_kartu', 'like', '%'.$request->nomor_kartu);
+            })->when($request->plat_nomor, function ($q) use ($request) {
+                return $q->where('plat_nomor', $request->plat_nomor);
+            })->where('status', $request->status)->first();
 
         return ($user) ? $user : response(['message' => 'Data tidak ditemukan'], 404);
     }

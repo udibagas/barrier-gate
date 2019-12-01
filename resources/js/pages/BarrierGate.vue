@@ -102,6 +102,20 @@
                             <div class="el-form-item__error" v-if="formErrors.controller_port">{{formErrors.controller_port[0]}}</div>
                         </el-form-item>
 
+                        <el-form-item label="Serial" :class="formErrors.serial_device || formErrors.serial_baudrate ? 'is-error' : ''">
+                            <el-input placeholder="Device" v-model="formModel.serial_device" style="width:49%"></el-input>
+                            <el-input placeholder="Baudrate" v-model="formModel.serial_baudrate" style="width:49%;float:right;clear:right"></el-input>
+                            <div class="el-form-item__error" v-if="formErrors.serial_device">{{formErrors.serial_device[0]}}</div>
+                            <div class="el-form-item__error" v-if="formErrors.serial_baudrate">{{formErrors.serial_baudrate[0]}}</div>
+                        </el-form-item>
+
+                        <el-form-item label="Perintah" :class="formErrors.cmd_open || formErrors.cmd_close ? 'is-error' : ''">
+                            <el-input placeholder="Buka" v-model="formModel.cmd_open" style="width:49%"></el-input>
+                            <el-input placeholder="Tutup" v-model="formModel.cmd_close" style="width:49%;float:right;clear:right"></el-input>
+                            <div class="el-form-item__error" v-if="formErrors.cmd_open">{{formErrors.cmd_open[0]}}</div>
+                            <div class="el-form-item__error" v-if="formErrors.cmd_close">{{formErrors.cmd_close[0]}}</div>
+                        </el-form-item>
+
                         <el-form-item label="Jenis Printer" :class="formErrors.printer_type || formErrors.printer_device || formErrors.printer_ip_address ? 'is-error' : ''">
                             <el-select v-model="formModel.printer_type" placeholder="Jenis Printer" style="width:40%">
                                 <el-option v-for="(t, i) in ['local', 'network']" :value="t" :label="t" :key="i"></el-option>

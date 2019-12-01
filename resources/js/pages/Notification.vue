@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-page-header @back="$emit('back')" content="USER"> </el-page-header>
+        <el-page-header @back="$emit('back')" content="NOTIFIKASI"> </el-page-header>
         <el-divider></el-divider>
         <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
             <el-form-item>
-                <el-button @click="clearNotification" type="danger" plain icon="el-icon-delete">HAPUS NOTIFIKASI</el-button>
+                <el-button @click="clearNotification" type="danger" icon="el-icon-delete">HAPUS NOTIFIKASI</el-button>
             </el-form-item>
             <el-form-item>
                 <el-date-picker
@@ -13,9 +13,9 @@
                 format="dd/MMM/yyyy"
                 value-format="yyyy-MM-dd"
                 type="daterange"
-                range-separator="To"
-                start-placeholder="Start date"
-                end-placeholder="End date">
+                range-separator="-"
+                start-placeholder="Dari tanggal"
+                end-placeholder="Sampai tanggal">
                 </el-date-picker>
             </el-form-item>
             <el-form-item style="margin-right:0;">
