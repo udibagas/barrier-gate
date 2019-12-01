@@ -16,9 +16,9 @@
                 end-placeholder="Sampai Tanggal">
                 </el-date-picker>
             </el-form-item>
-            <!-- <el-form-item>
+            <el-form-item>
                 <el-button type="primary" icon="el-icon-finished" @click="setSudahKeluarSemua">SET KENDARAAN SUDAH KELUAR SEMUA</el-button>
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item style="margin-right:0;">
                 <el-input v-model="keyword" placeholder="Search" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
                     <el-button @click="() => { page = 1; keyword = ''; requestData(); }" slot="append" icon="el-icon-refresh"></el-button>
@@ -50,7 +50,7 @@
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item @click.native.prevent="() => { trx = scope.row; showTrxDetail = true }"><i class="el-icon-zoom-in"></i> Lihat Detail</el-dropdown-item>
-                            <!-- <el-dropdown-item v-if="!scope.row.time_out" @click.native.prevent="setSudahKeluar(scope.row.id)"><i class="el-icon-check"></i> Set Sudah Keluar</el-dropdown-item> -->
+                            <el-dropdown-item v-if="!scope.row.time_out" @click.native.prevent="setSudahKeluar(scope.row.id)"><i class="el-icon-check"></i> Set Sudah Keluar</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>

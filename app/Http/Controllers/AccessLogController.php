@@ -92,4 +92,30 @@ class AccessLogController extends Controller
 
         return response(['message' => 'Data tidak ditemukan'], 500);
     }
+
+    public function setSudahKeluar(AccessLog $accessLog)
+    {
+        $accessLog->time_out = now();
+        $accessLog->operator = auth()->user()->name;
+        $accessLog->save();
+        return ['message' => 'KENDARAAN BERHASIL DISET SUDAH KELUAR'];
+    }
+
+    public function setSudahKeluarSemua(Request $request)
+    {
+        $sql = 'UPDATE access_logs
+            SET time_out = :time_out,
+                operator = :operator
+            WHERE time_out IS NULL
+                AND DATE(time_in) BETWEEN :start AND :stop';
+
+        DB::update($sql, [
+            ':time_out' => now(),
+            ':operator' => $request->user()->name,
+            ':start' => $request->dateRange[0],
+            ':stop' => $request->dateRange[1]
+        ]);
+
+        return ['message' => 'KENDARAAN BERHASIL DISET SUDAH KELUAR'];
+    }
 }

@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::post('restoreDatabase', 'BackupController@restoreDatabase');
     Route::post('restoreSnapshot', 'BackupController@restoreSnapshot');
 
+    // Barrier gate related
     Route::post('barrierGate/openGate/{barrierGate}', 'BarrierGateController@openGate');
     Route::post('barrierGate/testPrinter/{barrierGate}', 'BarrierGateController@testPrinter');
     Route::post('barrierGate/testCamera/{barrierGate}', 'BarrierGateController@testCamera');
@@ -38,9 +39,14 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('user/search', 'UserController@search');
     Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('setting', 'SettingController')->only(['index', 'store', 'update']);
-    Route::resource('accessLog', 'AccessLogController')->only(['index', 'store', 'update', 'destroy']);
+
     Route::resource('karcisHilang', 'KarcisHilangController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('bukaManual', 'BukaManualController')->only(['index', 'store', 'update', 'destroy']);
+
+    // Access Log Related
+    Route::put('accessLog/setSudahKeluar/{accessLog}', 'AccessLogController@setSudahKeluar');
+    Route::put('accessLog/setSudahKeluarSemua', 'AccessLogController@setSudahKeluarSemua');
+    Route::resource('accessLog', 'AccessLogController')->only(['index', 'store', 'update', 'destroy']);
 
     // Report
     Route::get('report', 'ReportController@index');
