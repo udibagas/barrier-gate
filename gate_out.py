@@ -142,6 +142,17 @@ def gate_out_thread():
                         send_notification(GATE['nama'] + ' : Gagal play Selamat Datang ')
                         # keluar dari loop cek kendaraan untuk sambung ulang controller
                         break
+
+                # buka dari pos
+                if b'IN2ON' in vehicle_detection:
+                    try:
+                        s.sendall(b'\xa6TRIG1\xa9')
+                    except Exception as e:
+                        logging.error('Failed to open gate ' + str(e))
+                        send_notification(GATE['nama'] + 'Gagal membuka gate')
+                        # keluar dari loop cek kendaraan untuk sambung ulang controller
+                        break
+
                 else:
                     time.sleep(2)
                     continue
