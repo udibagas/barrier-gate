@@ -34,10 +34,9 @@ class BarrierGateRequest extends FormRequest
             'printer_type' => 'required|in:network,local',
             'printer_device' => 'required_if:printer_type,local',
             'printer_ip_address' => 'required_if:printer_type,network|ipv4',
-            'cmd_open' => 'required',
-            'cmd_close' => 'required',
-            'serial_device' => 'required',
-            'serial_baudrate' => 'required|numeric',
+            'cmd_open' => 'required_if:jenis,OUT',
+            'serial_device' => 'required_if:jenis,OUT',
+            'serial_baudrate' => 'required_if:jenis,OUT|numeric',
         ];
     }
 
