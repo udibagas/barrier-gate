@@ -21,7 +21,7 @@
                         </el-col>
                     </el-row>
 
-                    <button id="submit-btn" @keydown.enter="openGate" class="my-big-btn" @click="submit">BUKA GATE</button>
+                    <button id="submit-btn" @keydown.enter="openGate" class="my-big-btn" @click="openGate">BUKA GATE</button>
                     <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">KARCIS HILANG</button>
                     <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">BUKA MANUAL</button>
 
