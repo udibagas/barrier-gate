@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\AccessLog;
-use App\BarrierGate;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AccessLogController extends Controller
 {
@@ -25,8 +25,8 @@ class AccessLogController extends Controller
             return $q->where('nomor_barcode', 'LIKE', '%' . $request->keyword . '%')
                 ->orWhere('plat_nomor', 'LIKE', '%' . $request->keyword . '%')
                 ->orWhere('nomor_kartu', 'LIKE', '%' . $request->keyword . '%');
-        })->when($request->is_member, function ($q) use ($request) {
-            return $q->whereIn('is_member', $request->is_member);
+        })->when($request->is_staff, function ($q) use ($request) {
+            return $q->whereIn('is_staff', $request->is_staff);
         })->orderBy($sort, $order)->paginate($request->pageSize);
     }
 
@@ -86,7 +86,7 @@ class AccessLogController extends Controller
                 'nomor_barcode' => 'NOTAPIN',
                 'is_staff' => 1,
                 'nomor_kartu' => $request->nomor_kartu,
-                'user_id' => User::where('nomor_kartu', '%'.$request->nomor_kartu)->first()
+                'user_id' => User::where('nomor_kartu', '%'.$request->nomor_kartu)->first()->id
             ]);
         }
 

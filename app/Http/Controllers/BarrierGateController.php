@@ -167,13 +167,6 @@ class BarrierGateController extends Controller
         return ['message' => 'BERHASIL MENCETAK'];
     }
 
-    public function openGate(BarrierGate $barrierGate)
-    {
-        // TODO
-
-        return ['message' => 'GATE BERHASIL DIBUKA'];
-    }
-
     public function takeSnapshot(BarrierGate $barrierGate)
     {
         if (!$barrierGate->camera_status || !$barrierGate->camera_snapshot_url) {

@@ -5,10 +5,10 @@
                 <el-card style="height:calc(100vh - 105px)">
                     <el-row :gutter="10" style="margin-bottom:10px;">
                         <el-col :span="10">
-                            <div class="label-big">NO. TIKET/KARTU</div>
+                            <div class="label-big">NO. KARCIS/KARTU</div>
                         </el-col>
                         <el-col :span="14">
-                            <input id="nomor-barcode" autocomplete="off" @keyup.enter="checkTicket" type="text" placeholder="NO. TIKET/KARTU" v-model="formModel.nomor_barcode" class="my-input">
+                            <input id="nomor-barcode" autocomplete="off" @keyup.enter="checkTicket" type="text" placeholder="NO. KARCIS/KARTU" v-model="formModel.nomor_barcode" class="my-input">
                         </el-col>
                     </el-row>
 
@@ -21,7 +21,9 @@
                         </el-col>
                     </el-row>
 
-                    <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">BUKA GATE</button>
+                    <button id="submit-btn" @keydown.enter="openGate" class="my-big-btn" @click="submit">BUKA GATE</button>
+                    <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">KARCIS HILANG</button>
+                    <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">BUKA MANUAL</button>
 
                 </el-card>
             </el-col>
@@ -68,6 +70,7 @@ export default {
             axios.get('/user/search', { params: params }).then(r => {
                 this.formModel.is_staff = 1
                 document.getElementById('submit-btn').focus()
+                // TODO: tampilkan info expiry, tampilkan info member
             }).catch(e => {
                 this.formModel.is_staff = 0
                 if (e.response.status == 404) {
@@ -113,7 +116,7 @@ export default {
                 this.formModel.is_staff = r.data.is_staff
                 this.formModel.time_out = now
 
-                document.getElementById('submit-btn').focus()
+                document.getElementById('plat-nomor').focus()
             }).then(() => {
                 this.takeSnapshot(this.formModel.id)
             }).catch(e => {
@@ -133,7 +136,7 @@ export default {
             this.snapshot_in = ''
             this.snapshot_out = ''
 
-            document.getElementById('plat-nomor').focus()
+            document.getElementById('nomor-barcode').focus()
         },
         submit() {
             if (!!this.formModel.id) {
@@ -143,7 +146,7 @@ export default {
             }
         },
         store() {
-            axios.post('/accessLog', this.formModel).then(r => {
+            axios.post('/accessLogs', this.formModel).then(r => {
                 this.takeSnapshot(r.data.id)
                 this.openGate()
             }).catch(e => {
@@ -155,7 +158,7 @@ export default {
             })
         },
         update() {
-            axios.put('/accessLog/' + this.formModel.id, this.formModel).then(r => {
+            axios.put('/accessLogs/' + this.formModel.id, this.formModel).then(r => {
                 this.openGate()
             }).catch(e => {
                 this.$message({
@@ -166,7 +169,7 @@ export default {
             })
         },
         takeSnapshot(id) {
-            axios.post('/accessLog/takeSnapshot/' + id, { gate_out_id: this.formModel.gate_out_id }).then(r => {
+            axios.post('/barrierGate/takeSnapshot/' + this.gateOut.id).then(r => {
                 this.snapshot_out = r.data.snapshot_out
             }).catch(e => {
                 this.$message({

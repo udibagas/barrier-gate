@@ -39,7 +39,7 @@
             <el-table-column prop="gate" label="Gate" sortable="custom" width="150px"></el-table-column>
             <el-table-column prop="user" label="User" sortable="custom" width="150px"></el-table-column>
             <el-table-column prop="alasan" label="Alasan" sortable="custom"></el-table-column>
-            <!-- <el-table-column fixed="right" width="40px">
+            <el-table-column fixed="right" width="40px" v-if="$store.state.user.role == 1">
                 <template slot-scope="scope">
                     <el-dropdown>
                         <span class="el-dropdown-link">
@@ -51,7 +51,7 @@
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
-            </el-table-column> -->
+            </el-table-column>
         </el-table>
 
         <br>
@@ -188,65 +188,6 @@ export default {
                     });
                 })
             }).catch(() => console.log(e));
-        },
-        bukaManual() {
-            this.$confirm('Aksi ini akan dicatat oleh sistem. Anda yakin?', 'Peringatan', { type: 'warning'} ).then(() => {
-                this.formModelManualOpen.parking_gate_id = this.formModel.gate_out_id
-                axios.post('/bukaManual', this.formModel).then(r => {
-                    this.openGate();
-                    this.showManualOpenForm = false
-                    this.formModelManualOpen = {}
-                }).catch(e => {
-                    if (e.response.status == 422) {
-                        this.formErrors = e.response.data.errors;
-                    } else {
-                        this.$message({
-                            message: e.response.data.message,
-                            type: 'error',
-                            showClose: true,
-                        })
-                    }
-                })
-            }).catch(() => console.log(e))
-        },
-        openGate() {
-            const gate = this.$store.state.barrierGateList.find(g => g.id == this.formModel.barrier_gate_id);
-
-            if (!gate) {
-                this.$message({
-                    message: 'MOHON PILIH GATE OUT',
-                    type: 'error',
-                    showClose: true
-                })
-                return
-            }
-
-            // kalau ga ada ip berarti langsung nancep
-            if (!gate.controller_ip_address) {
-                axios.post('/parkingGate/openGate/' + this.formModel.gate_out_id).then(r => {
-                    this.$message({
-                        message: r.data.message,
-                        type: 'success',
-                        showClose: true
-                    })
-                }).catch(e => {
-                    this.$message({
-                        message: e.response.data.message,
-                        type: 'error',
-                        showClose: true
-                    })
-                }).finally(() => {
-                    this.resetForm()
-                })
-            } else {
-                this.ws.send([
-                    'open',
-                    gate.serial_device,
-                    gate.serial_baudrate,
-                    gate.cmd_open,
-                    gate.cmd_close
-                ].join(';'));
-            }
         },
         requestData() {
             let params = {

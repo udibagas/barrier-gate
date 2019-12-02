@@ -32,6 +32,19 @@
         height="calc(100vh - 290px)"
         v-loading="loading"
         @sort-change="sortChange">
+            <el-table-column
+            prop="time_out"
+            label="Status"
+            sortable="custom"
+            width="130px"
+            align="center"
+            header-align="center">
+                <template slot-scope="scope">
+                    <el-tag effect="dark" size="small" style="width:100%;border-radius:13px" :type="scope.row.time_out ? 'success' : 'danger'">
+                        {{scope.row.time_out ? 'SUDAH KELUAR' : 'PARKIR'}}
+                    </el-tag>
+                </template>
+            </el-table-column>
             <el-table-column prop="nomor_barcode" label="No. Tiket" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="plat_nomor" label="Plat Nomor" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
@@ -179,8 +192,9 @@ export default {
             }
 
             this.loading = true;
-            axios.get('/accessLog', {params: params}).then(r => {
-                    this.tableData = r.data
+            axios.get('accessLogs', {params: params}).then(r => {
+                console.log(r)
+                this.tableData = r.data
             }).catch(e => {
                 if (e.response.status == 500) {
                     this.$message({

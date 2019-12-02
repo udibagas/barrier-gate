@@ -36,12 +36,12 @@
             </el-table-column>
             <el-table-column prop="printer_status" label="Status Printer" min-width="120px" align="center" header-align="center">
                 <template slot-scope="scope">
-                    <el-tag size="mini" :type="scope.row.printer_status ? 'success' : 'info'">{{scope.row.printer_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
+                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%;" :type="scope.row.printer_status ? 'success' : 'info'">{{scope.row.printer_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="camera_status" label="Status Kamera" min-width="120px" align="center" header-align="center">
                 <template slot-scope="scope">
-                    <el-tag size="mini" :type="scope.row.camera_status ? 'success' : 'info'">{{scope.row.camera_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
+                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%;" :type="scope.row.camera_status ? 'success' : 'info'">{{scope.row.camera_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                 </template>
             </el-table-column>
 
@@ -102,14 +102,14 @@
                             <div class="el-form-item__error" v-if="formErrors.controller_port">{{formErrors.controller_port[0]}}</div>
                         </el-form-item>
 
-                        <el-form-item label="Serial" :class="formErrors.serial_device || formErrors.serial_baudrate ? 'is-error' : ''">
+                        <el-form-item v-show="formModel.jenis == 'OUT'" label="Serial" :class="formErrors.serial_device || formErrors.serial_baudrate ? 'is-error' : ''">
                             <el-input placeholder="Device" v-model="formModel.serial_device" style="width:49%"></el-input>
                             <el-input placeholder="Baudrate" v-model="formModel.serial_baudrate" style="width:49%;float:right;clear:right"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.serial_device">{{formErrors.serial_device[0]}}</div>
                             <div class="el-form-item__error" v-if="formErrors.serial_baudrate">{{formErrors.serial_baudrate[0]}}</div>
                         </el-form-item>
 
-                        <el-form-item label="Perintah" :class="formErrors.cmd_open || formErrors.cmd_close ? 'is-error' : ''">
+                        <el-form-item v-show="formModel.jenis == 'OUT'" label="Perintah" :class="formErrors.cmd_open || formErrors.cmd_close ? 'is-error' : ''">
                             <el-input placeholder="Buka" v-model="formModel.cmd_open" style="width:49%"></el-input>
                             <el-input placeholder="Tutup" v-model="formModel.cmd_close" style="width:49%;float:right;clear:right"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.cmd_open">{{formErrors.cmd_open[0]}}</div>
@@ -134,7 +134,7 @@
                             v-model="formModel.printer_status"
                             active-color="#13ce66">
                             </el-switch>
-                            <el-tag :type="formModel.printer_status ? 'success' : 'info'" size="small" style="margin-left:10px">{{!!formModel.printer_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
+                            <el-tag effect="dark" :type="formModel.printer_status ? 'success' : 'info'" size="small" style="margin-left:10px;border-radius:13px;">{{!!formModel.printer_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                             <div class="el-form-item__error" v-if="formErrors.printer_status">{{formErrors.printer_status[0]}}</div>
                         </el-form-item>
                     </el-col>
@@ -162,7 +162,7 @@
                             v-model="formModel.camera_status"
                             active-color="#13ce66">
                             </el-switch>
-                            <el-tag :type="formModel.camera_status ? 'success' : 'info'" size="small" style="margin-left:10px">{{!!formModel.camera_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
+                            <el-tag effect="dark" :type="formModel.camera_status ? 'success' : 'info'" size="small" style="margin-left:10px;border-radius:13px;">{{!!formModel.camera_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                             <div class="el-form-item__error" v-if="formErrors.camera_status">{{formErrors.camera_status[0]}}</div>
                         </el-form-item>
                     </el-col>

@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::post('restoreSnapshot', 'BackupController@restoreSnapshot');
 
     // Barrier gate related
-    Route::post('barrierGate/openGate/{barrierGate}', 'BarrierGateController@openGate');
+    Route::get('barrierGate/takeSnapshot/{barrierGate}', 'BarrierGateController@takeSnapshot');
     Route::post('barrierGate/testPrinter/{barrierGate}', 'BarrierGateController@testPrinter');
     Route::post('barrierGate/testCamera/{barrierGate}', 'BarrierGateController@testCamera');
     Route::get('barrierGate/getList', 'BarrierGateController@getList');
@@ -46,7 +46,8 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     // Access Log Related
     Route::put('accessLog/setSudahKeluar/{accessLog}', 'AccessLogController@setSudahKeluar');
     Route::put('accessLog/setSudahKeluarSemua', 'AccessLogController@setSudahKeluarSemua');
-    Route::resource('accessLog', 'AccessLogController')->only(['index', 'store', 'update', 'destroy']);
+    // Route::get('accessLog/index', 'AccessLogController@index');
+    Route::resource('accessLogs', 'AccessLogController')->only(['index', 'store', 'update', 'destroy']);
 
     // Report
     Route::get('report', 'ReportController@index');

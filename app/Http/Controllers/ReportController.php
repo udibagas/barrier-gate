@@ -10,52 +10,12 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $sql = "SELECT
-                DATE(created_at) AS tanggal,
-                SUM(CASE WHEN is_staff = 1 THEN 1 ELSE 0 END) AS staff,
-                SUM(CASE WHEN is_staff = 0 THEN 1 ELSE 0 END) AS tamu
-            FROM access_logs
-            WHERE DATE(created_at) BETWEEN :start AND :end
-            GROUP BY created_at
-        ";
-
-        // return [
-            // ['tanggal' => '2019-01-01', 'staff' => '10', 'tamu' => '12'],
-            // ['tanggal' => '2019-01-02', 'staff' => '11', 'tamu' => '21'],
-            // ['tanggal' => '2019-01-03', 'staff' => '15', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-04', 'staff' => '11', 'tamu' => '26'],
-            // ['tanggal' => '2019-01-05', 'staff' => '10', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-06', 'staff' => '19', 'tamu' => '29'],
-            // ['tanggal' => '2019-01-01', 'staff' => '10', 'tamu' => '12'],
-            // ['tanggal' => '2019-01-02', 'staff' => '11', 'tamu' => '21'],
-            // ['tanggal' => '2019-01-03', 'staff' => '15', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-04', 'staff' => '11', 'tamu' => '26'],
-            // ['tanggal' => '2019-01-05', 'staff' => '10', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-06', 'staff' => '19', 'tamu' => '29'],
-            // ['tanggal' => '2019-01-01', 'staff' => '10', 'tamu' => '12'],
-            // ['tanggal' => '2019-01-02', 'staff' => '11', 'tamu' => '21'],
-            // ['tanggal' => '2019-01-03', 'staff' => '15', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-04', 'staff' => '11', 'tamu' => '26'],
-            // ['tanggal' => '2019-01-05', 'staff' => '10', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-06', 'staff' => '19', 'tamu' => '29'],
-            // ['tanggal' => '2019-01-01', 'staff' => '10', 'tamu' => '12'],
-            // ['tanggal' => '2019-01-02', 'staff' => '11', 'tamu' => '21'],
-            // ['tanggal' => '2019-01-03', 'staff' => '15', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-04', 'staff' => '11', 'tamu' => '26'],
-            // ['tanggal' => '2019-01-05', 'staff' => '10', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-06', 'staff' => '19', 'tamu' => '29'],
-            // ['tanggal' => '2019-01-01', 'staff' => '10', 'tamu' => '12'],
-            // ['tanggal' => '2019-01-02', 'staff' => '11', 'tamu' => '21'],
-            // ['tanggal' => '2019-01-03', 'staff' => '15', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-04', 'staff' => '11', 'tamu' => '26'],
-            // ['tanggal' => '2019-01-05', 'staff' => '10', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-06', 'staff' => '19', 'tamu' => '29'],
-            // ['tanggal' => '2019-01-01', 'staff' => '10', 'tamu' => '12'],
-            // ['tanggal' => '2019-01-02', 'staff' => '11', 'tamu' => '21'],
-            // ['tanggal' => '2019-01-03', 'staff' => '15', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-04', 'staff' => '11', 'tamu' => '26'],
-            // ['tanggal' => '2019-01-05', 'staff' => '10', 'tamu' => '22'],
-            // ['tanggal' => '2019-01-06', 'staff' => '19', 'tamu' => '29'],
-        // ];
+            DATE(created_at) AS tanggal,
+            SUM(CASE WHEN is_staff = 1 THEN 1 ELSE 0 END) AS staff,
+            SUM(CASE WHEN is_staff = 0 THEN 1 ELSE 0 END) AS tamu
+        FROM access_logs
+        WHERE DATE(created_at) BETWEEN :start AND :end
+        GROUP BY tanggal";
 
         return DB::select($sql, [
             ':start' => $request->dateRange[0],

@@ -56,7 +56,7 @@
         :total="tableData.total">
         </el-pagination>
 
-        <el-dialog width="90%" top="60px" :visible.sync="showForm" :title="!!formModel.id ? 'EDIT USER' : 'TAMBAH USER'" v-loading="loading" :close-on-click-modal="false">
+        <el-dialog fullscreen :visible.sync="showForm" :title="!!formModel.id ? 'EDIT USER' : 'TAMBAH USER'" v-loading="loading" :close-on-click-modal="false">
             <el-alert type="error" title="ERROR"
                 :description="error.message + '\n' + error.file + ':' + error.line"
                 v-show="error.message"
@@ -65,10 +65,7 @@
 
             <el-form label-width="160px" label-position="left">
                 <el-row :gutter="40">
-                    <el-col :span="6">
-                        ini nanti foto
-                    </el-col>
-                    <el-col :span="9">
+                    <el-col :span="12">
                         <el-form-item label="Nama" :class="formErrors.name ? 'is-error' : ''">
                             <el-input placeholder="Nama" v-model="formModel.name"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.name">{{formErrors.name[0]}}</div>
@@ -113,7 +110,7 @@
                             <div class="el-form-item__error" v-if="formErrors.phone">{{formErrors.phone[0]}}</div>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="9">
+                    <el-col :span="12">
                         <el-form-item label="NIP" :class="formErrors.nip ? 'is-error' : ''">
                             <el-input placeholder="NIP" v-model="formModel.nip"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.nip">{{formErrors.nip[0]}}</div>
