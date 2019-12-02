@@ -193,7 +193,6 @@ export default {
 
             this.loading = true;
             axios.get('accessLogs', {params: params}).then(r => {
-                console.log(r)
                 this.tableData = r.data
             }).catch(e => {
                 if (e.response.status == 500) {
