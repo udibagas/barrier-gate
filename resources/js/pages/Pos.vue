@@ -212,10 +212,11 @@ export default {
                     })
                 } else {
                     this.gateOut = gateOut;
+                    this.connectToWebSocket()
                 }
             }).catch(e => console.log(e))
         },
-        connectToWebSocket(gate) {
+        connectToWebSocket() {
             this.ws = new WebSocket("ws://localhost:5678/");
             this.ws.onerror = (event) => {
                 console.log(event)
@@ -240,8 +241,7 @@ export default {
     },
     mounted() {
         this.getSetting()
-        this.connectToWebSocket()
-        this.$store.commit('getBarrierGateList');
+        this.getGate()
         document.getElementById('plat-nomor').focus()
 
         document.getElementById('gate-out-app').onkeydown = (e) => {
