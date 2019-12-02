@@ -12,6 +12,7 @@ class BarrierGate extends Model
         'controller_port', 'camera_snapshot_url',
         'camera_username', 'camera_password', 'camera_status',
         'printer_type', 'printer_device', 'printer_ip_address',
-        'printer_status', 'cmd_open', 'cmd_close', 'serial_device'
+        'printer_status', 'cmd_open', 'cmd_close',
+        'serial_device', 'serial_baudrate'
     ];
 }

@@ -16,17 +16,17 @@
         height="calc(100vh - 345px)"
         v-loading="loading"
         @sort-change="sortChange">
+            <el-table-column prop="status" label="Status" sortable="custom" align="center" header-align="center" width="120px">
+                <template slot-scope="scope">
+                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%" :type="scope.row.status ? 'success' : 'error'">{{scope.row.status ? 'AKTIF' : 'NONAKTIF'}}</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column prop="name" label="Nama" sortable="custom"></el-table-column>
             <el-table-column prop="email" label="Alamat Email" sortable="custom"></el-table-column>
             <el-table-column prop="phone" label="Nomor HP" sortable="custom"></el-table-column>
             <el-table-column prop="role" label="Level" sortable="custom">
                 <template slot-scope="scope">
                     {{scope.row.role ? 'Admin' : 'Operator'}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="status" label="Status" sortable="custom" align="center" header-align="center">
-                <template slot-scope="scope">
-                    <el-tag size="mini" :type="scope.row.status ? 'success' : 'info'">{{scope.row.status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                 </template>
             </el-table-column>
 
@@ -64,8 +64,8 @@
             </el-alert>
 
             <el-form label-width="160px" label-position="left">
-                <el-row :gutter="40">
-                    <el-col :span="12">
+                <el-row :gutter="20">
+                    <el-col :span="8">
                         <el-form-item label="Nama" :class="formErrors.name ? 'is-error' : ''">
                             <el-input placeholder="Nama" v-model="formModel.name"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.name">{{formErrors.name[0]}}</div>
@@ -99,7 +99,8 @@
                         <el-form-item label="Alamat">
                             <el-input placeholder="Alamat" type="textarea" rows="4" v-model="formModel.alamat"></el-input>
                         </el-form-item>
-
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="Alamat Email" :class="formErrors.email ? 'is-error' : ''">
                             <el-input placeholder="Alamat Email" v-model="formModel.email"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.email">{{formErrors.email[0]}}</div>
@@ -109,8 +110,7 @@
                             <el-input placeholder="Nomor HP" v-model="formModel.phone"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.phone">{{formErrors.phone[0]}}</div>
                         </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
+
                         <el-form-item label="NIP" :class="formErrors.nip ? 'is-error' : ''">
                             <el-input placeholder="NIP" v-model="formModel.nip"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.nip">{{formErrors.nip[0]}}</div>
@@ -123,6 +123,18 @@
                             <div class="el-form-item__error" v-if="formErrors.type">{{formErrors.department_id[0]}}</div>
                         </el-form-item>
 
+                        <el-form-item label="Level" :class="formErrors.role ? 'is-error' : ''">
+                            <el-select v-model="formModel.role" placeholder="Level" style="width:100%">
+                                <el-option v-for="(t, i) in [{value: 0, label: 'Operator'}, {value: 1, label: 'Admin'}]"
+                                :value="t.value"
+                                :label="t.label"
+                                :key="i">
+                                </el-option>
+                            </el-select>
+                            <div class="el-form-item__error" v-if="formErrors.type">{{formErrors.role[0]}}</div>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="Nomor Kartu" :class="formErrors.nomor_kartu ? 'is-error' : ''">
                             <el-input placeholder="Nomor Kartu" v-model="formModel.nomor_kartu"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.nomor_kartu">{{formErrors.nomor_kartu[0]}}</div>
@@ -140,17 +152,6 @@
                         <el-form-item label="Plat Nomor" :class="formErrors.plat_nomor ? 'is-error' : ''">
                             <el-input placeholder="Plat Nomor" v-model="formModel.plat_nomor"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.plat_nomor">{{formErrors.plat_nomor[0]}}</div>
-                        </el-form-item>
-
-                        <el-form-item label="Level" :class="formErrors.role ? 'is-error' : ''">
-                            <el-select v-model="formModel.role" placeholder="Level" style="width:100%">
-                                <el-option v-for="(t, i) in [{value: 0, label: 'Operator'}, {value: 1, label: 'Admin'}]"
-                                :value="t.value"
-                                :label="t.label"
-                                :key="i">
-                                </el-option>
-                            </el-select>
-                            <div class="el-form-item__error" v-if="formErrors.type">{{formErrors.role[0]}}</div>
                         </el-form-item>
 
                         <el-form-item label="Password" :class="formErrors.password ? 'is-error' : ''">

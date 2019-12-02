@@ -54,7 +54,7 @@
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-camera" @click.native.prevent="testDevice('testCamera', scope.row.id)">Test Kamera</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-printer" @click.native.prevent="testDevice('testPrinter', scope.row.id)">Test Printer</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-minus" @click.native.prevent="testDevice('openGate', scope.row.id)">Test Gate</el-dropdown-item>
+                            <el-dropdown-item v-if="scope.row.jenis == 'OUT'" icon="el-icon-minus" @click.native.prevent="testGate(scope.row)">Test Gate</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-edit-outline" @click.native.prevent="openForm(scope.row)">Edit</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete" @click.native.prevent="deleteData(scope.row.id)">Hapus</el-dropdown-item>
                         </el-dropdown-menu>
@@ -197,7 +197,7 @@ export default {
             order: 'ascending',
             loading: false,
             snapshot: '',
-            snapshotPreview: false
+            snapshotPreview: false,
         }
     },
     methods: {
@@ -220,6 +220,38 @@ export default {
                     showClose: true
                 });
             })
+        },
+        testGate(gate) {
+            const ws = new WebSocket("ws://127.0.0.1:5678/");
+
+            ws.onerror = (event) => {
+                this.$message({
+                    message: 'KONEKSI KE CONTROLLER GATE KELUAR GAGAL',
+                    type: 'error',
+                    showClose: true,
+                    duration: 10000
+                })
+            }
+
+            ws.onopen = (event) => {
+                ws.send([
+                    'open',
+                    gate.serial_device,
+                    gate.serial_baudrate,
+                    gate.cmd_open,
+                    gate.cmd_close,
+                ].join(';'));
+            }
+
+            ws.onmessage = (event) => {
+                let data = JSON.parse(event.data)
+                this.$message({
+                    message: data.message,
+                    type: data.status ? 'success' : 'error',
+                    showClose: true
+                })
+                ws.close(1000, 'Leaving app')
+            }
         },
         sortChange(c) {
             if (c.prop != this.sort || c.order != this.order) {

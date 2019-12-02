@@ -6,7 +6,7 @@
         <el-tabs type="card">
             <el-tab-pane lazy label="Global Setting" v-loading="loading">
                 <el-card>
-                    <el-form label-position="left" label-width="250px">
+                    <el-form label-position="left" label-width="270px">
                         <el-form-item label="Nama Lokasi" :class="formErrors.nama_lokasi ? 'is-error' : ''">
                             <el-input placeholder="Nama Lokasi" v-model="formModel.nama_lokasi"></el-input>
                             <div class="el-form-item__error" v-if="formErrors.nama_lokasi">{{formErrors.nama_lokasi[0]}}</div>
