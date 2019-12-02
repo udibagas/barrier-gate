@@ -28,6 +28,8 @@ class KarcisHilangRequest extends FormRequest
             'alamat' => 'required',
             'no_hp' => 'required',
             'no_plat' => 'required',
+            'jenis_kartu_identitas' => 'required',
+            // 'nomor_kartu_identitas' => 'required'
         ];
     }
 
@@ -38,6 +40,8 @@ class KarcisHilangRequest extends FormRequest
             'alamat' => 'Alamat',
             'no_hp' => 'No HP',
             'no_plat' => 'No Plat',
+            'jenis_kartu_identitas' => 'Jenis Kartu Identitas',
+            'nomor_kartu_identitas' => 'Nomor Kartu Identitas',
         ];
     }
 }

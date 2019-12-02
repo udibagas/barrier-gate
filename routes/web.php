@@ -40,7 +40,9 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('setting', 'SettingController')->only(['index', 'store', 'update']);
 
+    Route::put('karcisHilang/sudahDiambil/{karcisHilang}', 'KarcisHilangController@sudahDiambil');
     Route::resource('karcisHilang', 'KarcisHilangController')->only(['index', 'store', 'update', 'destroy']);
+
     Route::resource('bukaManual', 'BukaManualController')->only(['index', 'store', 'update', 'destroy']);
 
     // Access Log Related

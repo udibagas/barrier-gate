@@ -64,32 +64,6 @@
         :page-sizes="[10, 25, 50, 100]"
         :total="tableData.total">
         </el-pagination>
-
-        <el-dialog :visible.sync="showForm" :title="!!formModel.id ? 'EDIT DATA BUKA MANUAL' : 'FORM BUKA MANUAL'" width="500px" v-loading="loading" :close-on-click-modal="false">
-            <el-alert type="error" title="ERROR"
-                :description="error.message + '\n' + error.file + ':' + error.line"
-                v-show="error.message"
-                style="margin-bottom:15px;">
-            </el-alert>
-
-            <el-form label-width="150px" label-position="left">
-                <el-form-item label="Gate" :class="formErrors.barrier_gate_id ? 'is-error' : ''">
-                    <el-select placeholder="Gate" v-model="formModel.barrier_gate_id" style="width:100%">
-                        <el-option v-for="g in $store.state.barrierGateList" :key="g.id" :value="g.id" :label="g.nama"></el-option>
-                    </el-select>
-                    <div class="el-form-item__error" v-if="formErrors.nama">{{formErrors.nama[0]}}</div>
-                </el-form-item>
-
-                <el-form-item label="Alasan" :class="formErrors.nama ? 'is-error' : ''">
-                    <el-input type="textarea" rows="3" placeholder="Alasan" v-model="formModel.alasan"></el-input>
-                    <div class="el-form-item__error" v-if="formErrors.alasan">{{formErrors.alasan[0]}}</div>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="el-icon-success" @click="() => !!formModel.id ? update() : store()">SIMPAN</el-button>
-                <el-button type="info" icon="el-icon-error" @click="showForm = false">BATAL</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 
@@ -97,10 +71,6 @@
 export default {
     data() {
         return {
-            showForm: false,
-            formErrors: {},
-            error: {},
-            formModel: {},
             keyword: '',
             page: 1,
             pageSize: 10,
@@ -122,72 +92,6 @@ export default {
             this.formErrors = {}
             this.formModel = JSON.parse(JSON.stringify(data));
             this.showForm = true
-        },
-        store() {
-            this.loading = true;
-            axios.post('/bukaManual', this.formModel).then(r => {
-                this.showForm = false;
-                this.$message({
-                    message: 'Data berhasil disimpan.',
-                    type: 'success',
-                    showClose: true
-                });
-                this.requestData();
-            }).catch(e => {
-                if (e.response.status == 422) {
-                    this.error = {}
-                    this.formErrors = e.response.data.errors;
-                }
-
-                if (e.response.status == 500) {
-                    this.formErrors = {}
-                    this.error = e.response.data;
-                }
-            }).finally(() => {
-                this.loading = false
-            })
-        },
-        update() {
-            this.loading = true;
-            axios.put('/bukaManual/' + this.formModel.id, this.formModel).then(r => {
-                this.showForm = false
-                this.$message({
-                    message: 'Data berhasil disimpan.',
-                    type: 'success',
-                    showClose: true
-                });
-                this.requestData()
-            }).catch(e => {
-                if (e.response.status == 422) {
-                    this.error = {}
-                    this.formErrors = e.response.data.errors;
-                }
-
-                if (e.response.status == 500) {
-                    this.formErrors = {}
-                    this.error = e.response.data;
-                }
-            }).finally(() => {
-                this.loading = false
-            })
-        },
-        deleteData(id) {
-            this.$confirm('Anda yakin akan menghapus data ini?', 'Warning', { type: 'warning' }).then(() => {
-                axios.delete('/bukaManual/' + id).then(r => {
-                    this.requestData();
-                    this.$message({
-                        message: r.data.message,
-                        type: 'success',
-                        showClose: true
-                    });
-                }).catch(e => {
-                    this.$message({
-                        message: e.response.data.message,
-                        type: 'error',
-                        showClose: true
-                    });
-                })
-            }).catch(() => console.log(e));
         },
         requestData() {
             let params = {

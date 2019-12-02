@@ -50,6 +50,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="nama" label="Nama" sortable="custom" width="150px"></el-table-column>
+            <el-table-column prop="jenis_kartu_identitas" label="Jenis Identitas" sortable="custom" width="150px"></el-table-column>
             <el-table-column prop="no_hp" label="No HP" sortable="custom" width="150px"></el-table-column>
             <el-table-column prop="no_plat" label="No Plat" sortable="custom" width="100px"></el-table-column>
             <el-table-column prop="alamat" label="Alamat" sortable="custom"></el-table-column>
@@ -61,6 +62,7 @@
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <!-- <el-dropdown-item icon="el-icon-printer" @click.native.prevent="printTicket(scope.row.id)">Print Struk</el-dropdown-item> -->
+                            <el-dropdown-item v-if="scope.row.status == 0" icon="el-icon-check" @click.native.prevent="sudahDiambil(scope.row.id)">Identitas Sudah Diambil</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-edit-outline" @click.native.prevent="openForm(scope.row)">Edit</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete" @click.native.prevent="deleteData(scope.row.id)">Hapus</el-dropdown-item>
                         </el-dropdown-menu>
@@ -79,47 +81,6 @@
         :page-sizes="[10, 25, 50, 100]"
         :total="tableData.total">
         </el-pagination>
-
-        <el-dialog :visible.sync="showForm" :title="!!formModel.id ? 'EDIT DATA BUKA MANUAL' : 'FORM BUKA MANUAL'" width="500px" v-loading="loading" :close-on-click-modal="false">
-            <el-alert type="error" title="ERROR"
-                :description="error.message + '\n' + error.file + ':' + error.line"
-                v-show="error.message"
-                style="margin-bottom:15px;">
-            </el-alert>
-
-            <el-form label-width="150px" label-position="left">
-                <el-form-item label="Nama" :class="formErrors.nama ? 'is-error' : ''">
-                    <el-input placeholder="Nama" v-model="formModel.nama"></el-input>
-                    <div class="el-form-item__error" v-if="formErrors.nama">{{formErrors.nama[0]}}</div>
-                </el-form-item>
-
-                <el-form-item label="No. HP" :class="formErrors.no_hp ? 'is-error' : ''">
-                    <el-input placeholder="No. HP" v-model="formModel.no_hp"></el-input>
-                    <div class="el-form-item__error" v-if="formErrors.no_hp">{{formErrors.no_hp[0]}}</div>
-                </el-form-item>
-
-                <el-form-item label="No. Plat" :class="formErrors.no_plat ? 'is-error' : ''">
-                    <el-input placeholder="No. Plat" v-model="formModel.no_plat"></el-input>
-                    <div class="el-form-item__error" v-if="formErrors.no_plat">{{formErrors.no_plat[0]}}</div>
-                </el-form-item>
-
-                <el-form-item label="Alamat" :class="formErrors.alamat ? 'is-error' : ''">
-                    <el-input type="textarea" rows="3" placeholder="Alamat" v-model="formModel.alamat"></el-input>
-                    <div class="el-form-item__error" v-if="formErrors.alamat">{{formErrors.alamat[0]}}</div>
-                </el-form-item>
-
-                <el-form-item v-show="!!formModel.id" label="Status" :class="formErrors.status ? 'is-error' : ''">
-                    <el-select placeholder="Status" v-model="formModel.status" style="width:100%">
-                        <el-option v-for="(s, i) in ['BELUM DIAMBIL', 'SUDAH DIAMBIL']" :key="i" :value="i" :label="s"></el-option>
-                    </el-select>
-                    <div class="el-form-item__error" v-if="formErrors.nama">{{formErrors.nama[0]}}</div>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="el-icon-success" @click="() => !!formModel.id ? update() : store()">SIMPAN</el-button>
-                <el-button type="info" icon="el-icon-error" @click="showForm = false">BATAL</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 
@@ -128,9 +89,6 @@ export default {
     data() {
         return {
             showForm: false,
-            formErrors: {},
-            error: {},
-            formModel: {},
             keyword: '',
             page: 1,
             pageSize: 10,
@@ -153,112 +111,6 @@ export default {
             this.formModel = JSON.parse(JSON.stringify(data));
             this.showForm = true
         },
-        store() {
-            this.loading = true;
-            axios.post('/karcisHilang', this.formModel).then(r => {
-                // this.openGate()
-                this.showForm = false;
-                this.$message({
-                    message: 'Data berhasil disimpan.',
-                    type: 'success',
-                    showClose: true
-                });
-                this.requestData();
-            }).catch(e => {
-                if (e.response.status == 422) {
-                    this.error = {}
-                    this.formErrors = e.response.data.errors;
-                }
-
-                if (e.response.status == 500) {
-                    this.formErrors = {}
-                    this.error = e.response.data;
-                }
-            }).finally(() => {
-                this.loading = false
-            })
-        },
-        update() {
-            this.loading = true;
-            axios.put('/karcisHilang/' + this.formModel.id, this.formModel).then(r => {
-                this.showForm = false
-                this.$message({
-                    message: 'Data berhasil disimpan.',
-                    type: 'success',
-                    showClose: true
-                });
-                this.requestData()
-            }).catch(e => {
-                if (e.response.status == 422) {
-                    this.error = {}
-                    this.formErrors = e.response.data.errors;
-                }
-
-                if (e.response.status == 500) {
-                    this.formErrors = {}
-                    this.error = e.response.data;
-                }
-            }).finally(() => {
-                this.loading = false
-            })
-        },
-        deleteData(id) {
-            this.$confirm('Anda yakin akan menghapus data ini?', 'Peringatan', { type: 'warning' }).then(() => {
-                axios.delete('/karcisHilang/' + id).then(r => {
-                    this.requestData();
-                    this.$message({
-                        message: r.data.message,
-                        type: 'success',
-                        showClose: true
-                    });
-                }).catch(e => {
-                    this.$message({
-                        message: e.response.data.message,
-                        type: 'error',
-                        showClose: true
-                    });
-                })
-            }).catch(() => console.log(e));
-        },
-        openGate() {
-            const gate = this.$store.state.barrierGateList.find(g => g.id == this.formModel.barrier_gate_id);
-
-            if (!gate) {
-                this.$message({
-                    message: 'MOHON PILIH GATE OUT',
-                    type: 'error',
-                    showClose: true
-                })
-                return
-            }
-
-            // kalau ga ada ip berarti langsung nancep
-            if (!gate.controller_ip_address) {
-                axios.post('/parkingGate/openGate/' + this.formModel.gate_out_id).then(r => {
-                    this.$message({
-                        message: r.data.message,
-                        type: 'success',
-                        showClose: true
-                    })
-                }).catch(e => {
-                    this.$message({
-                        message: e.response.data.message,
-                        type: 'error',
-                        showClose: true
-                    })
-                }).finally(() => {
-                    this.resetForm()
-                })
-            } else {
-                this.ws.send([
-                    'open',
-                    gate.serial_device,
-                    gate.serial_baudrate,
-                    gate.cmd_open,
-                    gate.cmd_close
-                ].join(';'));
-            }
-        },
         requestData() {
             let params = {
                 page: this.page,
@@ -271,8 +123,8 @@ export default {
 
             this.loading = true;
             axios.get('/karcisHilang', {params: params}).then(r => {
-                    this.loading = false;
-                    this.tableData = r.data
+                this.loading = false;
+                this.tableData = r.data
             }).catch(e => {
                 this.loading = false;
                 if (e.response.status == 500) {
@@ -283,6 +135,18 @@ export default {
                     });
                 }
             })
+        },
+        sudahDiambil(id) {
+            this.$confirm('Anda yakin?', 'Perhatian', { type: 'warning' }).then(() => {
+                axios.put('karcisHilang/sudahDiambil/' + id).then(r => {
+                    this.$message({
+                        message: 'Data berhasil disimpan',
+                        type: 'success',
+                        showClose: true
+                    });
+                    this.requestData();
+                })
+            }).catch(e => console.log(e))
         }
     },
     mounted() {

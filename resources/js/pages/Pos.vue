@@ -21,9 +21,9 @@
                         </el-col>
                     </el-row>
 
-                    <button id="submit-btn" @keydown.enter="openGate" class="my-big-btn" @click="openGate">BUKA GATE</button>
-                    <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">KARCIS HILANG</button>
-                    <button id="submit-btn" @keydown.enter="submit" class="my-big-btn" @click="submit">BUKA MANUAL</button>
+                    <button id="btn-open-gate" @keydown.enter="openGate" class="my-big-btn" @click="openGate">BUKA GATE</button>
+                    <button id="btn-karcis-hilang" @keydown.enter="formKarcisHilang = true" class="my-big-btn" @click="formKarcisHilang = true">KARCIS HILANG</button>
+                    <button id="btn-buka-manual" @keydown.enter="formBukaManual = true" class="my-big-btn" @click="formBukaManual = true">BUKA MANUAL</button>
 
                 </el-card>
             </el-col>
@@ -46,11 +46,18 @@
                 </el-card>
             </el-col>
         </el-row>
+
+        <FormBukaManual :show="formBukaManual" @close-form="formBukaManual = false" @open-gate="openGate" />
+        <FormKarcisHilang :show="formKarcisHilang" @close-form="formKarcisHilang = false" @open-gate="openGate" />
     </div>
 </template>
 
 <script>
+import FormBukaManual from '../components/FormBukaManual'
+import FormKarcisHilang from '../components/FormKarcisHilang'
+
 export default {
+    components: { FormBukaManual, FormKarcisHilang },
     data() {
         return {
             formModel: { nomor_barcode: '' },
@@ -61,7 +68,9 @@ export default {
             vehicleTypeList: [],
             setting: {},
             ws: null,
-            gateOut: null
+            gateOut: null,
+            formBukaManual: false,
+            formKarcisHilang: false,
         }
     },
     methods: {
@@ -69,7 +78,7 @@ export default {
             let params = { plat_nomor: this.formModel.plat_nomor }
             axios.get('/user/search', { params: params }).then(r => {
                 this.formModel.is_staff = 1
-                document.getElementById('submit-btn').focus()
+                document.getElementById('btn-open-gate').focus()
                 // TODO: tampilkan info expiry, tampilkan info member
             }).catch(e => {
                 this.formModel.is_staff = 0

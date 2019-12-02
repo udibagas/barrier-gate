@@ -64,4 +64,10 @@ class KarcisHilangController extends Controller
         $karcisHilang->delete();
         return ['message' => 'Data telah dihapus'];
     }
+
+    public function sudahDiambil(KarcisHilang $karcisHilang)
+    {
+        $karcisHilang->update(['status' => 1]);
+        return $karcisHilang;
+    }
 }
