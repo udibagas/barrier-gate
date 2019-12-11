@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::resource('bukaManual', 'BukaManualController')->only(['index', 'store', 'update', 'destroy']);
 
     // Access Log Related
+    Route::get('accessLog/getQueue', 'AccessLogController@getQueue');
     Route::put('accessLog/setSudahKeluar/{accessLog}', 'AccessLogController@setSudahKeluar');
     Route::put('accessLog/setSudahKeluarSemua', 'AccessLogController@setSudahKeluarSemua');
     // Route::get('accessLog/index', 'AccessLogController@index');

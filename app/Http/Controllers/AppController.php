@@ -15,7 +15,7 @@ class AppController extends Controller
     {
         $operatorPath = [ '/home', '/access-log' ];
 
-        if ($request->user()->role == 0 && !in_array($request->route, $operatorPath)) {
+        if (($request->user()->role == 1 && !in_array($request->route, $operatorPath)) || $request->user()->role == 0) {
             return response(['message' => 'Anda tidak berhak mengakses halaman ini'], 401);
 
         }
@@ -40,6 +40,6 @@ class AppController extends Controller
             ['label' => 'Setting', 'icon' => 'el-icon-setting', 'path' => 'setting' ],
         ];
 
-        return $request->user()->role == 1 ? array_merge($nav, $adminNav) : $nav;
+        return $request->user()->role == 2 ? array_merge($nav, $adminNav) : $nav;
     }
 }

@@ -81,6 +81,7 @@ class AccessLogController extends Controller
 
         // ini sudah lewat pengecekan member aktif atau tidak
         if ($request->nomor_kartu) {
+            // member tapi gak tap waktu in
             return AccessLog::create([
                 'time_in' => now(),
                 'nomor_barcode' => 'NOTAPIN',
@@ -117,5 +118,11 @@ class AccessLogController extends Controller
         ]);
 
         return ['message' => 'KENDARAAN BERHASIL DISET SUDAH KELUAR'];
+    }
+
+    public function getQueue()
+    {
+        $queue = AccessLog::where('on_queue', 1)->where('time_out', null)->first();
+        return $queue ? $queue : response(['message' => 'Tidak ada antrian di gate keluar'], 404);
     }
 }

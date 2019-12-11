@@ -2,13 +2,13 @@
     <div id="gate-out-app">
         <el-row :gutter="20">
             <el-col :span="12">
-                <el-card style="height:calc(100vh - 105px)">
+                <el-card>
                     <el-row :gutter="10" style="margin-bottom:10px;">
                         <el-col :span="10">
-                            <div class="label-big">NO. KARCIS/KARTU</div>
+                            <div class="label-big">NO. KARCIS</div>
                         </el-col>
                         <el-col :span="14">
-                            <input id="nomor-barcode" autocomplete="off" @keyup.enter="checkTicket" type="text" placeholder="NO. KARCIS/KARTU" v-model="formModel.nomor_barcode" class="my-input">
+                            <input id="nomor-barcode" autocomplete="off" @keyup.enter="checkTicket" type="text" placeholder="NO. KARCIS" v-model="formModel.nomor_barcode" class="my-input">
                         </el-col>
                     </el-row>
 
@@ -21,12 +21,28 @@
                         </el-col>
                     </el-row>
 
-                    <button id="btn-open-gate" @keydown.enter="openGate" class="my-big-btn" @click="openGate">BUKA GATE</button>
-                    <button id="btn-karcis-hilang" @keydown.enter="formKarcisHilang = true" class="my-big-btn" @click="formKarcisHilang = true">KARCIS HILANG</button>
-                    <button id="btn-buka-manual" @keydown.enter="formBukaManual = true" class="my-big-btn" @click="formBukaManual = true">BUKA MANUAL</button>
+                    <button :disabled="!formModel.id" id="btn-open-gate" @keydown.enter="submit" class="my-big-btn" @click="submit">BUKA GATE</button>
 
+                    <el-row :gutter="10">
+                        <el-col :span="12">
+                            <button id="btn-karcis-hilang" @keydown.enter="formKarcisHilang = true" class="my-big-btn" @click="formKarcisHilang = true">KARCIS HILANG</button>
+                        </el-col>
+                        <el-col :span="12">
+                            <button id="btn-buka-manual" @keydown.enter="formBukaManual = true" class="my-big-btn" @click="formBukaManual = true">BUKA MANUAL</button>
+                        </el-col>
+                    </el-row>
+                </el-card>
+                <br>
+                <el-card class="text-center" v-if="showUserInfo">
+                    <el-avatar icon="el-icon-user-solid" :size="100"></el-avatar>
+                    <div style="font-size:20px;margin-bottom:5px;margin-top:10px;font-weight:bold;">{{user.name}}</div>
+                    <div style="font-size:16px;"> NIP: {{user.nip}}<br> Dept. : {{user.department.nama}}</div>
+                    <div style="margin:10px 0 20px 0;">
+                        <el-tag effect="dark" type="success" style="font-size:20px;"> {{user.plat_nomor}} </el-tag>
+                    </div>
                 </el-card>
             </el-col>
+
             <el-col :span="12">
                 <el-card style="height:calc(100vh - 105px)">
                     <div class="block">
@@ -71,17 +87,53 @@ export default {
             gateOut: null,
             formBukaManual: false,
             formKarcisHilang: false,
+            showUserInfo: false,
+            user: {},
+            getQueueInterval: null
         }
     },
     methods: {
+        // plat nomor hanya khusus staff
         checkPlate() {
-            let params = { plat_nomor: this.formModel.plat_nomor }
-            axios.get('/user/search', { params: params }).then(r => {
-                this.formModel.is_staff = 1
-                document.getElementById('btn-open-gate').focus()
-                // TODO: tampilkan info expiry, tampilkan info member
+            // cari user yag aktif saja
+            const params = { plat_nomor: this.formModel.plat_nomor, status: 1 }
+            axios.get('/user/search', { params }).then(r => {
+                const user = r.data;
+                this.user = user;
+                this.showUserInfo = true;
+
+                if (user.expired) {
+                    this.$alert('Kartu telah habis masa berlaku', 'Perhatian', {
+                        type: 'warning',
+                        center: true,
+                        roundButton: true,
+                        confirmButtonText: 'OK',
+                    })
+                    return false
+                }
+
+                if (!user.expired && user.expired_in <= 5) {
+                    this.$alert('Kartu akan habis masa berlaku dalam ' + user.expired_in + ' hari', 'Perhatian', {
+                        type: 'warning',
+                        center: true,
+                        roundButton: true,
+                        confirmButtonText: 'OK',
+                    })
+                }
+
+                return user;
+            }).then(user => {
+                if (user) {
+                    const params = { nomor_kartu: user.nomor_kartu }
+                    // ambil transaksi terkahir, kalau ga ada maka otomatis create baru
+                    axios.get('accessLog/search', { params }).then(r => {
+                        this.formModel = r.data
+                        this.snapshot_in = r.data.snapshot_in
+                        this.takeSnapshot()
+                        document.getElementById('btn-open-gate').focus()
+                    }).catch(e => console.log(e))
+                }
             }).catch(e => {
-                this.formModel.is_staff = 0
                 if (e.response.status == 404) {
                     this.$message({
                         message: e.response.data.message,
@@ -91,43 +143,16 @@ export default {
                 }
             })
         },
+        // check tiket hanya khusus tamu
         checkTicket() {
             const now = moment().format('YYYY-MM-DD HH:mm:ss')
             const params = { nomor_barcode: this.formModel.nomor_barcode }
             axios.get('/accessLog/search', { params: params }).then(r => {
-                if (r.data.is_staff) {
-                    if (r.data.user.expired) {
-                        this.$alert('Kartu telah habis masa berlaku', 'Perhatian', {
-                            type: 'warning',
-                            center: true,
-                            roundButton: true,
-                            confirmButtonText: 'OK',
-                            confirmButtonClass: 'bg-red',
-                        })
-                        return
-                    }
-
-                    if (!r.data.user.expired && r.data.user.expired_in <= 5) {
-                        this.$alert('Kartu akan habis masa berlaku dalam ' + r.data.member.expired_in + ' hari', 'Perhatian', {
-                            type: 'warning',
-                            center: true,
-                            roundButton: true,
-                            confirmButtonText: 'OK',
-                            confirmButtonClass: 'bg-red',
-                        })
-                    }
-
-                }
-
+                this.formModel = r.data
                 this.snapshot_in = r.data.snapshot_in
-                this.formModel.id = r.data.id
-                this.formModel.time_in = r.data.time_in
-                this.formModel.is_staff = r.data.is_staff
                 this.formModel.time_out = now
-
-                document.getElementById('plat-nomor').focus()
-            }).then(() => {
-                this.takeSnapshot(this.formModel.id)
+                this.takeSnapshot()
+                document.getElementById('btn-open-gate').focus()
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message,
@@ -137,36 +162,14 @@ export default {
             })
         },
         resetForm() {
-            let default_vehicle = this.vehicleTypeList.find(v => v.is_default == 1)
-            this.formModel.plat_nomor = this.setting.default_plat_nomor
-            this.formModel.nomor_barcode = ''
-            this.formModel.time_out = ''
-            this.formModel.time_in = ''
+            this.formModel = { nomor_barcode: '' }
             this.snapshot_in = ''
             this.snapshot_out = ''
-
             document.getElementById('nomor-barcode').focus()
         },
         submit() {
-            if (!!this.formModel.id) {
-                this.update()
-            } else {
-                this.store()
-            }
-        },
-        store() {
-            axios.post('/accessLogs', this.formModel).then(r => {
-                this.takeSnapshot(r.data.id)
-                this.openGate()
-            }).catch(e => {
-                this.$message({
-                    message: 'DATA GAGAL DISIMPAN',
-                    type: 'error',
-                    showClose: true
-                })
-            })
-        },
-        update() {
+            this.formModel.on_queue = 0;
+            this.formModel.operator = this.$store.state.user.name;
             axios.put('/accessLogs/' + this.formModel.id, this.formModel).then(r => {
                 this.openGate()
             }).catch(e => {
@@ -177,9 +180,9 @@ export default {
                 })
             })
         },
-        takeSnapshot(id) {
+        takeSnapshot() {
             axios.post('/barrierGate/takeSnapshot/' + this.gateOut.id).then(r => {
-                this.snapshot_out = r.data.snapshot_out
+                this.snapshot_out = this.formModel.snapshot_out = r.data.filename
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message,
@@ -196,6 +199,8 @@ export default {
                 this.gateOut.cmd_open,
                 this.gateOut.cmd_close
             ].join(';'));
+
+            this.resetForm()
         },
         getSetting(state) {
             axios.get('/setting').then(r => {
@@ -246,12 +251,22 @@ export default {
 
                 this.resetForm()
             }
+        },
+        getQueue() {
+            if (this.formModel.id) return
+            axios.get('accessLog/getQueue').then(r => {
+                this.formModel = r.data;
+                this.snapshot_in = r.data.snapshot_in
+                this.snapshot_out = r.data.snapshot_out
+                document.getElementById('btn-open-gate').focus()
+            }).catch(e => console.log(e))
         }
     },
     mounted() {
         this.getSetting()
         this.getGate()
-        document.getElementById('plat-nomor').focus()
+        document.getElementById('btn-open-gate').focus()
+        this.getQueueInterval = setInterval(this.getQueue, 2000)
 
         document.getElementById('gate-out-app').onkeydown = (e) => {
             // console.log(e.key)
@@ -273,6 +288,7 @@ export default {
     },
     destroyed() {
         this.ws.close(1000, 'Leaving app')
+        clearInterval(this.getQueueInterval)
     }
 
 

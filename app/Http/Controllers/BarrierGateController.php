@@ -14,7 +14,7 @@ class BarrierGateController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:1')->except(['getList', 'search', 'openGate', 'takeSnapshot']);
+        $this->middleware('role:2')->except(['getList', 'search', 'openGate', 'takeSnapshot']);
     }
 
     /**

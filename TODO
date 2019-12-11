@@ -1,1 +1,35 @@
 Notifikasi blm beres
+- buka manual : open gate
+- karcis : open gate
+- Fokus di pos untuk skenario:
+    - karcis gak kebaca
+    - staff ga bawa kartu
+
+CHECK LIST TEST PROGRAM
+
+- Gate In:
+    - Input : Loop 1 deteksi. Output: sound selamat datang
+    - Skenario pengunjung
+        - Input : Pencet tombol.
+          Output : Kelur tiket, snapshot kamera, sound terimakasih, buka gate
+        - Input : Loop 2 deteksi.
+          Output : reset transaksi
+
+    - Skenario staff
+        - Input : Tempel kartu valid, aktif , expired != 5hari, expired != 1 hari
+          Output: sound terimakasih, snapshot kamera, buka gate
+        - Input : Tempel kartu valid, aktif, expired == 5 hari atau expired == 1 hari
+          Output: sound notifikasi masa aktif, snapshot, buka gate
+
+Gate Out:
+    - Skenario staff
+        - Input : Tempel kartu valid, aktif , expired != 5hari, expired != 1 hari
+          Output: sound terimakasih, snapshot kamera, buka gate (tergantung setingan)
+        - Input : Tempel kartu valid, aktif, expired == 5 hari atau expired == 1 hari
+          Output: sound notifikasi masa aktif, snapshot, buka gate
+
+    - Skenario pengunjung
+        - Input : Tempel barcode.
+          Output : snapshot kamera, sound terimakasih, buka gate (tergantung setingan)
+        - Input : Loop 2 deteksi.
+          Output : reset transaksi

@@ -46,6 +46,12 @@ class User extends Authenticatable implements JWTSubject
 
     protected $appends = ['expired', 'expired_in'];
 
+    protected $with = ['department'];
+
+    public function department() {
+        return $this->belongsTo(Department::class);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

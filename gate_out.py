@@ -44,9 +44,6 @@ def send_notification(message):
 
     return True
 
-def notify_vehicle_detected():
-    pass
-
 def save_data(id, data):
     try:
         r = requests.put(API_URL + '/accessLog/' + str(id), data=data, timeout=3)
@@ -289,24 +286,21 @@ def gate_out_thread():
                 if reset:
                     continue
 
-                data = {
-                    'time_out': time.strftime('%Y-%m-%d %T'),
-                    'snapshot_out': take_snapshot()
-                }
+                # buat update on queue
+                snapshot_out = take_snapshot()
+                save_data(access_log['id'], { 'on_queue' :  1, 'snapshot_out': snapshot_out })
 
                 # buka gate sesuai setingan
                 if (access_log['is_staff'] == 1 and SETTING['staff_buka_otomatis'] == 1) or (access_log['is_staff'] == 0 and SETTING['pengunjung_buka_otomatis'] == 1):
-                    save_data(access_log['id'], data)
+                    save_data(access_log['id'], { 'time_out': time.strftime('%Y-%m-%d %T'), 'on_queue': 0 })
 
                     try:
                         s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
                         logging.error('Failed to open gate ' + str(e))
-                        send_notification(GATE['nama'] + 'Gagal membuka gate')
+                        send_notification(GATE['nama'] + ' Gagal membuka gate')
                         # sambung ulang controller
                         break
-
-                    logging.info('Gate Opened')
 
                 # sensing INP2 (buka dari operator)
                 else:
@@ -318,19 +312,26 @@ def gate_out_thread():
                         except Exception as e:
                             logging.error('Failed to sense loop 2 ' + str(e))
                             send_notification(GATE['nama'] + ' : Gagal deteksi open manual')
+                            error = True
                             break
 
                         if b'IN2ON' in open_gate:
-                            save_data(access_log['id'], data)
                             try:
                                 s.sendall(b'\xa6TRIG1\xa9')
                             except Exception as e:
                                 logging.error('Failed to open gate ' + str(e))
                                 send_notification(GATE['nama'] + 'Gagal membuka gate')
+                                error = True
                                 # sambung ulang controller
                             break
 
                         time.sleep(1)
+
+                # sambung ulang controller
+                if error:
+                    break
+
+                logging.info('Gate Opened')
 
                 # play terimakasih
                 try:

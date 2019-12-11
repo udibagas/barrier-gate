@@ -16,29 +16,40 @@
         height="calc(100vh - 345px)"
         v-loading="loading"
         @sort-change="sortChange">
-            <el-table-column prop="status" label="Status" sortable="custom" align="center" header-align="center" width="120px">
+            <el-table-column prop="status" label="Status" sortable="custom" align="center" header-align="center" width="100px">
                 <template slot-scope="scope">
                     <el-tag size="small" effect="dark" style="border-radius:13px;width:100%" :type="scope.row.status ? 'success' : 'error'">{{scope.row.status ? 'AKTIF' : 'NONAKTIF'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" label="Nama" sortable="custom"></el-table-column>
-            <el-table-column prop="email" label="Alamat Email" sortable="custom"></el-table-column>
-            <el-table-column prop="phone" label="Nomor HP" sortable="custom"></el-table-column>
-            <el-table-column prop="role" label="Level" sortable="custom">
+            <el-table-column prop="name" label="Nama" sortable="custom" width="120px" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="nip" label="NIP" sortable="custom" width="100px"></el-table-column>
+            <el-table-column prop="role" label="Level" sortable="custom" align="center" header-align="center" width="120px">
                 <template slot-scope="scope">
-                    {{scope.row.role ? 'Admin' : 'Operator'}}
+                    {{roles[scope.row.role]}}
                 </template>
             </el-table-column>
+            <el-table-column prop="department.nama" label="Department" width="100px"></el-table-column>
+            <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" width="120px"></el-table-column>
+            <el-table-column label="Masa Aktif Kartu" sortable="custom" width="150px" align="center" header-align="center">
+                <template slot-scope="scope">
+                    {{scope.row.masa_aktif_kartu | readableDate}}
+                    <el-tag size="small" class="rounded full-width" type="danger" effect="dark" v-if="scope.row.expired">EXPIRED</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="plat_nomor" label="Plat Nomor" sortable="custom"  width="120px"></el-table-column>
+            <el-table-column prop="email" label="Alamat Email" sortable="custom" width="130px" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="phone" label="Nomor HP" sortable="custom" width="120px"></el-table-column>
 
-            <el-table-column width="40px">
+            <el-table-column width="40px" fixed="right">
                 <template slot-scope="scope">
                     <el-dropdown>
                         <span class="el-dropdown-link">
                             <i class="el-icon-more"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native.prevent="openForm(scope.row)"><i class="el-icon-edit-outline"></i> Edit</el-dropdown-item>
-                            <el-dropdown-item @click.native.prevent="deleteData(scope.row.id)"><i class="el-icon-delete"></i> Hapus</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-zoom-in" @click.native.prevent="showDetail = true; user = scope.row;">Lihat Detail</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-edit-outline" divided @click.native.prevent="openForm(scope.row)">Edit</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-delete" @click.native.prevent="deleteData(scope.row.id)">Hapus</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
@@ -120,12 +131,12 @@
                             <el-select clearable filterable v-model="formModel.department_id" placeholder="Departemen" style="width:100%">
                                 <el-option v-for="(d, i) in $store.state.departmentList" :value="d.id" :label="d.nama" :key="i"> </el-option>
                             </el-select>
-                            <div class="el-form-item__error" v-if="formErrors.type">{{formErrors.department_id[0]}}</div>
+                            <div class="el-form-item__error" v-if="formErrors.department_id">{{formErrors.department_id[0]}}</div>
                         </el-form-item>
 
                         <el-form-item label="Level" :class="formErrors.role ? 'is-error' : ''">
                             <el-select v-model="formModel.role" placeholder="Level" style="width:100%">
-                                <el-option v-for="(t, i) in [{value: 0, label: 'Operator'}, {value: 1, label: 'Admin'}]"
+                                <el-option v-for="(t, i) in [{value: 0, label: 'STAFF'}, {value: 1, label: 'OPERATOR'}, {value: 2, label: 'ADMIN'}]"
                                 :value="t.value"
                                 :label="t.label"
                                 :key="i">
@@ -181,6 +192,70 @@
                 <el-button type="info" icon="el-icon-error" @click="showForm = false">BATAL</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog :visible.sync="showDetail" v-if="user" title="DETAIL USER">
+            <table class="table table-sm">
+                <tbody>
+                    <tr>
+                        <td class="label">Nama</td>
+                        <td class="value">{{user.name}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Jenis Kelamin</td>
+                        <td class="value">{{user.jenis_kelamin == 'L' ? 'LAKI - LAKI' : 'PEREMPUAN'}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Tempat/Tanggal Lahir</td>
+                        <td class="value">{{user.tempat_lahir}}/{{user.tanggal_lahir | readableDate}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Alamat</td>
+                        <td class="value">{{user.alamat}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Alamat Email</td>
+                        <td class="value">{{user.email}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">No. HP</td>
+                        <td class="value">{{user.nomor_hp}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">NIP</td>
+                        <td class="value">{{user.nip}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Department</td>
+                        <td class="value">{{user.department.nama}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Level</td>
+                        <td class="value">{{roles[user.role]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Nomor Kartu</td>
+                        <td class="value">{{user.nomor_kartu}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Masa Aktif Kartu</td>
+                        <td class="value">
+                            {{user.masa_aktif_kartu | readableDate}}
+                            <el-tag size="small" class="rounded" type="danger" effect="dark" v-if="user.expired">EXPIRED</el-tag>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Plat Nomor</td>
+                        <td class="value">{{user.plat_nomor}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Status</td>
+                        <td class="value">
+                            <el-tag size="small" class="rounded" :type="user.status ? 'success' : 'error'" effect="dark">{{user.status ? 'AKTIF' : 'NONAKTIF'}}</el-tag>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </el-dialog>
     </div>
 </template>
 
@@ -198,7 +273,10 @@ export default {
             tableData: {},
             sort: 'name',
             order: 'ascending',
-            loading: false
+            loading: false,
+            roles: ['STAFF', 'OPERATOR', 'ADMIN'],
+            user: null,
+            showDetail: false,
         }
     },
     methods: {
@@ -310,3 +388,12 @@ export default {
     }
 }
 </script>
+
+
+<style lang="scss" scoped>
+td.label {
+    font-weight: bold;
+    width:150px;
+    border-right:2px solid #ddd;
+}
+</style>

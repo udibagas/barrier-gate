@@ -10,7 +10,7 @@ class BackupController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:1');
+        $this->middleware('role:2');
     }
 
     public function index(Request $request)
