@@ -258,6 +258,12 @@ export default {
                 this.formModel = r.data;
                 this.snapshot_in = r.data.snapshot_in
                 this.snapshot_out = r.data.snapshot_out
+
+                if (r.data.is_staff) {
+                    this.user = r.data.user
+                    this.showUserInfo = true
+                }
+
                 document.getElementById('btn-open-gate').focus()
             }).catch(e => console.log(e))
         }
