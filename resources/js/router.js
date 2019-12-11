@@ -9,6 +9,8 @@ import Setting from './pages/Setting'
 import Notification from './pages/Notification'
 import Pos from './pages/Pos'
 import Snapshot from './pages/Snapshot'
+import Department from './pages/Department'
+import User from './pages/User'
 
 Vue.use(VueRouter)
 
@@ -21,6 +23,8 @@ const router = new VueRouter({
         { path: '/buka-manual', component: BukaManual, name: 'buka-manual' },
         { path: '/snapshot', component: Snapshot, name: 'snapshot' },
         { path: '/setting', component: Setting, name: 'setting' },
+        { path: '/department', component: Department, name: 'department' },
+        { path: '/user', component: User, name: 'user' },
         { path: '/notification', component: Notification, name: 'notification' },
         { path: '*', component: Home },
     ]

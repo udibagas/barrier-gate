@@ -37,6 +37,8 @@ class AppController extends Controller
             // ['label' => 'Laporan', 'icon' => 'el-icon-data-analysis', 'path' => 'report' ],
             ['label' => 'Snapshot', 'icon' => 'el-icon-camera', 'path' => 'snapshot' ],
             ['label' => 'Notifikasi', 'icon' => 'el-icon-bell', 'path' => 'notification' ],
+            ['label' => 'Kelola Department', 'icon' => 'el-icon-menu', 'path' => 'department' ],
+            ['label' => 'Kelola User', 'icon' => 'el-icon-user', 'path' => 'user' ],
             ['label' => 'Setting', 'icon' => 'el-icon-setting', 'path' => 'setting' ],
         ];
 

@@ -50,12 +50,6 @@
             <el-tab-pane lazy label="Gate">
                 <BarrierGate />
             </el-tab-pane>
-            <el-tab-pane lazy label="Department">
-                <Department />
-            </el-tab-pane>
-            <el-tab-pane lazy label="User">
-                <User />
-            </el-tab-pane>
             <!-- <el-tab-pane lazy label="Backup &amp; Restore Database">
                 <Backup />
             </el-tab-pane> -->
@@ -65,12 +59,10 @@
 
 <script>
 import BarrierGate from './BarrierGate'
-import Department from './Department'
-import User from './User'
 import Backup from './Backup'
 
 export default {
-    components: { BarrierGate, Department, User, Backup },
+    components: { BarrierGate, Backup },
     data() {
         return {
             formModel: {},

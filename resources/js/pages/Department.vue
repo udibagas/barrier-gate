@@ -1,5 +1,7 @@
 <template>
     <div>
+        <el-page-header @back="$emit('back')" content="DEPARTMENT"> </el-page-header>
+        <el-divider></el-divider>
         <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
             <el-form-item v-if="$store.state.user.role == 1">
                 <el-button @click="openForm({})" type="primary" icon="el-icon-plus">TAMBAH DEPARTEMEN</el-button>
@@ -13,7 +15,7 @@
 
         <el-table :data="tableData.data" stripe
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 345px)"
+        height="calc(100vh - 290px)"
         v-loading="loading"
         @sort-change="sortChange">
             <el-table-column prop="kode" label="Kode" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
