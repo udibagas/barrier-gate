@@ -18,9 +18,16 @@ class DepartmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Department::paginate();
+        $sort = $request->sort ? $request->sort : 'nama';
+        $order = $request->order == 'ascending' ? 'asc' : 'desc';
+
+        return Department::when($request->keyword, function ($q) use ($request) {
+            return $q->where('kode', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('nama', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('keterangan', 'LIKE', '%' . $request->keyword . '%');
+        })->orderBy($sort, $order)->paginate($request->pageSize);
     }
 
     /**

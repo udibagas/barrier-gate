@@ -20,7 +20,13 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return User::paginate();
+        $sort = $request->sort ? $request->sort : 'nama';
+        $order = $request->order == 'ascending' ? 'asc' : 'desc';
+
+        return User::when($request->keyword, function ($q) use ($request) {
+            return $q->where('name', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('nip', 'LIKE', '%' . $request->keyword . '%');
+        })->orderBy($sort, $order)->paginate($request->pageSize);
     }
 
     /**

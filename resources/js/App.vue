@@ -89,7 +89,7 @@ export default {
             }
         },
         logout() {
-            axios.get('/logout').then(r => {
+            axios.post('/logout').then(r => {
                 window.localStorage.removeItem('user')
                 window.localStorage.removeItem('token')
                 this.$store.state.user = {}

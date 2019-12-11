@@ -35,10 +35,11 @@
                     {{ scope.row.created_at | readableDateTime }}
                 </template>
             </el-table-column>
-            <el-table-column prop="message" label="Message" min-width="150px"></el-table-column>
+            <el-table-column prop="type" label="Type"></el-table-column>
+            <el-table-column prop="data.message" label="Message" min-width="150px"></el-table-column>
             <el-table-column width="70px" align="center">
                 <template slot-scope="scope">
-                    <el-button size="small" type="danger" plain icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
+                    <el-button size="small" type="text" icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -107,7 +108,7 @@ export default {
 
             this.loading = true;
             axios.get('/notification', { params: params }).then(r => {
-                    this.tableData = r.data
+                this.tableData = r.data
             }).catch(e => {
                 if (e.response.status == 500) {
                     this.$message({
@@ -122,7 +123,7 @@ export default {
         },
         clearNotification() {
             this.$confirm('Anda yakin akan menghapus semua notifikasi?', 'Warning', { type: 'warning' }).then(() => {
-                axios.delete('/notification/clearNotification').then(r => {
+                axios.delete('/notification/clear').then(r => {
                     this.requestData();
                     this.$message({
                         message: r.data.message,

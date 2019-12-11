@@ -1,10 +1,10 @@
 <template>
     <div>
         <el-row>
-            <el-col :span="10">
+            <el-col :span="8">
                 <el-page-header @back="$emit('back')" content="DASHBOARD"> </el-page-header>
             </el-col>
-            <el-col :span="14">
+            <el-col :span="16">
                 <el-form inline style="float:right;clear:right;">
                     <el-form-item label="PILIH PERIODE" style="margin-bottom:0">
                         <el-date-picker

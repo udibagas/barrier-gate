@@ -58,6 +58,11 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('report/bukaManual', 'ReportController@bukaManual');
     Route::get('report/tanpaKartu', 'ReportController@tanpaKartu');
     Route::get('report/karcisHilang', 'ReportController@karcisHilang');
+
+    Route::post('notification', 'NotificationController@store');
+    Route::get('notification', 'NotificationController@index');
+    Route::delete('notification/clear', 'NotificationController@clear');
+    Route::delete('notification/{id}', 'NotificationController@destroy');
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');

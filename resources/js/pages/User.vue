@@ -28,12 +28,12 @@
                     {{roles[scope.row.role]}}
                 </template>
             </el-table-column>
-            <el-table-column prop="department.nama" label="Department" width="100px"></el-table-column>
+            <el-table-column prop="department.nama" label="Department" width="100px" show-overflow-tooltip=""></el-table-column>
             <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" width="120px"></el-table-column>
             <el-table-column label="Masa Aktif Kartu" sortable="custom" width="150px" align="center" header-align="center">
                 <template slot-scope="scope">
                     {{scope.row.masa_aktif_kartu | readableDate}}
-                    <el-tag size="small" class="rounded full-width" type="danger" effect="dark" v-if="scope.row.expired">EXPIRED</el-tag>
+                    <!-- <el-tag size="small" class="rounded full-width" type="danger" effect="dark" v-if="scope.row.expired">EXPIRED</el-tag> -->
                 </template>
             </el-table-column>
             <el-table-column prop="plat_nomor" label="Plat Nomor" sortable="custom"  width="120px"></el-table-column>

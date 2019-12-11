@@ -296,8 +296,6 @@ export default {
         this.ws.close(1000, 'Leaving app')
         clearInterval(this.getQueueInterval)
     }
-
-
 }
 </script>
 
