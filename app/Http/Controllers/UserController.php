@@ -69,6 +69,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if ($user->name == 'system') {
+            return response(['message' => 'User system tidak boleh dihapus'], 500);
+        }
+
         return $user->delete();
         return ['message' => 'Data berhasil dihapus'];
     }
