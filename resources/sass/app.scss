@@ -119,6 +119,10 @@ body {
     word-break: normal;
 }
 
+.el-notification__content {
+    word-break: break-all;
+}
+
 table {
     width: 100%;
     border-spacing: 0px;

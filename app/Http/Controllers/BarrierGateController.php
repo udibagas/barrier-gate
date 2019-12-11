@@ -9,11 +9,13 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 use GuzzleHttp\Client;
+use App\Notifications\SettingChanged;
 
 class BarrierGateController extends Controller
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('role:2')->except(['getList', 'search', 'openGate', 'takeSnapshot']);
     }
 
@@ -43,6 +45,8 @@ class BarrierGateController extends Controller
     {
         $gate = BarrierGate::create($request->all());
         // shell_exec('sudo systemctl restart barrier_gate');
+        $message = 'User '.$request->user()->name.' menambahkan gate '.json_encode($gate);
+        $this->systemUser->notify(new SettingChanged($request->user(), $message));
         return $gate;
     }
 
@@ -75,9 +79,13 @@ class BarrierGateController extends Controller
     public function update(BarrierGateRequest $request, BarrierGate $barrierGate)
     {
         $barrierGate->update($request->all());
+        $changes = $barrierGate->getChanges();
 
-        if (!!$barrierGate->getChanges()) {
+        if (!!$changes)
+        {
             // shell_exec('sudo systemctl restart barrier_gate');
+            $message = 'User '.$request->user()->name.' merubah setingan gate '.json_encode($changes);
+            $this->systemUser->notify(new SettingChanged($request->user(), $message));
         }
 
         return $barrierGate;
@@ -93,6 +101,8 @@ class BarrierGateController extends Controller
     {
         $barrierGate->delete();
         // shell_exec('sudo systemctl restart barrier_gate');
+        $message = 'User '.auth()->user()->name.' menghapus gate '.json_encode($barrierGate);
+        $this->systemUser->notify(new SettingChanged(auth()->user(), $message));
         return ['message' => 'Parking gate telah dihapus'];
     }
 

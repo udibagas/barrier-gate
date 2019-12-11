@@ -35,6 +35,15 @@
                             </span>
                         </el-col>
                         <el-col :span="12" class="text-right">
+                            <el-popover v-if="notifications.length > 0" style="margin-right:20px" placement="top-start" width="250" trigger="click">
+                                <el-button slot="reference" type="danger" size="mini" round icon="el-icon-bell" style="color:#fff;">{{notifications.length}}</el-button>
+                                <el-button type="text" size="small" @click="readAllNotification">Tandai sudah dibaca semua</el-button>
+                                <div v-for="n in notifications" :key="n.id">
+                                    <p><strong>{{n.created_at | readableDateTime}}</strong> {{n.data.message}}</p>
+                                    <el-button type="text" size="small" @click="readNotification(n.id)">Tandai sudah dibaca</el-button><br>
+                                </div>
+                            </el-popover>
+
                             <el-dropdown @command="handleCommand">
                                 <span class="el-dropdown-link" style="cursor:pointer">Selamat Datang, {{$store.state.user.name}}!</span>
                                 <el-dropdown-menu slot="dropdown">
@@ -72,7 +81,7 @@ export default {
             appName: APP_NAME,
             showProfile: false,
             loginForm: !this.$store.state.is_logged_in,
-            notif: false
+            notifications: []
         }
     },
     methods: {
@@ -98,13 +107,31 @@ export default {
             })
         },
         getNotification() {
-            if (!this.$store.state.is_logged_in || this.notif) {
+            if (!this.$store.state.is_logged_in) {
                 return
             }
 
-            axios.get('/notification/unread').then(r => {
-                // TODO: notif
+            const params = { type: 'App\\Notifications\\GateNotification' }
+            axios.get('/notification/unread', { params }).then(r => {
+                // kalau jumlah lebih dari sebelumnya tampilkan record terakhir
+                if (r.data.length > this.notifications.length) {
+                    this.$notify.warning({
+                        title: 'Notifikasi',
+                        message: r.data[0].data.message
+                    })
+                }
+                this.notifications = r.data;
             }).catch(e => console.log(e))
+        },
+        readNotification(id) {
+            axios.put('/notification/markAsRead/' + id)
+                .then(r => console.log(r))
+                .catch(e => console.log(e))
+        },
+        readAllNotification(id) {
+            axios.put('/notification/markAllAsRead')
+                .then(r => console.log(r))
+                .catch(e => console.log(e))
         }
     },
     mounted() {
@@ -114,7 +141,7 @@ export default {
         // }
 
         this.$store.commit('getNavigationList')
-        setInterval(this.getNotification, 5000)
+        setInterval(this.getNotification, 3000)
     }
 }
 </script>
