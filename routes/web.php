@@ -60,7 +60,10 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::get('report/karcisHilang', 'ReportController@karcisHilang');
 
     Route::post('notification', 'NotificationController@store');
+    Route::get('notification/unread', 'NotificationController@unread');
     Route::get('notification', 'NotificationController@index');
+    Route::put('notification/markAsRead/{id}', 'NotificationController@markAsRead');
+    Route::put('notification/markAllAsRead', 'NotificationController@markAllAsRead');
     Route::delete('notification/clear', 'NotificationController@clear');
     Route::delete('notification/{id}', 'NotificationController@destroy');
 });

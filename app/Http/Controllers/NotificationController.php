@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('role:2')->except(['store', 'unread']);
+    }
+
     // khusus buat simpan notifikasi gate
     public function store(Request $request)
     {
@@ -26,10 +32,12 @@ class NotificationController extends Controller
         $order = $request->order == 'ascending' ? 'asc' : 'desc';
 
         return $this->systemUser->notifications()
-        ->when($request->keyword, function ($q) use ($request) {
-            return $q->where('type', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('data->message', 'LIKE', '%' . $request->keyword . '%');
-        })->orderBy($sort, $order)->paginate($request->pageSize);
+            ->when($request->dateRange, function($q) use ($request) {
+                return $q->whereRaw('DATE(created_at) BETWEEN ? AND ?', $request->dateRange);
+            })->when($request->keyword, function ($q) use ($request) {
+                return $q->where('type', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('data->message', 'LIKE', '%' . $request->keyword . '%');
+            })->orderBy($sort, $order)->paginate($request->pageSize);
     }
 
     public function destroy($id)
@@ -42,5 +50,22 @@ class NotificationController extends Controller
     {
         $this->systemUser->notifications()->delete();
         return ['message' => 'Notifikasi telah dihapus'];
+    }
+
+    public function unread()
+    {
+        return $this->systemUser->unreadNotifications;
+    }
+
+    public function markAsRead($id)
+    {
+        $this->systemUser->notifications()->where('id', $id)->update(['read_at' => now()]);
+        return ['message' => 'ok'];
+    }
+
+    public function markAllAsRead()
+    {
+        $this->systemUser->unreadNotifications->markAsRead();
+        return ['message' => 'ok'];
     }
 }

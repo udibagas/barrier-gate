@@ -98,39 +98,12 @@ export default {
             })
         },
         getNotification() {
-            if (!this.$store.state.is_logged_in) {
+            if (!this.$store.state.is_logged_in || this.notif) {
                 return
             }
 
-            let params = { read: 0, pageSize: 1 }
-            axios.get('/notification', { params: params }).then(r => {
-                if (r.data.data.length == 0) {
-                    return
-                }
-
-                // jika tidak ada notifikasi yg tampil
-                if (!this.notif)
-                {
-                    let n = r.data.data[0]
-                    this.notif = true
-                    let h = this.$createElement
-                    this.$alert('[' + moment(n.created_at).format('DD/MMM/YYYY HH:mm:ss') + '] ' + n.message, 'Notifikasi', {
-                        type: 'warning',
-                        center: true,
-                        roundButton: true,
-                        confirmButtonText: 'SAYA TELAH MEMBACA NOTIFIKASI INI',
-                        confirmButtonClass: 'bg-red',
-                        beforeClose: (action, instance, done) => {
-                            this.notif = false
-                            done()
-                        }
-                    }).then(() => {
-                        this.notif = false
-                        axios.put('/notification/' + n.id, { read: 1 }).then(rr => {
-                            // console.log(rr.data)
-                        }).catch(e => console.log(e))
-                    })
-                }
+            axios.get('/notification/unread').then(r => {
+                // TODO: notif
             }).catch(e => console.log(e))
         }
     },
@@ -141,7 +114,7 @@ export default {
         // }
 
         this.$store.commit('getNavigationList')
-        // setInterval(this.getNotification, 5000)
+        setInterval(this.getNotification, 5000)
     }
 }
 </script>
