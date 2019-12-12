@@ -21,7 +21,7 @@
                         </el-col>
                     </el-row>
 
-                    <button :disabled="!formModel.id" id="btn-open-gate" @keydown.enter="submit" class="my-big-btn" @click="submit">BUKA GATE</button>
+                    <button :disabled="!formModel.id" id="btn-open-gate" @keydown.enter="submit" class="my-big-btn" @click="submit">[ENTER] BUKA GATE</button>
 
                     <el-row :gutter="10">
                         <el-col :span="12">
@@ -230,7 +230,8 @@ export default {
         getSetting(state) {
             axios.get('setting').then(r => {
                 this.setting = r.data
-                this.formModel.plat_nomor = r.data.default_plat_nomor
+                this.formModel.plat_nomor = r.data.plat_nomor_default
+                this.$forceUpdate()
             }).catch(e => {
                 this.$message({
                     message: 'BELUM ADA SETTING',
