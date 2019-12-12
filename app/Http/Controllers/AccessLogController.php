@@ -83,7 +83,7 @@ class AccessLogController extends Controller
         if ($request->nomor_kartu) {
             // member tapi gak tap waktu in
             return AccessLog::create([
-                'time_in' => now(),
+                'time_in' => date('Y-m-d H:i:s'),
                 'nomor_barcode' => 'NOTAPIN',
                 'is_staff' => 1,
                 'nomor_kartu' => $request->nomor_kartu,
