@@ -30,7 +30,6 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::post('restoreSnapshot', 'BackupController@restoreSnapshot');
 
     // Barrier gate related
-    Route::get('barrierGate/takeSnapshot/{barrierGate}', 'BarrierGateController@takeSnapshot');
     Route::post('barrierGate/testPrinter/{barrierGate}', 'BarrierGateController@testPrinter');
     Route::post('barrierGate/testCamera/{barrierGate}', 'BarrierGateController@testCamera');
     Route::get('barrierGate/getList', 'BarrierGateController@getList');
@@ -46,7 +45,6 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::resource('bukaManual', 'BukaManualController')->only(['index', 'store', 'update', 'destroy']);
 
     // Access Log Related
-    Route::get('accessLog/search', 'AccessLogController@search');
     Route::get('accessLog/getQueue', 'AccessLogController@getQueue');
     Route::put('accessLog/setSudahKeluar/{accessLog}', 'AccessLogController@setSudahKeluar');
     Route::put('accessLog/setSudahKeluarSemua', 'AccessLogController@setSudahKeluarSemua');

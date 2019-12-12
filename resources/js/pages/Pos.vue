@@ -98,7 +98,7 @@ export default {
             // cari user yag aktif saja
             if (!!this.formModel.id) this.submit()
             const params = { plat_nomor: this.formModel.plat_nomor, status: 1 }
-            axios.get('/user/search', { params }).then(r => {
+            axios.get('user/search', { params }).then(r => {
                 const user = r.data;
                 this.user = user;
                 this.showUserInfo = true;
@@ -127,7 +127,7 @@ export default {
                 if (user) {
                     const params = { nomor_kartu: user.nomor_kartu }
                     // ambil transaksi terkahir, kalau ga ada maka otomatis create baru
-                    axios.get('accessLog/search', { params }).then(r => {
+                    axios.get('api/accessLog/search', { params }).then(r => {
                         this.formModel = r.data
                         this.snapshot_in = r.data.snapshot_in
                         this.takeSnapshot()
@@ -149,7 +149,7 @@ export default {
             if (!!this.formModel.id) this.submit()
             const now = moment().format('YYYY-MM-DD HH:mm:ss')
             const params = { nomor_barcode: this.formModel.nomor_barcode }
-            axios.get('/accessLog/search', { params: params }).then(r => {
+            axios.get('api/accessLog/search', { params: params }).then(r => {
                 this.formModel = r.data
                 this.snapshot_in = r.data.snapshot_in
                 this.formModel.time_out = now
@@ -174,7 +174,7 @@ export default {
         submit() {
             this.formModel.on_queue = 0;
             this.formModel.operator = this.$store.state.user.name;
-            axios.put('/accessLogs/' + this.formModel.id, this.formModel).then(r => {
+            axios.put('accessLogs/' + this.formModel.id, this.formModel).then(r => {
                 this.openGate()
             }).catch(e => {
                 this.$message({
@@ -185,7 +185,7 @@ export default {
             })
         },
         takeSnapshot() {
-            axios.post('/barrierGate/takeSnapshot/' + this.gateOut.id).then(r => {
+            axios.get('api/barrierGate/takeSnapshot/' + this.gateOut.id).then(r => {
                 this.snapshot_out = this.formModel.snapshot_out = r.data.filename
             }).catch(e => {
                 this.$message({
@@ -207,7 +207,7 @@ export default {
             this.resetForm()
         },
         getSetting(state) {
-            axios.get('/setting').then(r => {
+            axios.get('setting').then(r => {
                 this.setting = r.data
                 this.formModel.plat_nomor = r.data.default_plat_nomor
             }).catch(e => {
