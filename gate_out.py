@@ -247,6 +247,8 @@ def gate_out_thread():
 
                             continue
 
+                        break
+
                     elif b'IN3' in r:
                         logging.info('Reset')
                         reset = True
