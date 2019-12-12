@@ -1,12 +1,10 @@
 <template>
     <el-dialog
     :visible.sync="show"
-    :show-close="false"
+    :before-close="(done) => { closeForm() }"
     title="FORM KARCIS HILANG"
     width="500px"
-    :close-on-press-escape="false"
-    v-loading="loading"
-    :close-on-click-modal="false">
+    v-loading="loading">
 
         <el-alert type="error" title="ERROR"
             :description="error.message + '\n' + error.file + ':' + error.line"
@@ -77,6 +75,7 @@ export default {
             this.error = {}
             this.formModel = {}
             this.$emit('close-form');
+            setTimeout(() => { document.getElementById('nomor-barcode').focus() }, 100)
         },
         store() {
             this.loading = true;
