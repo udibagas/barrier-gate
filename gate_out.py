@@ -249,6 +249,17 @@ def gate_out_thread():
 
                         break
 
+                    elif b'IN2ON' in r:
+                        try:
+                            s.sendall(b'\xa6TRIG1\xa9')
+                        except Exception as e:
+                            logging.error('Failed to open gate ' + str(e))
+                            send_notification(GATE['nama'] + 'Gagal membuka gate')
+                            error = True
+                            # sambung ulang controller
+                        reset = True
+                        break
+
                     elif b'IN3' in r:
                         logging.info('Reset')
                         reset = True
