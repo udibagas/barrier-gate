@@ -20,6 +20,11 @@
                             <el-input placeholder="Info Tambahan Tiket" type="textarea" rows="3" v-model="formModel.info_tambahan_tiket"></el-input>
                         </el-form-item>
 
+                        <el-form-item label="Plat Nomor Default" :class="formErrors.plat_nomor_default ? 'is-error' : ''">
+                            <el-input placeholder="Plat Nomor Default" v-model="formModel.plat_nomor_default"></el-input>
+                            <div class="el-form-item__error" v-if="formErrors.plat_nomor_default">{{formErrors.plat_nomor_default[0]}}</div>
+                        </el-form-item>
+
                         <el-form-item label="Mode Buka Gate Untuk Staff" :class="formErrors.staff_buka_otomatis ? 'is-error' : ''">
                             <el-select placeholder="Mode Buka Gate Untuk Staff" v-model="formModel.staff_buka_otomatis" style="width:100%">
                                 <el-option v-for="(l, i) in ['Ketik Plat Nomor (Buka oleh operator)', 'Tempel Kartu (Otomatis)']" :key="i" :value="i" :label="l"></el-option>

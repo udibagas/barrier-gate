@@ -25,10 +25,10 @@
 
                     <el-row :gutter="10">
                         <el-col :span="12">
-                            <button id="btn-karcis-hilang" @keydown.enter="formKarcisHilang = true" class="my-big-btn" @click="formKarcisHilang = true">KARCIS HILANG</button>
+                            <button id="btn-karcis-hilang" @keydown.enter="formKarcisHilang = true" class="my-big-btn" @click="formKarcisHilang = true">[F10] KARCIS HILANG</button>
                         </el-col>
                         <el-col :span="12">
-                            <button id="btn-buka-manual" @keydown.enter="formBukaManual = true" class="my-big-btn" @click="formBukaManual = true">BUKA MANUAL</button>
+                            <button id="btn-buka-manual" @keydown.enter="formBukaManual = true" class="my-big-btn" @click="formBukaManual = true">[F11] BUKA MANUAL</button>
                         </el-col>
                     </el-row>
                 </el-card>
@@ -135,8 +135,12 @@ export default {
                         this.formModel = r.data
                         this.formModel.plat_nomor = user.plat_nomor
                         this.snapshot_in = r.data.snapshot_in
+
+                        setTimeout(() => {
+                            document.getElementById('btn-open-gate').focus()
+                        }, 100)
+
                         this.takeSnapshot()
-                        document.getElementById('btn-open-gate').focus()
                     }).catch(e => console.log(e))
                 }
             }).catch(e => {
@@ -166,7 +170,10 @@ export default {
                     this.showUserInfo = true;
                 }
 
-                document.getElementById('plat-nomor').focus()
+                setTimeout(() => {
+                    document.getElementById('plat-nomor').focus()
+                }, 100)
+
                 this.takeSnapshot()
             }).catch(e => {
                 this.$message({
@@ -282,7 +289,10 @@ export default {
                     this.showUserInfo = true
                 }
 
-                document.getElementById('btn-open-gate').focus()
+                setTimeout(() => {
+                    document.getElementById('plat-nomor').focus()
+                }, 100)
+
             }).catch(e => console.log(e))
         }
     },
@@ -301,13 +311,16 @@ export default {
                 this.$forceUpdate()
             }
 
-            // ke field nomor tiket
-            if (e.key == '+') {
+            if (e.key == 'F10') {
                 e.preventDefault()
-                this.formModel.nomor_barcode = ''
-                this.formModel.time_out = ''
-                document.getElementById('nomor-barcode').focus()
+                this.formKarcisHilang = true
             }
+
+            if (e.key == 'F11') {
+                e.preventDefault()
+                this.formBukaManual = true;
+            }
+
         }
     },
     destroyed() {
