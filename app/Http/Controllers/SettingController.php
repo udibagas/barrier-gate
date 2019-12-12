@@ -50,6 +50,8 @@ class SettingController extends Controller
 
         if ($changes)
         {
+            shell_exec('sudo systemctl restart gate_in');
+            shell_exec('sudo systemctl restart gate_out');
             $message = 'User '.$request->user()->name.' merubah setingan '.json_encode($changes);
             $this->systemUser->notify(new SettingChanged($request->user(), $message));
         }
