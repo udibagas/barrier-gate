@@ -227,7 +227,7 @@ def gate_out_thread():
 
                         break
 
-                    elif b'X' in r:
+                    elif b'Y' in r:
                         nomor_barcode = str(r).split('X')[1].split('\\xa9')[0]
                         access_log = get_last_access('nomor_barcode', str(int(nomor_barcode, 16)))
                         logging.info('Barcode detected : ' + str(int(nomor_barcode, 16)))
