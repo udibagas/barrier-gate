@@ -96,7 +96,11 @@ export default {
         // plat nomor hanya khusus staff
         checkPlate() {
             // cari user yag aktif saja
-            if (!!this.formModel.id) this.submit()
+            if (!!this.formModel.id) {
+                this.submit()
+                return
+            }
+
             const params = { plat_nomor: this.formModel.plat_nomor, status: 1 }
             axios.get('user/search', { params }).then(r => {
                 const user = r.data;
@@ -146,15 +150,25 @@ export default {
         },
         // check tiket hanya khusus tamu
         checkTicket() {
-            if (!!this.formModel.id) this.submit()
+            if (!!this.formModel.id) {
+                this.submit()
+                return
+            }
+
             const now = moment().format('YYYY-MM-DD HH:mm:ss')
             const params = { nomor_barcode: this.formModel.nomor_barcode }
             axios.get('api/accessLog/search', { params: params }).then(r => {
                 this.formModel = r.data
                 this.snapshot_in = r.data.snapshot_in
                 this.formModel.time_out = now
+
+                if (r.data.is_staff) {
+                    this.user = r.data.user;
+                    this.showUserInfo = true;
+                }
+
+                document.getElementById('plat-nomor').focus()
                 this.takeSnapshot()
-                document.getElementById('btn-open-gate').focus()
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message,
