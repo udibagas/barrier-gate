@@ -35,7 +35,7 @@
                             </span>
                         </el-col>
                         <el-col :span="12" class="text-right">
-                            <el-popover v-if="notifications.length > 0" style="margin-right:20px" placement="top-start" width="250" trigger="click">
+                            <el-popover v-if="notifications.length > 0" style="margin-right:20px" placement="top-start" width="300" trigger="click">
                                 <el-button slot="reference" type="danger" size="mini" round icon="el-icon-bell" style="color:#fff;">{{notifications.length}}</el-button>
                                 <div style="height:calc(100vh - 300px);overflow:auto;padding-right:10px;">
                                     <el-button type="danger" style="width:100%" round size="mini" @click="readAllNotification">Tandai Sudah Dibaca Semua</el-button>
