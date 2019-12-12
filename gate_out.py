@@ -169,7 +169,7 @@ def gate_out_thread():
 
                     logging.debug('Detecting barcode or card ' + str(r))
 
-                    # ada input wiegand (W = card, X = barcode)
+                    # ada input wiegand (W = card, Y = barcode)
                     if b'W' in r:
                         nomor_kartu = str(r).split('W')[1].split('\\xa9')[0]
                         staff = check_card(str(int(nomor_kartu, 16)))
@@ -228,7 +228,7 @@ def gate_out_thread():
                         break
 
                     elif b'Y' in r:
-                        nomor_barcode = str(r).split('X')[1].split('\\xa9')[0]
+                        nomor_barcode = str(r).split('Y')[1].split('\\xa9')[0]
                         access_log = get_last_access('nomor_barcode', str(int(nomor_barcode, 16)))
                         logging.info('Barcode detected : ' + str(int(nomor_barcode, 16)))
 
