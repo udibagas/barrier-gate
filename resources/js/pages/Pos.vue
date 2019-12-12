@@ -258,6 +258,7 @@ export default {
             if (this.formModel.id) return
             axios.get('accessLog/getQueue').then(r => {
                 this.formModel = r.data;
+                this.formModel.time_out = moment().format('YYYY-MM-DD HH:mm:ss')
                 this.snapshot_in = r.data.snapshot_in
                 this.snapshot_out = r.data.snapshot_out
 
