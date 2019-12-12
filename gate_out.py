@@ -141,7 +141,7 @@ def gate_out_thread():
                         break
 
                 # buka dari pos
-                if b'IN2ON' in vehicle_detection:
+                elif b'IN2ON' in vehicle_detection:
                     try:
                         s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
