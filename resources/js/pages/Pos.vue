@@ -165,6 +165,8 @@ export default {
             this.formModel = { nomor_barcode: '' }
             this.snapshot_in = ''
             this.snapshot_out = ''
+            this.showUserInfo = false
+            this.user = {}
             document.getElementById('nomor-barcode').focus()
         },
         submit() {
