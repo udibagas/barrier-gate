@@ -155,12 +155,10 @@ export default {
                 return
             }
 
-            const now = moment().format('YYYY-MM-DD HH:mm:ss')
             const params = { nomor_barcode: this.formModel.nomor_barcode }
             axios.get('api/accessLog/search', { params: params }).then(r => {
                 this.formModel = r.data
                 this.snapshot_in = r.data.snapshot_in
-                this.formModel.time_out = now
 
                 if (r.data.is_staff) {
                     this.user = r.data.user;
@@ -188,6 +186,7 @@ export default {
         submit() {
             this.formModel.on_queue = 0;
             this.formModel.operator = this.$store.state.user.name;
+            this.formModel.time_out = moment().format('YYYY-MM-DD HH:mm:ss')
             axios.put('accessLogs/' + this.formModel.id, this.formModel).then(r => {
                 this.openGate()
             }).catch(e => {
@@ -274,7 +273,6 @@ export default {
             if (this.formModel.id) return
             axios.get('accessLog/getQueue').then(r => {
                 this.formModel = r.data;
-                this.formModel.time_out = moment().format('YYYY-MM-DD HH:mm:ss')
                 this.snapshot_in = r.data.snapshot_in
                 this.snapshot_out = r.data.snapshot_out
 
