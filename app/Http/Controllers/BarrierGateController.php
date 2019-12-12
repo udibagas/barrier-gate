@@ -44,7 +44,8 @@ class BarrierGateController extends Controller
     public function store(BarrierGateRequest $request)
     {
         $gate = BarrierGate::create($request->all());
-        // shell_exec('sudo systemctl restart barrier_gate');
+        shell_exec('sudo systemctl restart gate_in');
+        shell_exec('sudo systemctl restart gate_out');
         $message = 'User '.$request->user()->name.' menambahkan gate '.json_encode($gate);
         $this->systemUser->notify(new SettingChanged($request->user(), $message));
         return $gate;
@@ -83,7 +84,8 @@ class BarrierGateController extends Controller
 
         if (!!$changes)
         {
-            // shell_exec('sudo systemctl restart barrier_gate');
+            shell_exec('sudo systemctl restart gate_in');
+            shell_exec('sudo systemctl restart gate_out');
             $message = 'User '.$request->user()->name.' merubah setingan gate '.json_encode($changes);
             $this->systemUser->notify(new SettingChanged($request->user(), $message));
         }
@@ -100,7 +102,8 @@ class BarrierGateController extends Controller
     public function destroy(BarrierGate $barrierGate)
     {
         $barrierGate->delete();
-        // shell_exec('sudo systemctl restart barrier_gate');
+        shell_exec('sudo systemctl restart gate_in');
+        shell_exec('sudo systemctl restart gate_out');
         $message = 'User '.auth()->user()->name.' menghapus gate '.json_encode($barrierGate);
         $this->systemUser->notify(new SettingChanged(auth()->user(), $message));
         return ['message' => 'Parking gate telah dihapus'];

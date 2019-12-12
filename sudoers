@@ -1,0 +1,8 @@
+www-data ALL=NOPASSWD: /bin/systemctl start gate_in
+www-data ALL=NOPASSWD: /bin/systemctl stop gate_in
+www-data ALL=NOPASSWD: /bin/systemctl restart gate_in
+www-data ALL=NOPASSWD: /bin/systemctl status gate_in
+www-data ALL=NOPASSWD: /bin/systemctl start gate_out
+www-data ALL=NOPASSWD: /bin/systemctl stop gate_out
+www-data ALL=NOPASSWD: /bin/systemctl restart gate_out
+www-data ALL=NOPASSWD: /bin/systemctl status gate_out
