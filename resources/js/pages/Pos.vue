@@ -171,6 +171,7 @@ export default {
                 }
 
                 setTimeout(() => {
+                    this.formModel.plat_nomor = this.setting.plat_nomor_default
                     document.getElementById('plat-nomor').focus()
                 }, 100)
 
@@ -282,6 +283,7 @@ export default {
             if (this.formModel.id) return
             axios.get('accessLog/getQueue').then(r => {
                 this.formModel = r.data;
+                this.formModel.plat_nomor = this.setting.plat_nomor_default;
                 this.snapshot_in = r.data.snapshot_in
                 this.snapshot_out = r.data.snapshot_out
 
