@@ -276,7 +276,7 @@ export default {
     mounted() {
         this.getSetting()
         this.getGate()
-        document.getElementById('btn-open-gate').focus()
+        document.getElementById('nomor-barcode').focus()
         this.getQueueInterval = setInterval(this.getQueue, 2000)
 
         document.getElementById('gate-out-app').onkeydown = (e) => {
