@@ -87,7 +87,7 @@ class AccessLogController extends Controller
                 'nomor_barcode' => 'NOTAPIN',
                 'is_staff' => 1,
                 'nomor_kartu' => $request->nomor_kartu,
-                'user_id' => User::where('nomor_kartu', '%'.$request->nomor_kartu)->first()->id
+                'user_id' => User::where('nomor_kartu', 'LIKE', '%'.$request->nomor_kartu)->first()->id
             ]);
         }
 
