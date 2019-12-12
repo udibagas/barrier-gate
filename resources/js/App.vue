@@ -37,10 +37,12 @@
                         <el-col :span="12" class="text-right">
                             <el-popover v-if="notifications.length > 0" style="margin-right:20px" placement="top-start" width="250" trigger="click">
                                 <el-button slot="reference" type="danger" size="mini" round icon="el-icon-bell" style="color:#fff;">{{notifications.length}}</el-button>
-                                <el-button type="text" size="small" @click="readAllNotification">Tandai sudah dibaca semua</el-button>
-                                <div v-for="n in notifications" :key="n.id">
-                                    <p><strong>{{n.created_at | readableDateTime}}</strong> {{n.data.message}}</p>
-                                    <el-button type="text" size="small" @click="readNotification(n.id)">Tandai sudah dibaca</el-button><br>
+                                <div style="height:calc(100vh - 300px);overflow:auto;padding-right:10px;">
+                                    <el-button type="danger" style="width:100%" round size="mini" @click="readAllNotification">Tandai Sudah Dibaca Semua</el-button>
+                                    <div v-for="n in notifications" :key="n.id">
+                                        <p style="margin-bottom:0"><strong>{{n.created_at | readableDateTime}}</strong> {{n.data.message}}</p>
+                                        <el-button type="text" size="small" @click="readNotification(n.id)">Tandai sudah dibaca</el-button><br>
+                                    </div>
                                 </div>
                             </el-popover>
 
@@ -117,7 +119,7 @@ export default {
                 if (r.data.length > this.notifications.length) {
                     this.$notify.warning({
                         title: 'Notifikasi',
-                        message: r.data[0].data.message
+                        message: '[' + r.data[0].created_at + '] ' + r.data[0].data.message
                     })
                 }
                 this.notifications = r.data;
@@ -130,7 +132,7 @@ export default {
         },
         readAllNotification(id) {
             axios.put('/notification/markAllAsRead')
-                .then(r => console.log(r))
+                .then(r => this.notifications = [])
                 .catch(e => console.log(e))
         }
     },
