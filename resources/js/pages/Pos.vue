@@ -133,6 +133,7 @@ export default {
                     // ambil transaksi terkahir, kalau ga ada maka otomatis create baru
                     axios.get('api/accessLog/search', { params }).then(r => {
                         this.formModel = r.data
+                        this.formModel.plat_nomor = user.plat_nomor
                         this.snapshot_in = r.data.snapshot_in
                         this.takeSnapshot()
                         document.getElementById('btn-open-gate').focus()
