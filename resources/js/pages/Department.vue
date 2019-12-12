@@ -3,7 +3,7 @@
         <el-page-header @back="$emit('back')" content="DEPARTMENT"> </el-page-header>
         <el-divider></el-divider>
         <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
-            <el-form-item v-if="$store.state.user.role == 1">
+            <el-form-item>
                 <el-button @click="openForm({})" type="primary" icon="el-icon-plus">TAMBAH DEPARTEMEN</el-button>
             </el-form-item>
             <el-form-item style="margin-right:0;">
@@ -28,8 +28,8 @@
                             <i class="el-icon-more"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native.prevent="openForm(scope.row)"><i class="el-icon-edit-outline"></i> Edit</el-dropdown-item>
-                            <el-dropdown-item @click.native.prevent="deleteData(scope.row.id)"><i class="el-icon-delete"></i> Hapus</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-edit-outline" @click.native.prevent="openForm(scope.row)">Edit</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-delete" @click.native.prevent="deleteData(scope.row.id)">Hapus</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
@@ -182,19 +182,17 @@ export default {
             }
 
             this.loading = true;
-            axios.get('/department', {params: params}).then(r => {
-                    this.loading = false;
-                    this.tableData = r.data
-            }).catch(e => {
-                this.loading = false;
-                if (e.response.status == 500) {
-                    this.$message({
-                        message: e.response.data.message + '\n' + e.response.data.file + ':' + e.response.data.line,
-                        type: 'error',
-                        showClose: true
-                    });
-                }
-            })
+            axios.get('/department', {params: params})
+                .then(r => this.tableData = r.data)
+                .catch(e => {
+                    if (e.response.status == 500) {
+                        this.$message({
+                            message: e.response.data.message + '\n' + e.response.data.file + ':' + e.response.data.line,
+                            type: 'error',
+                            showClose: true
+                        });
+                    }
+                }).finally(() => this.loading = false)
         }
     },
     mounted() {
