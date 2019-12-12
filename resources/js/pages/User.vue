@@ -31,7 +31,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="department.nama" label="Department" width="100px" show-overflow-tooltip=""></el-table-column>
-            <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" width="120px"></el-table-column>
+            <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" width="150px"></el-table-column>
             <el-table-column label="Masa Aktif Kartu" sortable="custom" width="150px" align="center" header-align="center">
                 <template slot-scope="scope">
                     {{scope.row.masa_aktif_kartu | readableDate}}
