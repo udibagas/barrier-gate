@@ -96,6 +96,7 @@ export default {
         // plat nomor hanya khusus staff
         checkPlate() {
             // cari user yag aktif saja
+            if (!!this.formModel.id) this.submit()
             const params = { plat_nomor: this.formModel.plat_nomor, status: 1 }
             axios.get('/user/search', { params }).then(r => {
                 const user = r.data;
@@ -145,6 +146,7 @@ export default {
         },
         // check tiket hanya khusus tamu
         checkTicket() {
+            if (!!this.formModel.id) this.submit()
             const now = moment().format('YYYY-MM-DD HH:mm:ss')
             const params = { nomor_barcode: this.formModel.nomor_barcode }
             axios.get('/accessLog/search', { params: params }).then(r => {
