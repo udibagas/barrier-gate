@@ -156,8 +156,8 @@ def gate_out_thread():
                         s.sendall(b'\xa6MT00015\xa9')
                         time.sleep(6)
                     except Exception as e:
-                        logging.error('Failed to play barcode invalid ' + str(e))
-                        send_notification(GATE['nama'] + 'Gagal play barcode invalid')
+                        logging.error('Failed to play terimakasih ' + str(e))
+                        send_notification(GATE['nama'] + 'Gagal play terimakasih')
                         break
 
                 else:

@@ -1,7 +1,7 @@
 <template>
     <div id="gate-out-app">
         <el-row :gutter="20">
-            <el-col :span="12">
+            <el-col :span="13">
                 <el-card>
                     <el-row :gutter="10" style="margin-bottom:10px;">
                         <el-col :span="10">
@@ -43,7 +43,7 @@
                 </el-card>
             </el-col>
 
-            <el-col :span="12">
+            <el-col :span="11">
                 <el-image :src="snapshot_in" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
                         <h1>SNAPSHOT IN</h1>
