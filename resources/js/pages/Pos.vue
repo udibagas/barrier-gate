@@ -251,7 +251,7 @@ export default {
                 } else {
                     this.gateOut = gateOut;
                     this.connectToWebSocket()
-                    this.streamingInterval = setInterval(this.getStream, 500)
+                    this.streamingInterval = setInterval(this.getStream, 1000)
                 }
             }).catch(e => console.log(e))
         },
