@@ -132,7 +132,7 @@ def gate_out_thread():
                     try:
                         logging.debug('Playing welcome')
                         time.sleep(.1)
-                        s.sendall(b'\xa6MT00017\xa9')
+                        s.sendall(b'\xa6MT00005\xa9')
                         # logging.debug(GATE['nama'] + ' : ' + str(s.recv(64)))
                     except Exception as e:
                         logging.error('Failed to play Selamat Datang ' + str(e))
