@@ -142,6 +142,7 @@ def gate_out_thread():
 
                 # buka dari pos
                 elif b'IN2ON' in vehicle_detection:
+                    time.sleep(.1)
                     try:
                         s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
@@ -250,6 +251,7 @@ def gate_out_thread():
                         break
 
                     elif b'IN2ON' in r:
+                        time.sleep(.1)
                         try:
                             s.sendall(b'\xa6TRIG1\xa9')
                         except Exception as e:
@@ -306,7 +308,7 @@ def gate_out_thread():
                 # buka gate sesuai setingan
                 if (access_log['is_staff'] == 1 and SETTING['staff_buka_otomatis'] == 1) or (access_log['is_staff'] == 0 and SETTING['pengunjung_buka_otomatis'] == 1):
                     save_data(access_log['id'], { 'time_out': time.strftime('%Y-%m-%d %T'), 'on_queue': 0 })
-
+                    time.sleep(.1)
                     try:
                         s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
@@ -329,6 +331,7 @@ def gate_out_thread():
                             break
 
                         if b'IN2ON' in open_gate:
+                            time.sleep(.1)
                             try:
                                 s.sendall(b'\xa6TRIG1\xa9')
                             except Exception as e:
