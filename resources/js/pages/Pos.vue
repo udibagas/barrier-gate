@@ -46,12 +46,12 @@
             <el-col :span="11">
                 <el-image :src="snapshot_in" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
-                        <h1>SNAPSHOT IN</h1>
+                        <h1>SNAPSHOT KELUAR</h1>
                     </div>
                 </el-image>
                 <el-image :src="streaming" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
-                        <h1>SNAPSHOT OUT</h1>
+                        <h1>{{gate_out_camera_status}}</h1>
                     </div>
                 </el-image>
             </el-col>
@@ -85,7 +85,8 @@ export default {
             user: {},
             getQueueInterval: null,
             streamingInterval: null,
-            streaming: ''
+            streaming: '',
+            gate_out_camera_status: 'SNAPSHOT KELUAR'
         }
     },
     methods: {
@@ -251,14 +252,21 @@ export default {
                 } else {
                     this.gateOut = gateOut;
                     this.connectToWebSocket()
-                    this.streamingInterval = setInterval(this.getStream, 1000)
+                    if (!!this.gateOut.camera_status) {
+                        this.streamingInterval = setInterval(this.getStream, 1000)
+                    } else {
+                        this.gate_out_camera_status = 'KAMERA GATE KELUAR TIDAK AKTIF'
+                    }
                 }
             }).catch(e => console.log(e))
         },
         getStream() {
-            axios.post('/barrierGate/testCamera/' + this.gateOut.id).then(r => {
+            axios.post('/barrierGate/testCamera/' + this.gateOut.id, {}, { timeout: 1000 }).then(r => {
                 this.streaming = 'data:image/jpeg;base64,' + r.data.snapshot
-            }).catch(e => this.streaming = '')
+            }).catch(e => {
+                this.streaming = ''
+                this.gate_out_camera_status = 'GAGAL MENGAMBIL SNAPSHOT GATE KELUAR'
+            })
         },
         connectToWebSocket() {
             this.ws = new WebSocket("ws://localhost:5678/");

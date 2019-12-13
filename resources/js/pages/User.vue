@@ -23,6 +23,11 @@
                     <el-tag size="small" effect="dark" style="border-radius:13px;width:100%" :type="scope.row.status ? 'success' : 'error'">{{scope.row.status ? 'AKTIF' : 'NONAKTIF'}}</el-tag>
                 </template>
             </el-table-column>
+            <el-table-column prop="status" label="Status Kartu" sortable="custom" align="center" header-align="center" width="150px">
+                <template slot-scope="scope">
+                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%" :type="scope.row.expired ? 'success' : 'error'">{{scope.row.expired ? 'MASIH BERLAKU' : 'KEDALUARSA'}}</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column prop="name" label="Nama" sortable="custom" width="120px" show-overflow-tooltip></el-table-column>
             <el-table-column prop="nip" label="NIP" sortable="custom" width="100px"></el-table-column>
             <el-table-column prop="role" label="Level" sortable="custom" align="center" header-align="center" width="120px">

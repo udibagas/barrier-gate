@@ -125,7 +125,7 @@ class BarrierGateController extends Controller
 
     public function testCamera(BarrierGate $barrierGate)
     {
-        $client = new Client(['timeout' => 3]);
+        $client = new Client(['timeout' => 1]);
 
         try {
             $response = $client->request('GET', $barrierGate->camera_snapshot_url, [
