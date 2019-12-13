@@ -140,7 +140,7 @@ export default {
                             document.getElementById('btn-open-gate').focus()
                         }, 100)
 
-                        // this.takeSnapshot()
+                        this.takeSnapshot()
                     }).catch(e => console.log(e))
                 }
             }).catch(e => {
@@ -175,7 +175,7 @@ export default {
                     document.getElementById('plat-nomor').focus()
                 }, 100)
 
-                // this.takeSnapshot()
+                this.takeSnapshot()
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message,
