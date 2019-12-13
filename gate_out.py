@@ -322,7 +322,6 @@ def gate_out_thread():
                 try:
                     time.sleep(.1)
                     s.sendall(b'\xa6MT00006\xa9')
-                    time.sleep(6)
                 except Exception as e:
                     logging.error('Failed to play mohon tunggu ' + str(e))
                     send_notification(GATE['nama'] + 'Gagal play mohon tunggu')
