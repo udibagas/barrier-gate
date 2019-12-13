@@ -49,7 +49,7 @@
                         <h1>SNAPSHOT IN</h1>
                     </div>
                 </el-image>
-                <el-image :src="snapshot_out" style="width:100%;height:100%" fit="cover">
+                <el-image :src="streaming" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
                         <h1>SNAPSHOT OUT</h1>
                     </div>
@@ -83,7 +83,9 @@ export default {
             formKarcisHilang: false,
             showUserInfo: false,
             user: {},
-            getQueueInterval: null
+            getQueueInterval: null,
+            streamingInterval: null,
+            streaming: ''
         }
     },
     methods: {
@@ -202,7 +204,8 @@ export default {
         },
         takeSnapshot() {
             axios.get('api/barrierGate/takeSnapshot/' + this.gateOut.id).then(r => {
-                this.snapshot_out = this.formModel.snapshot_out = r.data.filename
+                // this.snapshot_out =
+                this.formModel.snapshot_out = r.data.filename
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message,
@@ -248,7 +251,13 @@ export default {
                 } else {
                     this.gateOut = gateOut;
                     this.connectToWebSocket()
+                    this.streamingInterval = setInterval(this.getStream, 500)
                 }
+            }).catch(e => console.log(e))
+        },
+        getStream() {
+            axios.post('/barrierGate/testCamera/' + this.gateOut.id).then(r => {
+                this.streaming = 'data:image/jpeg;base64,' + r.data.snapshot
             }).catch(e => console.log(e))
         },
         connectToWebSocket() {
@@ -323,6 +332,7 @@ export default {
     destroyed() {
         this.ws.close(1000, 'Leaving app')
         clearInterval(this.getQueueInterval)
+        clearInterval(this.streamingInterval)
     }
 }
 </script>
