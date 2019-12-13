@@ -214,10 +214,16 @@ class BarrierGateController extends Controller
 
             if ($response->getHeader('Content-Type')[0] == 'image/jpeg') {
                 file_put_contents($fileName, $response->getBody());
-            } else {
+            }
+
+            else {
+                $message = 'Gagal mengambil snapshot di gate '.$barrierGate->nama;
+                $this->systemUser->notify(new GateNotification($barrierGate, $message));
                 return response(['message' => 'GAGAL MENGAMBIL GAMBAR. URL SNAPSHOT KAMERA TIDAK SESUAI'], 500);
             }
         } catch (\Exception $e) {
+            $message = 'Gagal mengambil snapshot di gate '.$barrierGate->nama;
+            $this->systemUser->notify(new GateNotification($barrierGate, $message));
             return response(['message' => 'GAGAL MENGAMBIL GAMBAR. '. $e->getMessage()], 500);
         }
 

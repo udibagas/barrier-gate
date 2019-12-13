@@ -258,7 +258,7 @@ export default {
         getStream() {
             axios.post('/barrierGate/testCamera/' + this.gateOut.id).then(r => {
                 this.streaming = 'data:image/jpeg;base64,' + r.data.snapshot
-            }).catch(e => console.log(e))
+            }).catch(e => this.streaming = '')
         },
         connectToWebSocket() {
             this.ws = new WebSocket("ws://localhost:5678/");

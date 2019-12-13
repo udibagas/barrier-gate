@@ -64,7 +64,6 @@ def take_snapshot():
 
         if r.status_code != 200:
             logging.error('Failed to take snapshot. Status code : ' + str(r.status_code))
-            send_notification("Gagal mengambil snapshot di gate " + GATE['nama'] + ". Status Code : " + str(r.status_code))
             return ''
 
         respons = r.json()
