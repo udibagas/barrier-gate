@@ -132,7 +132,7 @@ def gate_out_thread():
                     try:
                         logging.debug('Playing welcome')
                         time.sleep(.1)
-                        s.sendall(b'\xa6MT00015\xa9')
+                        s.sendall(b'\xa6MT00017\xa9')
                         # logging.debug(GATE['nama'] + ' : ' + str(s.recv(64)))
                     except Exception as e:
                         logging.error('Failed to play Selamat Datang ' + str(e))
@@ -153,7 +153,7 @@ def gate_out_thread():
 
                     try:
                         time.sleep(.1)
-                        s.sendall(b'\xa6MT00015\xa9')
+                        s.sendall(b'\xa6MT00012\xa9')
                         time.sleep(6)
                     except Exception as e:
                         logging.error('Failed to play terimakasih ' + str(e))
@@ -187,7 +187,7 @@ def gate_out_thread():
 
                         if not staff:
                             try:
-                                s.sendall(b'\xa6MT00003\xa9')
+                                s.sendall(b'\xa6MT00009\xa9')
                             except Exception as e:
                                 logging.error('Failed to respon invalid card ' + str(e))
                                 send_notification(GATE['nama'] + ' : Gagal merespon kartu invalid')
@@ -198,7 +198,7 @@ def gate_out_thread():
 
                         if staff['expired']:
                             try:
-                                s.sendall(b'\xa6MT00013\xa9')
+                                s.sendall(b'\xa6MT00003\xa9')
                             except Exception as e:
                                 logging.error('Failed to respon card expired ' + str(e))
                                 send_notification(GATE['nama'] + ' : Gagal merespon kartu expired')
@@ -209,7 +209,7 @@ def gate_out_thread():
 
                         if not staff['expired'] and staff['expired_in'] == 5:
                             try:
-                                s.sendall(b'\xa6MT00011\xa9')
+                                s.sendall(b'\xa6MT00001\xa9')
                                 time.sleep(6)
                             except Exception as e:
                                 logging.error('Failed to respon card expired in 5 days ' + str(e))
@@ -219,7 +219,7 @@ def gate_out_thread():
 
                         if not staff['expired'] and staff['expired_in'] == 1:
                             try:
-                                s.sendall(b'\xa6MT00012\xa9')
+                                s.sendall(b'\xa6MT00002\xa9')
                                 time.sleep(6)
                             except Exception as e:
                                 logging.error('Failed to respon card expired in 1 day ' + str(e))
@@ -245,7 +245,7 @@ def gate_out_thread():
                         if not access_log:
                             try:
                                 time.sleep(.1)
-                                s.sendall(b'\xa6MT00009\xa9')
+                                s.sendall(b'\xa6MT00015\xa9')
                                 time.sleep(6)
                             except Exception as e:
                                 logging.error('Failed to play barcode invalid ' + str(e))
@@ -293,7 +293,7 @@ def gate_out_thread():
                         reset = True
                         try:
                             time.sleep(.1)
-                            s.sendall(b'\xa6MT00005\xa9')
+                            s.sendall(b'\xa6MT00011\xa9')
                             time.sleep(10)
                         except Exception as e:
                             logging.error('Failed to respon help button ' + str(e))
@@ -321,7 +321,7 @@ def gate_out_thread():
                 # play mohon tunggu
                 try:
                     time.sleep(.1)
-                    s.sendall(b'\xa6MT00016\xa9')
+                    s.sendall(b'\xa6MT00006\xa9')
                     time.sleep(6)
                 except Exception as e:
                     logging.error('Failed to play mohon tunggu ' + str(e))
@@ -371,15 +371,6 @@ def gate_out_thread():
                             break
 
                         time.sleep(1)
-
-                try:
-                    time.sleep(.1)
-                    s.sendall(b'\xa6MT00012\xa9')
-                    time.sleep(6)
-                except Exception as e:
-                    logging.error('Failed to play terimakasih ' + str(e))
-                    send_notification(GATE['nama'] + 'Gagal play terimakasih')
-                    error = True
 
                 # sambung ulang controller
                 if error:
