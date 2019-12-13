@@ -44,18 +44,16 @@
             </el-col>
 
             <el-col :span="12">
-                <el-card>
-                    <el-image :src="snapshot_in" style="width:100%;height:100%" fit="cover">
-                        <div slot="error" class="el-image__error">
-                            <h1>SNAPSHOT IN</h1>
-                        </div>
-                    </el-image>
-                    <el-image :src="snapshot_out" style="width:100%;height:100%" fit="cover">
-                        <div slot="error" class="el-image__error">
-                            <h1>SNAPSHOT OUT</h1>
-                        </div>
-                    </el-image>
-                </el-card>
+                <el-image :src="snapshot_in" style="width:100%;height:100%" fit="cover">
+                    <div slot="error" class="el-image__error">
+                        <h1>SNAPSHOT IN</h1>
+                    </div>
+                </el-image>
+                <el-image :src="snapshot_out" style="width:100%;height:100%" fit="cover">
+                    <div slot="error" class="el-image__error">
+                        <h1>SNAPSHOT OUT</h1>
+                    </div>
+                </el-image>
             </el-col>
         </el-row>
 
