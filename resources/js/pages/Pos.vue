@@ -44,21 +44,17 @@
             </el-col>
 
             <el-col :span="12">
-                <el-card style="height:calc(100vh - 105px)">
-                    <div class="block">
-                        <el-image :src="snapshot_in" style="width: 100%; height: 100%" fit="none">
-                            <div slot="error" class="el-image__error">
-                                <h1>SNAPSHOT IN</h1>
-                            </div>
-                        </el-image>
-                    </div>
-                    <div class="block">
-                        <el-image :src="snapshot_out" style="width: 100%; height: 100%" fit="none">
-                            <div slot="error" class="el-image__error">
-                                <h1>SNAPSHOT OUT</h1>
-                            </div>
-                        </el-image>
-                    </div>
+                <el-card>
+                    <el-image :src="snapshot_in" style="width:100%;height:100%" fit="cover">
+                        <div slot="error" class="el-image__error">
+                            <h1>SNAPSHOT IN</h1>
+                        </div>
+                    </el-image>
+                    <el-image :src="snapshot_out" style="width:100%;height:100%" fit="cover">
+                        <div slot="error" class="el-image__error">
+                            <h1>SNAPSHOT OUT</h1>
+                        </div>
+                    </el-image>
                 </el-card>
             </el-col>
         </el-row>
@@ -334,11 +330,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.block {
-    background-color: #eee;
-    height: calc(50vh - 73px);
-}
-
 .my-input {
     border: 2px solid #00adcc;
     height: 43px;
