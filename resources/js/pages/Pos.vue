@@ -46,7 +46,7 @@
             <el-col :span="11">
                 <el-image :src="snapshot_in" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
-                        <h1>SNAPSHOT KELUAR</h1>
+                        <h1>SNAPSHOT MASUK</h1>
                     </div>
                 </el-image>
                 <el-image :src="streaming" style="width:100%;height:100%" fit="cover">
