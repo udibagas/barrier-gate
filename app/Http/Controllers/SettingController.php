@@ -33,7 +33,20 @@ class SettingController extends Controller
      */
     public function store(SettingRequest $request)
     {
-        return Setting::create($request->all());
+        if (Setting::first()) {
+            return response(['message' => 'settingan sudah ada'], 500);
+        }
+
+        $setting = Setting::create($request->all());
+        shell_exec('sudo systemctl restart gate_in');
+        shell_exec('sudo systemctl restart gate_out');
+
+        if ($this->systemUser) {
+            $message = 'User '.$request->user()->name.' membuat setingan '.json_encode($setting);
+            $this->systemUser->notify(new SettingChanged($request->user(), $message));
+        }
+
+        return $setting;
     }
 
     /**
@@ -52,8 +65,11 @@ class SettingController extends Controller
         {
             shell_exec('sudo systemctl restart gate_in');
             shell_exec('sudo systemctl restart gate_out');
-            $message = 'User '.$request->user()->name.' merubah setingan '.json_encode($changes);
-            $this->systemUser->notify(new SettingChanged($request->user(), $message));
+
+            if ($this->systemUser) {
+                $message = 'User '.$request->user()->name.' merubah setingan '.json_encode($changes);
+                $this->systemUser->notify(new SettingChanged($request->user(), $message));
+            }
         }
 
         return $setting;

@@ -46,8 +46,13 @@ class BarrierGateController extends Controller
         $gate = BarrierGate::create($request->all());
         shell_exec('sudo systemctl restart gate_in');
         shell_exec('sudo systemctl restart gate_out');
-        $message = 'User '.$request->user()->name.' menambahkan gate '.json_encode($gate);
-        $this->systemUser->notify(new SettingChanged($request->user(), $message));
+
+        if ($this->systemUser)
+        {
+            $message = 'User '.$request->user()->name.' menambahkan gate '.json_encode($gate);
+            $this->systemUser->notify(new SettingChanged($request->user(), $message));
+        }
+
         return $gate;
     }
 
@@ -86,8 +91,12 @@ class BarrierGateController extends Controller
         {
             shell_exec('sudo systemctl restart gate_in');
             shell_exec('sudo systemctl restart gate_out');
-            $message = 'User '.$request->user()->name.' merubah setingan gate '.json_encode($changes);
-            $this->systemUser->notify(new SettingChanged($request->user(), $message));
+
+            if ($this->systemUser)
+            {
+                $message = 'User '.$request->user()->name.' merubah setingan gate '.json_encode($changes);
+                $this->systemUser->notify(new SettingChanged($request->user(), $message));
+            }
         }
 
         return $barrierGate;

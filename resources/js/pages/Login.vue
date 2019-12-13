@@ -50,7 +50,7 @@ export default {
                 this.$store.state.user = r.data.user
                 this.$store.state.token = r.data.token
                 this.$store.state.is_logged_in = true
-                this.$router.push('home')
+                this.$router.push('/')
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message || e.response.message,
