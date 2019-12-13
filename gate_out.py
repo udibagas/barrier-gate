@@ -132,7 +132,7 @@ def gate_out_thread():
                     try:
                         logging.debug('Playing welcome')
                         time.sleep(.1)
-                        s.sendall(b'\xa6MT00007\xa9')
+                        s.sendall(b'\xa6MT00015\xa9')
                         # logging.debug(GATE['nama'] + ' : ' + str(s.recv(64)))
                     except Exception as e:
                         logging.error('Failed to play Selamat Datang ' + str(e))
@@ -149,6 +149,15 @@ def gate_out_thread():
                         logging.error('Failed to open gate ' + str(e))
                         send_notification(GATE['nama'] + 'Gagal membuka gate')
                         # keluar dari loop cek kendaraan untuk sambung ulang controller
+                        break
+
+                    try:
+                        time.sleep(.1)
+                        s.sendall(b'\xa6MT00015\xa9')
+                        time.sleep(6)
+                    except Exception as e:
+                        logging.error('Failed to play barcode invalid ' + str(e))
+                        send_notification(GATE['nama'] + 'Gagal play barcode invalid')
                         break
 
                 else:
@@ -234,11 +243,9 @@ def gate_out_thread():
                         logging.info('Barcode detected : ' + str(int(nomor_barcode, 16)))
 
                         if not access_log:
-                            # Play tiket invalid
-                            # TODO: sesuaikan audio-nya
                             try:
                                 time.sleep(.1)
-                                s.sendall(b'\xa6MT00012\xa9')
+                                s.sendall(b'\xa6MT00009\xa9')
                                 time.sleep(6)
                             except Exception as e:
                                 logging.error('Failed to play barcode invalid ' + str(e))
@@ -252,13 +259,23 @@ def gate_out_thread():
 
                     elif b'IN2ON' in r:
                         time.sleep(.1)
+
                         try:
                             s.sendall(b'\xa6TRIG1\xa9')
                         except Exception as e:
                             logging.error('Failed to open gate ' + str(e))
                             send_notification(GATE['nama'] + 'Gagal membuka gate')
                             error = True
-                            # sambung ulang controller
+
+                        try:
+                            time.sleep(.1)
+                            s.sendall(b'\xa6MT00012\xa9')
+                            time.sleep(6)
+                        except Exception as e:
+                            logging.error('Failed to play terimakasih ' + str(e))
+                            send_notification(GATE['nama'] + 'Gagal play terimakasih')
+                            error = True
+
                         reset = True
                         break
 
@@ -301,6 +318,15 @@ def gate_out_thread():
                 if reset:
                     continue
 
+                # play mohon tunggu
+                try:
+                    time.sleep(.1)
+                    s.sendall(b'\xa6MT00016\xa9')
+                    time.sleep(6)
+                except Exception as e:
+                    logging.error('Failed to play mohon tunggu ' + str(e))
+                    send_notification(GATE['nama'] + 'Gagal play mohon tunggu')
+
                 # buat update on queue
                 snapshot_out = take_snapshot()
                 save_data(access_log['id'], { 'on_queue' :  1, 'snapshot_out': snapshot_out })
@@ -308,7 +334,9 @@ def gate_out_thread():
                 # buka gate sesuai setingan
                 if (access_log['is_staff'] == 1 and SETTING['staff_buka_otomatis'] == 1) or (access_log['is_staff'] == 0 and SETTING['pengunjung_buka_otomatis'] == 1):
                     save_data(access_log['id'], { 'time_out': time.strftime('%Y-%m-%d %T'), 'on_queue': 0 })
+
                     time.sleep(.1)
+
                     try:
                         s.sendall(b'\xa6TRIG1\xa9')
                     except Exception as e:
@@ -332,16 +360,26 @@ def gate_out_thread():
 
                         if b'IN2ON' in open_gate:
                             time.sleep(.1)
+
                             try:
                                 s.sendall(b'\xa6TRIG1\xa9')
                             except Exception as e:
                                 logging.error('Failed to open gate ' + str(e))
                                 send_notification(GATE['nama'] + 'Gagal membuka gate')
                                 error = True
-                                # sambung ulang controller
+
                             break
 
                         time.sleep(1)
+
+                try:
+                    time.sleep(.1)
+                    s.sendall(b'\xa6MT00012\xa9')
+                    time.sleep(6)
+                except Exception as e:
+                    logging.error('Failed to play terimakasih ' + str(e))
+                    send_notification(GATE['nama'] + 'Gagal play terimakasih')
+                    error = True
 
                 # sambung ulang controller
                 if error:

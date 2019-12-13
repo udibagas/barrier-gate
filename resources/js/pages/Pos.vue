@@ -46,14 +46,14 @@
             <el-col :span="12">
                 <el-card style="height:calc(100vh - 105px)">
                     <div class="block">
-                        <el-image :src="snapshot_in" style="width: 100%; height: 100%" fit="cover">
+                        <el-image :src="snapshot_in" style="width: 100%; height: 100%" fit="none">
                             <div slot="error" class="el-image__error">
                                 <h1>SNAPSHOT IN</h1>
                             </div>
                         </el-image>
                     </div>
                     <div class="block">
-                        <el-image :src="snapshot_out" style="width: 100%; height: 100%" fit="cover">
+                        <el-image :src="snapshot_out" style="width: 100%; height: 100%" fit="none">
                             <div slot="error" class="el-image__error">
                                 <h1>SNAPSHOT OUT</h1>
                             </div>
@@ -140,7 +140,7 @@ export default {
                             document.getElementById('btn-open-gate').focus()
                         }, 100)
 
-                        this.takeSnapshot()
+                        // this.takeSnapshot()
                     }).catch(e => console.log(e))
                 }
             }).catch(e => {
@@ -175,7 +175,7 @@ export default {
                     document.getElementById('plat-nomor').focus()
                 }, 100)
 
-                this.takeSnapshot()
+                // this.takeSnapshot()
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message,
