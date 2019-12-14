@@ -1,5 +1,6 @@
 <template>
     <el-dialog :visible.sync="show"
+    :close-on-click-modal="false"
     title="FORM BUKA MANUAL"
     width="500px"
     :before-close="(done) => { closeForm() }"

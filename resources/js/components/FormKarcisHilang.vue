@@ -1,6 +1,7 @@
 <template>
     <el-dialog
     :visible.sync="show"
+    :close-on-click-modal="false"
     :before-close="(done) => { closeForm() }"
     title="FORM KARCIS HILANG"
     width="500px"

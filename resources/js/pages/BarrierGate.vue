@@ -1,19 +1,37 @@
 <template>
     <div>
-        <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
+        <el-form inline class="text-right" @submit.native.prevent="() => { return }">
             <el-form-item>
-                <el-button @click="openForm({printer_type: 'local'})" type="primary"><i class="el-icon-plus"></i> TAMBAH GATE</el-button>
+                <el-button size="small" @click="openForm({printer_type: 'local'})" type="primary"><i class="el-icon-plus"></i> TAMBAH GATE</el-button>
             </el-form-item>
-            <el-form-item style="margin-right:0;">
-                <el-input v-model="keyword" placeholder="Search" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
-                    <el-button @click="() => { page = 1; keyword = ''; requestData(); }" slot="append" icon="el-icon-refresh"></el-button>
+            <el-form-item>
+                <el-input
+                clearable
+                size="small"
+                v-model="keyword"
+                placeholder="Cari"
+                prefix-icon="el-icon-search"
+                @change="(v) => { keyword = v; requestData(); }">
                 </el-input>
+            </el-form-item>
+            <el-form-item style="margin-right:0;padding-right:0;">
+                <el-pagination
+                hide-on-single-page
+                background
+                style="margin-top:6px;padding:0"
+                @current-change="(p) => { page = p; requestData(); }"
+                @size-change="(s) => { pageSize = s; requestData(); }"
+                layout="total, sizes, prev, next"
+                :page-size="pageSize"
+                :page-sizes="[10, 25, 50, 100]"
+                :total="tableData.total">
+                </el-pagination>
             </el-form-item>
         </el-form>
 
         <el-table :data="tableData.data" stripe
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 345px)"
+        height="calc(100vh - 265px)"
         v-loading="loading"
         @sort-change="sortChange">
             <el-table-column prop="jenis" label="Jenis" min-width="80px" show-overflow-tooltip></el-table-column>
@@ -36,16 +54,24 @@
             </el-table-column>
             <el-table-column prop="printer_status" label="Status Printer" min-width="120px" align="center" header-align="center">
                 <template slot-scope="scope">
-                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%;" :type="scope.row.printer_status ? 'success' : 'info'">{{scope.row.printer_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
+                    <el-tag size="small" effect="dark" style="width:100%;" :type="scope.row.printer_status ? 'success' : 'info'">{{scope.row.printer_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="camera_status" label="Status Kamera" min-width="120px" align="center" header-align="center">
                 <template slot-scope="scope">
-                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%;" :type="scope.row.camera_status ? 'success' : 'info'">{{scope.row.camera_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
+                    <el-tag size="small" effect="dark" style="width:100%;" :type="scope.row.camera_status ? 'success' : 'info'">{{scope.row.camera_status ? 'Aktif' : 'Nonaktif'}}</el-tag>
                 </template>
             </el-table-column>
 
-            <el-table-column fixed="right" width="40px">
+            <el-table-column fixed="right" width="40px" align="center" header-align="center">
+                <template slot="header">
+                    <el-button
+                    title="Refresh"
+                    class="text-white"
+                    type="text" @click="() => { page = 1; keyword = ''; requestData(); }"
+                    icon="el-icon-refresh">
+                    </el-button>
+                </template>
                 <template slot-scope="scope">
                     <el-dropdown>
                         <span class="el-dropdown-link">
@@ -55,24 +81,13 @@
                             <el-dropdown-item icon="el-icon-camera" @click.native.prevent="testDevice('testCamera', scope.row.id)">Test Kamera</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-printer" @click.native.prevent="testDevice('testPrinter', scope.row.id)">Test Printer</el-dropdown-item>
                             <el-dropdown-item v-if="scope.row.jenis == 'OUT'" icon="el-icon-minus" @click.native.prevent="testGate(scope.row)">Test Gate</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-edit-outline" @click.native.prevent="openForm(scope.row)">Edit</el-dropdown-item>
+                            <el-dropdown-item divided icon="el-icon-edit-outline" @click.native.prevent="openForm(scope.row)">Edit</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete" @click.native.prevent="deleteData(scope.row.id)">Hapus</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
             </el-table-column>
         </el-table>
-
-        <br>
-
-        <el-pagination background
-        @current-change="(p) => { page = p; requestData(); }"
-        @size-change="(s) => { pageSize = s; requestData(); }"
-        layout="prev, pager, next, sizes, total"
-        :page-size="pageSize"
-        :page-sizes="[10, 25, 50, 100]"
-        :total="tableData.total">
-        </el-pagination>
 
         <el-dialog top="60px" :visible.sync="showForm" :title="!!formModel.id ? 'EDIT GATE' : 'TAMBAH GATE'" width="950px" v-loading="loading" :close-on-click-modal="false">
             <el-alert type="error" title="ERROR"
