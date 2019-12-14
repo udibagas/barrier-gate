@@ -1,13 +1,14 @@
 <template>
     <div>
         <el-page-header @back="$emit('back')" content="NOTIFIKASI"> </el-page-header>
-        <el-divider></el-divider>
-        <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
+
+        <el-form inline class="text-right" @submit.native.prevent="() => { return }">
             <el-form-item>
-                <el-button @click="clearNotification" type="danger" icon="el-icon-delete">HAPUS NOTIFIKASI</el-button>
+                <el-button size="small" @click="clearNotification" type="danger" icon="el-icon-delete">HAPUS NOTIFIKASI</el-button>
             </el-form-item>
             <el-form-item>
                 <el-date-picker
+                size="small"
                 @change="requestData"
                 v-model="dateRange"
                 format="dd/MMM/yyyy"
@@ -18,46 +19,71 @@
                 end-placeholder="Sampai tanggal">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item style="margin-right:0;">
-                <el-input v-model="keyword" placeholder="Search" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
-                    <el-button @click="() => { page = 1; keyword = ''; requestData(); }" slot="append" icon="el-icon-refresh"></el-button>
+            <el-form-item>
+                <el-input
+                clearable
+                size="small"
+                v-model="keyword"
+                placeholder="Search"
+                prefix-icon="el-icon-search"
+                @change="(v) => { keyword = v; requestData(); }">
                 </el-input>
+            </el-form-item>
+            <el-form-item style="margin-right:0;padding-right:0;">
+                <el-pagination
+                hide-on-single-page
+                background
+                style="margin-top:6px;padding:0"
+                @current-change="(p) => { page = p; requestData(); }"
+                @size-change="(s) => { pageSize = s; requestData(); }"
+                layout="total, sizes, prev, next"
+                :page-size="pageSize"
+                :page-sizes="[10, 25, 50, 100]"
+                :total="tableData.total">
+                </el-pagination>
             </el-form-item>
         </el-form>
 
         <el-table :data="tableData.data" stripe
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 290px)"
+        height="calc(100vh - 190px)"
         v-loading="loading"
         @sort-change="sortChange">
-            <el-table-column prop="created_at" label="Time" sortable="custom" width="150px">
+            <el-table-column prop="created_at" label="Waktu" sortable="custom" width="150px">
                 <template slot-scope="scope">
                     {{ scope.row.created_at | readableDateTime }}
                 </template>
             </el-table-column>
-            <el-table-column prop="type" label="Type"></el-table-column>
-            <el-table-column prop="data.message" label="Message" min-width="150px"></el-table-column>
-            <el-table-column width="70px" align="center">
+            <el-table-column prop="type" label="Jenis"></el-table-column>
+            <el-table-column prop="data.message" label="Pesan" min-width="150px"></el-table-column>
+            <el-table-column width="70px" align="center" header-align="center">
+                <template slot="header">
+                    <el-button
+                    title="Export Ke Excel"
+                    class="text-white"
+                    type="text"
+                    @click="download"
+                    icon="el-icon-download">
+                    </el-button>
+
+                    <el-button
+                    title="Refresh"
+                    class="text-white"
+                    type="text" @click="() => { page = 1; keyword = ''; requestData(); }"
+                    icon="el-icon-refresh">
+                    </el-button>
+                </template>
                 <template slot-scope="scope">
-                    <el-button size="small" type="text" icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
+                    <el-button size="small" type="text" class="text-danger" icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
                 </template>
             </el-table-column>
         </el-table>
-
-        <br>
-
-        <el-pagination background
-        @current-change="(p) => { page = p; requestData(); }"
-        @size-change="(s) => { pageSize = s; requestData(); }"
-        layout="prev, pager, next, sizes, total"
-        :page-size="pageSize"
-        :page-sizes="[10, 25, 50, 100]"
-        :total="tableData.total">
-        </el-pagination>
     </div>
 </template>
 
 <script>
+import exportFromJSON from 'export-from-json'
+
 export default {
     data() {
         return {
@@ -95,8 +121,31 @@ export default {
                 })
             }).catch(() => console.log(e));
         },
+        download() {
+            this.loading = true
+            const params = {
+                keyword: this.keyword,
+                pageSize: 1000000,
+                sort: this.sort,
+                order: this.order,
+                dateRange: this.dateRange
+            }
+
+            axios.get('notification', { params }).then(r => {
+                const data = r.data.data.map(d => {
+                    return {
+                        "Waktu": d.created_at,
+                        "Jenis": d.type,
+                        "Pesan": d.data.message,
+                    }
+                });
+
+                exportFromJSON({ data, fileName: 'notifikasi', exportType: 'xls' })
+            }).catch(e => console.log(e)).finally(() => this.loading = false)
+        },
         requestData() {
-            let params = {
+            this.loading = true;
+            const params = {
                 page: this.page,
                 keyword: this.keyword,
                 pageSize: this.pageSize,
@@ -106,20 +155,15 @@ export default {
                 read: 1
             }
 
-            this.loading = true;
-            axios.get('/notification', { params: params }).then(r => {
-                this.tableData = r.data
-            }).catch(e => {
+            axios.get('notification', { params: params }).then(r => this.tableData = r.data).catch(e => {
                 if (e.response.status == 500) {
                     this.$message({
-                        message: e.response.data.message + '\n' + e.response.data.file + ':' + e.response.data.line,
+                        message: e.response.data.message,
                         type: 'error',
                         showClose: true
                     });
                 }
-            }).finally(() => {
-                this.loading = false;
-            })
+            }).finally(() => this.loading = false)
         },
         clearNotification() {
             this.$confirm('Anda yakin akan menghapus semua notifikasi?', 'Warning', { type: 'warning' }).then(() => {
