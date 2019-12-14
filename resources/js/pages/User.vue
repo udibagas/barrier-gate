@@ -1,53 +1,107 @@
 <template>
     <div>
-        <el-page-header @back="$emit('back')" content="USER"> </el-page-header>
-        <el-divider></el-divider>
-        <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
+        <el-page-header @back="$emit('back')" content="KELOLA USER"> </el-page-header>
+        <el-form inline class="text-right" @submit.native.prevent="() => { return }">
             <el-form-item>
-                <el-button @click="openForm({role: 0, password: ''})" type="primary" icon="el-icon-plus">TAMBAH USER</el-button>
+                <el-button size="small" icon="el-icon-plus" @click="openForm({role: 0, password: ''})" type="primary">TAMBAH USER</el-button>
             </el-form-item>
-            <el-form-item style="margin-right:0;">
-                <el-input v-model="keyword" placeholder="Cari" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
-                    <el-button @click="() => { page = 1; keyword = ''; requestData(); }" slot="append" icon="el-icon-refresh"></el-button>
+            <el-form-item>
+                <el-button size="small" icon="el-icon-download" @click="download" type="primary">EXPORT KE EXCEL</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-input size="small" style="width:250px" v-model="keyword" placeholder="Cari" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
                 </el-input>
+            </el-form-item>
+            <el-form-item style="margin-right:0;padding-right:0;">
+                <el-pagination
+                hide-on-single-page
+                background
+                style="margin-top:6px;padding:0"
+                @current-change="(p) => { page = p; requestData(); }"
+                @size-change="(s) => { pageSize = s; requestData(); }"
+                layout="total, sizes, prev, next"
+                :page-size="pageSize"
+                :page-sizes="[10, 25, 50, 100]"
+                :total="tableData.total">
+                </el-pagination>
             </el-form-item>
         </el-form>
 
         <el-table :data="tableData.data" stripe
+        @filter-change="(f) => { let c = Object.keys(f)[0]; filters[c] = Object.values(f[c]); page = 1; requestData(); }"
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 290px)"
+        height="calc(100vh - 190px)"
         v-loading="loading"
         @sort-change="sortChange">
-            <el-table-column prop="status" label="Status" sortable="custom" align="center" header-align="center" width="100px">
+            <el-table-column type="index" :index="tableData.from"></el-table-column>
+            <el-table-column
+            :filters="[{value: 'active', text: 'AKTIF'}, {value: 'inactive', text: 'NONAKTIF'}]"
+            :filter-multiple="false"
+            column-key="status"
+            prop="status"
+            label="Status"
+            sortable="custom"
+            align="center"
+            header-align="center"
+            width="100px">
                 <template slot-scope="scope">
-                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%" :type="scope.row.status ? 'success' : 'error'">{{scope.row.status ? 'AKTIF' : 'NONAKTIF'}}</el-tag>
+                    <el-tag size="small" effect="dark" style="width:100%" :type="scope.row.status ? 'success' : 'danger'">{{scope.row.status ? 'AKTIF' : 'NONAKTIF'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="status" label="Status Kartu" sortable="custom" align="center" header-align="center" width="150px">
+            <el-table-column
+            :filters="[{value: 'berlaku', text: 'BERLAKU'}, {value: 'kedaluarsa', text: 'KEDALUARSA'}]"
+            :filter-multiple="false"
+            column-key="expired"
+            prop="expired"
+            label="Status Kartu"
+            align="center"
+            header-align="center" width="120px">
                 <template slot-scope="scope">
-                    <el-tag size="small" effect="dark" style="border-radius:13px;width:100%" :type="scope.row.expired ? 'success' : 'error'">{{scope.row.expired ? 'MASIH BERLAKU' : 'KEDALUARSA'}}</el-tag>
+                    <el-tag size="small" effect="dark" style="width:100%" :type="scope.row.expired ? 'danger' : 'success'">{{scope.row.expired ? 'KEDALUARSA' : 'BERLAKU'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" label="Nama" sortable="custom" width="120px" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="nip" label="NIP" sortable="custom" width="100px"></el-table-column>
-            <el-table-column prop="role" label="Level" sortable="custom" align="center" header-align="center" width="120px">
+            <el-table-column prop="name" label="Nama" sortable="custom" width="120px" column-key="name" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="nip" label="NIP" sortable="custom" width="100px" column-key="nip"></el-table-column>
+
+            <el-table-column
+            :filters="roles.map((r, i) => { return {value: i, text: r} })"
+            prop="role"
+            label="Level"
+            sortable="custom"
+            align="center"
+            header-align="center"
+            column-key="role"
+            width="120px">
                 <template slot-scope="scope">
                     {{roles[scope.row.role]}}
                 </template>
             </el-table-column>
-            <el-table-column prop="department.nama" label="Department" width="100px" show-overflow-tooltip=""></el-table-column>
+
+            <el-table-column
+            :filters="$store.state.departmentList.map(d=> { return {value: d.id, text: d.nama} })"
+            column-key="department_id"
+            prop="department.nama"
+            label="Department"
+            width="120px"
+            show-overflow-tooltip>
+            </el-table-column>
+
             <el-table-column prop="nomor_kartu" label="Nomor Kartu" sortable="custom" width="150px"></el-table-column>
+
             <el-table-column label="Masa Aktif Kartu" sortable="custom" width="150px" align="center" header-align="center">
                 <template slot-scope="scope">
                     {{scope.row.masa_aktif_kartu | readableDate}}
-                    <!-- <el-tag size="small" class="rounded full-width" type="danger" effect="dark" v-if="scope.row.expired">EXPIRED</el-tag> -->
                 </template>
             </el-table-column>
+
             <el-table-column prop="plat_nomor" label="Plat Nomor" sortable="custom"  width="120px"></el-table-column>
             <el-table-column prop="email" label="Alamat Email" sortable="custom" width="130px" show-overflow-tooltip></el-table-column>
             <el-table-column prop="phone" label="Nomor HP" sortable="custom" width="120px"></el-table-column>
 
             <el-table-column width="40px" fixed="right">
+                <template slot="header">
+                    <el-button class="text-white" type="text" @click="() => { page = 1; keyword = ''; requestData(); }" icon="el-icon-refresh"></el-button>
+                </template>
                 <template slot-scope="scope">
                     <el-dropdown>
                         <span class="el-dropdown-link">
@@ -62,17 +116,6 @@
                 </template>
             </el-table-column>
         </el-table>
-
-        <br>
-
-        <el-pagination background
-        @current-change="(p) => { page = p; requestData(); }"
-        @size-change="(s) => { pageSize = s; requestData(); }"
-        layout="prev, pager, next, sizes, total"
-        :page-size="pageSize"
-        :page-sizes="[10, 25, 50, 100]"
-        :total="tableData.total">
-        </el-pagination>
 
         <el-dialog fullscreen :visible.sync="showForm" :title="!!formModel.id ? 'EDIT USER' : 'TAMBAH USER'" v-loading="loading" :close-on-click-modal="false">
             <el-alert type="error" title="ERROR"
@@ -267,6 +310,8 @@
 </template>
 
 <script>
+import exportFromJSON from 'export-from-json'
+
 export default {
     data() {
         return {
@@ -284,6 +329,7 @@ export default {
             roles: ['STAFF', 'OPERATOR', 'ADMIN'],
             user: null,
             showDetail: false,
+            filters: []
         }
     },
     methods: {
@@ -318,9 +364,7 @@ export default {
                     this.formErrors = {}
                     this.error = e.response.data;
                 }
-            }).finally(() => {
-                this.loading = false
-            })
+            }).finally(() => this.loading = false)
         },
         update() {
             this.loading = true;
@@ -342,9 +386,7 @@ export default {
                     this.formErrors = {}
                     this.error = e.response.data;
                 }
-            }).finally(() => {
-                this.loading = false
-            })
+            }).finally(() => this.loading = false)
         },
         deleteData(id) {
             this.$confirm('Anda yakin akan menghapus data ini?', 'Warning', { type: 'warning' }).then(() => {
@@ -364,7 +406,37 @@ export default {
                 })
             }).catch(() => console.log(e));
         },
+        download() {
+            this.loading = true
+            const params = {
+                pageSize: 1000000,
+                sort: this.sort,
+                order: this.order,
+            }
+
+            axios.get('user', { params: Object.assign(params, this.filters) }).then(r => {
+                const data = r.data.data.map(d => {
+                    return {
+                        "Nama": d.name,
+                        "NIP": d.nip || '',
+                        "Departemen": d.department ? d.department.nama : '',
+                        "Nomor Kartu": d.nomor_kartu || '',
+                        "Plat Nomor": d.plat_nomor || '',
+                        "Masa Aktif Kartu": d.masa_aktif_kartu,
+                        "Status Kartu": d.expired ? 'Kedaluarsa' : 'Berlaku',
+                        "Level": this.roles[d.role],
+                        "Alamat Email": d.email,
+                        "Nomor HP": d.nomor_hp || '',
+                        "Satus": d.status ? 'Aktif' : 'Nonaktif',
+                    }
+                })
+
+                console.log(data)
+                exportFromJSON({ data: data, fileName: 'user', exportType: 'xls' })
+            }).catch(e => console.log(e)).finally(() => this.loading = false)
+        },
         requestData() {
+            this.loading = true;
             let params = {
                 page: this.page,
                 keyword: this.keyword,
@@ -373,12 +445,9 @@ export default {
                 order: this.order,
             }
 
-            this.loading = true;
-            axios.get('/user', {params: params}).then(r => {
-                    this.loading = false;
+            axios.get('/user', { params: Object.assign(params, this.filters) }).then(r => {
                     this.tableData = r.data
             }).catch(e => {
-                this.loading = false;
                 if (e.response.status == 500) {
                     this.$message({
                         message: e.response.data.message + '\n' + e.response.data.file + ':' + e.response.data.line,
@@ -386,7 +455,7 @@ export default {
                         showClose: true
                     });
                 }
-            })
+            }).finally(() => this.loading = false)
         }
     },
     mounted() {

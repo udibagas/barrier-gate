@@ -311,3 +311,7 @@ table {
 .el-tag.full-width {
     width: 100%;
 }
+
+.rounded > .el-input__inner {
+    border-radius: 30px;
+}

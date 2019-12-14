@@ -23,10 +23,25 @@ class UserController extends Controller
         $sort = $request->sort ? $request->sort : 'nama';
         $order = $request->order == 'ascending' ? 'asc' : 'desc';
 
-        return User::when($request->keyword, function ($q) use ($request) {
-            return $q->where('name', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('nip', 'LIKE', '%' . $request->keyword . '%');
-        })->orderBy($sort, $order)->paginate($request->pageSize);
+        return User::when($request->status, function($q) use ($request) {
+            return $q->where('status', $request->status[0] == 'active' ? 1 : 0);
+        })->when($request->expired, function($q) use ($request) {
+            return $q->where('masa_aktif_kartu', $request->expired[0] == 'berlaku' ? '>=' : '<', date('Y-m-d'));
+        })->when($request->keyword, function ($q) use ($request) {
+            return $q->where(function($qq) use ($request) {
+                return $qq->where('name', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('nip', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('nomor_hp', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('plat_nomor', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('nomor_kartu', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('email', 'LIKE', '%' . $request->keyword . '%');
+            });
+        })->when(is_array($request->role), function($q) use ($request) {
+            return $q->whereIn('role', $request->role);
+        })->when($request->department_id, function($q) use ($request) {
+            return $q->whereIn('department_id', $request->department_id);
+        })
+        ->orderBy($sort, $order)->paginate($request->pageSize);
     }
 
     /**

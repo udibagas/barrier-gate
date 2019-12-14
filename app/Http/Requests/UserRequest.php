@@ -49,7 +49,8 @@ class UserRequest extends FormRequest
             'role' => 'Level',
             'status' => 'Status',
             'foto' => 'required',
-            'masa_aktif_kartu' => 'Masa Aktif Kartu'
+            'masa_aktif_kartu' => 'Masa Aktif Kartu',
+            'tanggal_lahir' => 'Tanggal Lahir'
         ];
     }
 }
