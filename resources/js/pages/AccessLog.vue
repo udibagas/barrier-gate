@@ -54,25 +54,12 @@
                     </el-button>
                 </el-button-group>
             </el-form-item>
-            <el-form-item style="margin-right:0;padding-right:0;">
-                <el-pagination
-                hide-on-single-page
-                background
-                style="margin-top:6px;padding:0"
-                @current-change="(p) => { page = p; requestData(); }"
-                @size-change="(s) => { pageSize = s; requestData(); }"
-                layout="total, sizes, prev, next"
-                :page-size="pageSize"
-                :page-sizes="[10, 25, 50, 100]"
-                :total="tableData.total">
-                </el-pagination>
-            </el-form-item>
         </el-form>
 
         <el-table :data="tableData.data" stripe
         @row-dblclick="(row, column, event) => { trx = row; showTrxDetail = true }"
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 190px)"
+        height="calc(100vh - 240px)"
         v-loading="loading"
         @sort-change="sortChange">
             <el-table-column
@@ -98,16 +85,8 @@
             <el-table-column prop="keterangan" label="Keterangan" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="operator" label="Operator" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
 
-            <el-table-column fixed="right" width="70px" align="center" header-align="center">
+            <el-table-column fixed="right" width="40px" align="center" header-align="center">
                 <template slot="header">
-                    <el-button
-                    title="Export Ke Excel"
-                    class="text-white"
-                    type="text"
-                    @click="download"
-                    icon="el-icon-download">
-                    </el-button>
-
                     <el-button
                     title="Refresh"
                     class="text-white"
@@ -128,6 +107,18 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <br>
+
+        <el-pagination
+        background
+        @current-change="(p) => { page = p; requestData(); }"
+        @size-change="(s) => { pageSize = s; requestData(); }"
+        layout="total, sizes, prev, next"
+        :page-size="pageSize"
+        :page-sizes="[10, 25, 50, 100]"
+        :total="tableData.total">
+        </el-pagination>
 
         <el-dialog center top="60px" width="70%" v-if="trx" :visible.sync="showTrxDetail" :title="'DETAIL TRANSAKSI ' + trx.nomor_barcode">
             <el-row :gutter="20">
@@ -241,10 +232,19 @@ export default {
                 dateRange: this.dateRange
             }
 
-            axios.get('accessLog', { params }).then(r => {
+            axios.get('accessLogs', { params }).then(r => {
                 const data = r.data.data.map(d => {
                     return {
                         "No. Tiket": d.nomor_barcode,
+                        "Plat Nomor": d.plat_nomor || '',
+                        "Nomor Kartu": d.nomor_kartu || '',
+                        "Nama Staff": d.user ? d.user.name : '',
+                        "Waktu Masuk": d.time_in || '',
+                        "Waktu Keluar": d.time_out || '',
+                        "Durasi": d.durasi,
+                        "Keterangan": d.keterangan || '',
+                        "Operator": d.operator || '',
+                        "Status": d.time_out ? 'SUDAH KELUAR' : 'PARKIR',
                     }
                 });
 
@@ -252,7 +252,7 @@ export default {
             }).catch(e => console.log(e)).finally(() => this.loading = false)
         },
         print(action) {
-            window.open('accessLogs?action='+action+'&sort='+this.sort+'&order='+this.order+'&pageSize='+1000000+'&token='+this.$store.state.token)
+            window.open('accessLogs?action='+action+'&dateRange='+this.dateRange+'&sort='+this.sort+'&order='+this.order+'&pageSize='+1000000+'&token='+this.$store.state.token)
         },
         requestData() {
             this.loading = true;
