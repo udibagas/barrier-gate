@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\User;
 use Illuminate\Http\Request;
+use PDF;
 
 class UserController extends Controller
 {
@@ -23,7 +24,7 @@ class UserController extends Controller
         $sort = $request->sort ? $request->sort : 'nama';
         $order = $request->order == 'ascending' ? 'asc' : 'desc';
 
-        return User::when($request->status, function($q) use ($request) {
+        $users = User::where('name', '!=', 'system')->when($request->status, function($q) use ($request) {
             return $q->where('status', $request->status[0] == 'active' ? 1 : 0);
         })->when($request->expired, function($q) use ($request) {
             return $q->where('masa_aktif_kartu', $request->expired[0] == 'berlaku' ? '>=' : '<', date('Y-m-d'));
@@ -42,6 +43,17 @@ class UserController extends Controller
             return $q->whereIn('department_id', $request->department_id);
         })
         ->orderBy($sort, $order)->paginate($request->pageSize);
+
+        if ($request->action == 'print') {
+            return view('pdf.daftar_user', ['users' => $users, 'action' => $request->action]);
+        }
+
+        if ($request->action == 'pdf') {
+            $pdf = PDF::loadview('pdf.daftar_user', ['users' => $users, 'action' => $request->action]);
+            return $pdf->download('daftar_user.pdf');
+        }
+
+        return $users;
     }
 
     /**
@@ -102,4 +114,5 @@ class UserController extends Controller
 
         return ($user) ? $user : response(['message' => 'Data tidak ditemukan'], 404);
     }
+
 }

@@ -1,11 +1,11 @@
 <template>
     <div>
         <el-page-header @back="$emit('back')" content="LOG AKSES"> </el-page-header>
-        <el-divider></el-divider>
 
-        <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
+        <el-form inline class="text-right" @submit.native.prevent="() => { return }">
             <el-form-item>
                 <el-date-picker
+                size="small"
                 @change="requestData"
                 v-model="dateRange"
                 format="dd/MMM/yyyy"
@@ -17,19 +17,62 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" icon="el-icon-finished" @click="setSudahKeluarSemua">SET KENDARAAN SUDAH KELUAR SEMUA</el-button>
+                <el-button size="small" type="primary" icon="el-icon-finished" @click="setSudahKeluarSemua">SET KENDARAAN SUDAH KELUAR SEMUA</el-button>
             </el-form-item>
-            <el-form-item style="margin-right:0;">
-                <el-input v-model="keyword" placeholder="Search" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
-                    <el-button @click="() => { page = 1; keyword = ''; requestData(); }" slot="append" icon="el-icon-refresh"></el-button>
+            <el-form-item>
+                <el-input size="small"
+                v-model="keyword"
+                placeholder="Cari"
+                prefix-icon="el-icon-search"
+                clearable
+                @change="(v) => { keyword = v; requestData(); }">
                 </el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button-group>
+                    <el-button
+                    type="primary"
+                    size="small"
+                    title="Export Ke Excel"
+                    @click="download"
+                    icon="el-icon-download">
+                    </el-button>
+
+                    <el-button
+                    type="primary"
+                    size="small"
+                    title="Export ke PDF"
+                    @click="print('pdf')"
+                    icon="el-icon-document">
+                    </el-button>
+                    <el-button
+                    type="primary"
+                    size="small"
+                    title="Print"
+                    @click="print('print')"
+                    icon="el-icon-printer">
+                    </el-button>
+                </el-button-group>
+            </el-form-item>
+            <el-form-item style="margin-right:0;padding-right:0;">
+                <el-pagination
+                hide-on-single-page
+                background
+                style="margin-top:6px;padding:0"
+                @current-change="(p) => { page = p; requestData(); }"
+                @size-change="(s) => { pageSize = s; requestData(); }"
+                layout="total, sizes, prev, next"
+                :page-size="pageSize"
+                :page-sizes="[10, 25, 50, 100]"
+                :total="tableData.total">
+                </el-pagination>
             </el-form-item>
         </el-form>
 
         <el-table :data="tableData.data" stripe
         @row-dblclick="(row, column, event) => { trx = row; showTrxDetail = true }"
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 290px)"
+        height="calc(100vh - 190px)"
         v-loading="loading"
         @sort-change="sortChange">
             <el-table-column
@@ -40,7 +83,7 @@
             align="center"
             header-align="center">
                 <template slot-scope="scope">
-                    <el-tag effect="dark" size="small" style="width:100%;border-radius:13px" :type="scope.row.time_out ? 'success' : 'danger'">
+                    <el-tag effect="dark" size="small" style="width:100%;" :type="scope.row.time_out ? 'success' : 'danger'">
                         {{scope.row.time_out ? 'SUDAH KELUAR' : 'PARKIR'}}
                     </el-tag>
                 </template>
@@ -55,7 +98,23 @@
             <el-table-column prop="keterangan" label="Keterangan" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="operator" label="Operator" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
 
-            <el-table-column fixed="right" width="40px">
+            <el-table-column fixed="right" width="70px" align="center" header-align="center">
+                <template slot="header">
+                    <el-button
+                    title="Export Ke Excel"
+                    class="text-white"
+                    type="text"
+                    @click="download"
+                    icon="el-icon-download">
+                    </el-button>
+
+                    <el-button
+                    title="Refresh"
+                    class="text-white"
+                    type="text" @click="() => { page = 1; keyword = ''; requestData(); }"
+                    icon="el-icon-refresh">
+                    </el-button>
+                </template>
                 <template slot-scope="scope">
                     <el-dropdown>
                         <span class="el-dropdown-link">
@@ -70,21 +129,10 @@
             </el-table-column>
         </el-table>
 
-        <br>
-
-        <el-pagination background
-        @current-change="(p) => { page = p; requestData(); }"
-        @size-change="(s) => { pageSize = s; requestData(); }"
-        layout="prev, pager, next, sizes, total"
-        :page-size="pageSize"
-        :page-sizes="[10, 25, 50, 100]"
-        :total="tableData.total">
-        </el-pagination>
-
         <el-dialog center top="60px" width="70%" v-if="trx" :visible.sync="showTrxDetail" :title="'DETAIL TRANSAKSI ' + trx.nomor_barcode">
             <el-row :gutter="20">
                 <el-col :span="14">
-                    <table style="width:100%">
+                    <table class="table table-bordered">
                         <tbody>
                             <tr><td class="td-label">Nomor Barcode</td><td class="td-value">{{trx.nomor_barcode}}</td></tr>
                             <tr><td class="td-label">Plat Nomor</td><td class="td-value">{{trx.plat_nomor}}</td></tr>
@@ -120,6 +168,8 @@
 </template>
 
 <script>
+import exportFromJSON from 'export-from-json'
+
 export default {
     data() {
         return {
@@ -181,8 +231,32 @@ export default {
                 })
             }).catch(() => console.log(e))
         },
+        download() {
+            this.loading = true
+            const params = {
+                keyword: this.keyword,
+                pageSize: 1000000,
+                sort: this.sort,
+                order: this.order,
+                dateRange: this.dateRange
+            }
+
+            axios.get('accessLog', { params }).then(r => {
+                const data = r.data.data.map(d => {
+                    return {
+                        "No. Tiket": d.nomor_barcode,
+                    }
+                });
+
+                exportFromJSON({ data, fileName: 'akses-log', exportType: 'xls' })
+            }).catch(e => console.log(e)).finally(() => this.loading = false)
+        },
+        print(action) {
+            window.open('accessLogs?action='+action+'&sort='+this.sort+'&order='+this.order+'&pageSize='+1000000+'&token='+this.$store.state.token)
+        },
         requestData() {
-            let params = {
+            this.loading = true;
+            const params = {
                 page: this.page,
                 keyword: this.keyword,
                 pageSize: this.pageSize,
@@ -191,20 +265,15 @@ export default {
                 dateRange: this.dateRange
             }
 
-            this.loading = true;
-            axios.get('accessLogs', {params: params}).then(r => {
-                this.tableData = r.data
-            }).catch(e => {
+            axios.get('accessLogs', { params }).then(r => this.tableData = r.data).catch(e => {
                 if (e.response.status == 500) {
                     this.$message({
-                        message: e.response.data.message + '\n' + e.response.data.file + ':' + e.response.data.line,
+                        message: e.response.data.message,
                         type: 'error',
                         showClose: true
                     });
                 }
-            }).finally(() => {
-                this.loading = false;
-            })
+            }).finally(() => this.loading = false)
         }
     },
     mounted() {
@@ -223,12 +292,10 @@ export default {
 .td-label {
     width: 200px;
     font-weight: bold;
-    background-color: #ddd;
     padding: 5px 10px;
 }
 
 .td-value {
-    background-color: #eee;
     padding: 5px 10px;
 }
 

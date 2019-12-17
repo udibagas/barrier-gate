@@ -36,6 +36,7 @@
         height="calc(100vh - 210px)"
         v-loading="loading"
         @sort-change="sortChange">
+            <el-table-column type="index" :index="tableData.from"></el-table-column>
             <el-table-column prop="kode" label="Kode" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="nama" label="Nama" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="keterangan" label="Keterangan" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>

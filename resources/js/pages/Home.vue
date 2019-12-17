@@ -1,10 +1,10 @@
 <template>
     <div>
         <el-row>
-            <el-col :span="8">
+            <el-col :span="6">
                 <el-page-header @back="$emit('back')" content="DASHBOARD"> </el-page-header>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="18">
                 <el-form inline style="float:right;clear:right;">
                     <el-form-item label="PILIH PERIODE" style="margin-bottom:0">
                         <el-date-picker
@@ -20,6 +20,9 @@
                     </el-form-item>
                     <el-form-item style="margin-bottom:0">
                         <el-button type="primary" icon="el-icon-refresh" @click="fetchAllData">REFRESH</el-button>
+                    </el-form-item>
+                    <el-form-item style="margin-bottom:0">
+                        <el-button type="primary" icon="el-icon-download" @click="download">EXPORT KE EXCEL</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -107,6 +110,7 @@ import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/legend'
 import 'echarts/lib/component/title'
+import exportFromJSON from 'export-from-json'
 
 export default {
     components: { 'v-chart': ECharts },
@@ -203,9 +207,34 @@ export default {
 
             return sums;
         },
+        download() {
+            const params = { dateRange: this.dateRange }
+            axios.get('report', { params }).then(r => {
+                const totalTamu = r.data.reduce((prev, curr) => prev + parseInt(curr.tamu), 0)
+                const totalStaff = r.data.reduce((prev, curr) => prev + parseInt(curr.staff), 0)
+
+                let data = r.data.map(d => {
+                    return {
+                        "Tanggal": d.tanggal,
+                        "Staff": d.staff,
+                        "Tamu": d.tamu,
+                        "Total": parseInt(d.tamu) + parseInt(d.staff),
+                    }
+                })
+
+                data.push({
+                    "Tanggal": "TOTAL",
+                    "Tamu": totalTamu,
+                    "Staff": totalStaff,
+                    "Total": totalTamu + totalStaff,
+                })
+
+                exportFromJSON({ data, fileName: 'report', exportType: 'xls' })
+            }).catch(e => console.log(e))
+        },
         requestData() {
             const params = { dateRange: this.dateRange }
-            axios.get('report', { params: params }).then(r => {
+            axios.get('report', { params }).then(r => {
                 this.tableData = r.data
                 this.chartOptions.xAxis.data = r.data.map(d => this.readableDate(d.tanggal))
                 this.chartOptions.series = [{
@@ -256,25 +285,25 @@ export default {
         },
         getTerparkir() {
             const params = { dateRange: this.dateRange }
-            axios.get('report/terparkir', { params: params }).then(r => {
+            axios.get('report/terparkir', { params }).then(r => {
                 this.terparkir = r.data
             }).catch(e => console.log(e))
         },
         getBukaManual() {
             const params = { dateRange: this.dateRange }
-            axios.get('report/bukaManual', { params: params }).then(r => {
+            axios.get('report/bukaManual', { params }).then(r => {
                 this.bukaManual = r.data
             }).catch(e => console.log(e))
         },
         getKarcisHilang() {
             const params = { dateRange: this.dateRange }
-            axios.get('report/karcisHilang', { params: params }).then(r => {
+            axios.get('report/karcisHilang', { params }).then(r => {
                 this.karcisHilang = r.data
             }).catch(e => console.log(e))
         },
         getTanpaKartu() {
             const params = { dateRange: this.dateRange }
-            axios.get('report/tanpaKartu', { params: params }).then(r => {
+            axios.get('report/tanpaKartu', { params }).then(r => {
                 this.tanpaKartu = r.data
             }).catch(e => console.log(e))
         },

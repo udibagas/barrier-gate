@@ -6,11 +6,40 @@
                 <el-button size="small" icon="el-icon-plus" @click="openForm({role: 0, password: ''})" type="primary">TAMBAH USER</el-button>
             </el-form-item>
             <el-form-item>
-                <el-button size="small" icon="el-icon-download" @click="download" type="primary">EXPORT KE EXCEL</el-button>
+                <el-input
+                size="small"
+                v-model="keyword"
+                placeholder="Cari"
+                prefix-icon="el-icon-search"
+                clearable
+                @change="(v) => { keyword = v; requestData(); }">
+                </el-input>
             </el-form-item>
             <el-form-item>
-                <el-input size="small" style="width:250px" v-model="keyword" placeholder="Cari" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
-                </el-input>
+                <el-button-group>
+                    <el-button
+                    type="primary"
+                    size="small"
+                    title="Export Ke Excel"
+                    @click="download"
+                    icon="el-icon-download">
+                    </el-button>
+
+                    <el-button
+                    type="primary"
+                    size="small"
+                    title="Export ke PDF"
+                    @click="print('pdf')"
+                    icon="el-icon-document">
+                    </el-button>
+                    <el-button
+                    type="primary"
+                    size="small"
+                    title="Print"
+                    @click="print('print')"
+                    icon="el-icon-printer">
+                    </el-button>
+                </el-button-group>
             </el-form-item>
             <el-form-item style="margin-right:0;padding-right:0;">
                 <el-pagination
@@ -60,7 +89,7 @@
                     <el-tag size="small" effect="dark" style="width:100%" :type="scope.row.expired ? 'danger' : 'success'">{{scope.row.expired ? 'KEDALUARSA' : 'BERLAKU'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" label="Nama" sortable="custom" width="120px" column-key="name" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="name" label="Nama" sortable="custom" min-width="120px" column-key="name" show-overflow-tooltip></el-table-column>
             <el-table-column prop="nip" label="NIP" sortable="custom" width="100px" column-key="nip"></el-table-column>
 
             <el-table-column
@@ -82,7 +111,7 @@
             column-key="department_id"
             prop="department.nama"
             label="Department"
-            width="120px"
+            min-width="120px"
             show-overflow-tooltip>
             </el-table-column>
 
@@ -95,12 +124,17 @@
             </el-table-column>
 
             <el-table-column prop="plat_nomor" label="Plat Nomor" sortable="custom"  width="120px"></el-table-column>
-            <el-table-column prop="email" label="Alamat Email" sortable="custom" width="130px" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="email" label="Alamat Email" sortable="custom" min-width="130px" show-overflow-tooltip></el-table-column>
             <el-table-column prop="phone" label="Nomor HP" sortable="custom" width="120px"></el-table-column>
 
-            <el-table-column width="40px" fixed="right">
+            <el-table-column width="40px" fixed="right" align="center" header-align="center">
                 <template slot="header">
-                    <el-button class="text-white" type="text" @click="() => { page = 1; keyword = ''; requestData(); }" icon="el-icon-refresh"></el-button>
+                    <el-button
+                    class="text-white"
+                    type="text"
+                    @click="() => { page = 1; keyword = ''; requestData(); }"
+                    icon="el-icon-refresh">
+                    </el-button>
                 </template>
                 <template slot-scope="scope">
                     <el-dropdown>
@@ -431,9 +465,11 @@ export default {
                     }
                 })
 
-                console.log(data)
-                exportFromJSON({ data: data, fileName: 'user', exportType: 'xls' })
+                exportFromJSON({ data, fileName: 'user', exportType: 'xls' })
             }).catch(e => console.log(e)).finally(() => this.loading = false)
+        },
+        print(action) {
+            window.open('user?action='+action+'&sort='+this.sort+'&order='+this.order+'&pageSize='+1000000+'&token='+this.$store.state.token)
         },
         requestData() {
             this.loading = true;

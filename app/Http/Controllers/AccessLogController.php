@@ -19,7 +19,7 @@ class AccessLogController extends Controller
         $sort = $request->sort ? $request->sort : 'updated_at';
         $order = $request->order == 'ascending' ? 'asc' : 'desc';
 
-        return AccessLog::when($request->dateRange, function($q) use ($request) {
+        $logs = AccessLog::when($request->dateRange, function($q) use ($request) {
             return $q->whereRaw('DATE(updated_at) BETWEEN "'.$request->dateRange[0].'" AND "'.$request->dateRange[1].'"');
         })->when($request->keyword, function ($q) use ($request) {
             return $q->where('nomor_barcode', 'LIKE', '%' . $request->keyword . '%')
@@ -28,6 +28,17 @@ class AccessLogController extends Controller
         })->when($request->is_staff, function ($q) use ($request) {
             return $q->whereIn('is_staff', $request->is_staff);
         })->orderBy($sort, $order)->paginate($request->pageSize);
+
+        if ($request->action == 'print') {
+            return view('pdf.log_akses', ['logs' => $logs, 'action' => $request->action]);
+        }
+
+        if ($request->action == 'pdf') {
+            $pdf = PDF::loadview('pdf.log_akses', ['logs' => $logs, 'action' => $request->action]);
+            return $pdf->download('log_akses_barrier_gate.pdf');
+        }
+
+        return $logs;
     }
 
     /**
