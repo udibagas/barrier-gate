@@ -19,11 +19,19 @@
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item style="margin-bottom:0">
+                        <el-button-group>
+                            <el-button type="primary" icon="el-icon-refresh" @click="fetchAllData" title="Refresh"></el-button>
+                            <el-button type="primary" title="Export Ke Excel" @click="download" icon="el-icon-download"> </el-button>
+                            <el-button type="primary" title="Export ke PDF" @click="print('pdf')" icon="el-icon-document"> </el-button>
+                            <el-button type="primary" title="Print" @click="print('print')" icon="el-icon-printer"> </el-button>
+                        </el-button-group>
+                    </el-form-item>
+                    <!-- <el-form-item style="margin-bottom:0">
                         <el-button type="primary" icon="el-icon-refresh" @click="fetchAllData">REFRESH</el-button>
                     </el-form-item>
                     <el-form-item style="margin-bottom:0">
                         <el-button type="primary" icon="el-icon-download" @click="download">EXPORT KE EXCEL</el-button>
-                    </el-form-item>
+                    </el-form-item> -->
                 </el-form>
             </el-col>
         </el-row>
@@ -231,6 +239,9 @@ export default {
 
                 exportFromJSON({ data, fileName: 'report', exportType: 'xls' })
             }).catch(e => console.log(e))
+        },
+        print(action) {
+            window.open('report?action='+action+'&dateRange='+this.dateRange+'&token='+this.$store.state.token)
         },
         requestData() {
             const params = { dateRange: this.dateRange }

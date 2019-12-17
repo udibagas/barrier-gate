@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ReportController extends Controller
 {
@@ -17,10 +18,34 @@ class ReportController extends Controller
         WHERE DATE(created_at) BETWEEN :start AND :end
         GROUP BY tanggal";
 
-        return DB::select($sql, [
-            ':start' => $request->dateRange[0],
-            ':end' => $request->dateRange[1],
+        $dateRange = is_array($request->dateRange) ? $request->dateRange : explode(',', $request->dateRange);
+
+        $data = DB::select($sql, [
+            ':start' => $dateRange[0],
+            ':end' => $dateRange[1],
         ]);
+
+        if ($request->action == 'print')
+        {
+            return view('pdf.report', [
+                'data' => $data,
+                'action' => $request->action,
+                'dateRange' => $dateRange
+            ]);
+        }
+
+        if ($request->action == 'pdf')
+        {
+            $pdf = PDF::loadview('pdf.report', [
+                'data' => $data,
+                'action' => $request->action,
+                'dateRange' => $dateRange
+            ]);
+
+            return $pdf->download('report_barrier_gate.pdf');
+        }
+
+        return $data;
     }
 
     public function terparkir(Request $request)
