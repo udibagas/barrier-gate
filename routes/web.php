@@ -65,6 +65,16 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::put('notification/markAllAsRead', 'NotificationController@markAllAsRead');
     Route::delete('notification/clear', 'NotificationController@clear');
     Route::delete('notification/{id}', 'NotificationController@destroy');
+
+    Route::get('gate-in-log', function() {
+        $output = shell_exec('tail -n 250 /var/log/gate_in.log');
+        return nl2br($output);
+    });
+
+    Route::get('gate-out-log', function() {
+        $output = shell_exec('tail -n 250 /var/log/gate_out.log');
+        return nl2br($output);
+    });
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');

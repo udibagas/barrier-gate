@@ -1,90 +1,103 @@
 <template>
     <div>
         <el-page-header @back="$emit('back')" content="NOTIFIKASI"> </el-page-header>
+        <br>
+        <el-tabs type="card">
+            <el-tab-pane lazy label="NOTIFIKASI">
+                <el-form inline class="text-right" @submit.native.prevent="() => { return }">
+                    <el-form-item>
+                        <el-button size="small" @click="clearNotification" type="danger" icon="el-icon-delete">HAPUS NOTIFIKASI</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-date-picker
+                        size="small"
+                        @change="requestData"
+                        v-model="dateRange"
+                        format="dd/MMM/yyyy"
+                        value-format="yyyy-MM-dd"
+                        type="daterange"
+                        range-separator="-"
+                        start-placeholder="Dari tanggal"
+                        end-placeholder="Sampai tanggal">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-input
+                        clearable
+                        size="small"
+                        v-model="keyword"
+                        placeholder="Search"
+                        prefix-icon="el-icon-search"
+                        @change="(v) => { keyword = v; requestData(); }">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item style="margin-right:0;padding-right:0;">
+                        <el-pagination
+                        hide-on-single-page
+                        background
+                        style="margin-top:6px;padding:0"
+                        @current-change="(p) => { page = p; requestData(); }"
+                        @size-change="(s) => { pageSize = s; requestData(); }"
+                        layout="total, sizes, prev, next"
+                        :page-size="pageSize"
+                        :page-sizes="[10, 25, 50, 100]"
+                        :total="tableData.total">
+                        </el-pagination>
+                    </el-form-item>
+                </el-form>
 
-        <el-form inline class="text-right" @submit.native.prevent="() => { return }">
-            <el-form-item>
-                <el-button size="small" @click="clearNotification" type="danger" icon="el-icon-delete">HAPUS NOTIFIKASI</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-date-picker
-                size="small"
-                @change="requestData"
-                v-model="dateRange"
-                format="dd/MMM/yyyy"
-                value-format="yyyy-MM-dd"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="Dari tanggal"
-                end-placeholder="Sampai tanggal">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item>
-                <el-input
-                clearable
-                size="small"
-                v-model="keyword"
-                placeholder="Search"
-                prefix-icon="el-icon-search"
-                @change="(v) => { keyword = v; requestData(); }">
-                </el-input>
-            </el-form-item>
-            <el-form-item style="margin-right:0;padding-right:0;">
-                <el-pagination
-                hide-on-single-page
-                background
-                style="margin-top:6px;padding:0"
-                @current-change="(p) => { page = p; requestData(); }"
-                @size-change="(s) => { pageSize = s; requestData(); }"
-                layout="total, sizes, prev, next"
-                :page-size="pageSize"
-                :page-sizes="[10, 25, 50, 100]"
-                :total="tableData.total">
-                </el-pagination>
-            </el-form-item>
-        </el-form>
+                <el-table :data="tableData.data" stripe
+                :default-sort = "{prop: sort, order: order}"
+                height="calc(100vh - 270px)"
+                v-loading="loading"
+                @sort-change="sortChange">
+                    <el-table-column prop="created_at" label="Waktu" sortable="custom" width="150px">
+                        <template slot-scope="scope">
+                            {{ scope.row.created_at | readableDateTime }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="type" label="Jenis"></el-table-column>
+                    <el-table-column prop="data.message" label="Pesan" min-width="150px"></el-table-column>
+                    <el-table-column width="70px" align="center" header-align="center">
+                        <template slot="header">
+                            <el-button
+                            title="Export Ke Excel"
+                            class="text-white"
+                            type="text"
+                            @click="download"
+                            icon="el-icon-download">
+                            </el-button>
 
-        <el-table :data="tableData.data" stripe
-        :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 190px)"
-        v-loading="loading"
-        @sort-change="sortChange">
-            <el-table-column prop="created_at" label="Waktu" sortable="custom" width="150px">
-                <template slot-scope="scope">
-                    {{ scope.row.created_at | readableDateTime }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="type" label="Jenis"></el-table-column>
-            <el-table-column prop="data.message" label="Pesan" min-width="150px"></el-table-column>
-            <el-table-column width="70px" align="center" header-align="center">
-                <template slot="header">
-                    <el-button
-                    title="Export Ke Excel"
-                    class="text-white"
-                    type="text"
-                    @click="download"
-                    icon="el-icon-download">
-                    </el-button>
-
-                    <el-button
-                    title="Refresh"
-                    class="text-white"
-                    type="text" @click="() => { page = 1; keyword = ''; requestData(); }"
-                    icon="el-icon-refresh">
-                    </el-button>
-                </template>
-                <template slot-scope="scope">
-                    <el-button size="small" type="text" class="text-danger" icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+                            <el-button
+                            title="Refresh"
+                            class="text-white"
+                            type="text" @click="() => { page = 1; keyword = ''; requestData(); }"
+                            icon="el-icon-refresh">
+                            </el-button>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-button size="small" type="text" class="text-danger" icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
+            <el-tab-pane lazy label="LOG GATE MASUK">
+                <GateLog type="in" />
+            </el-tab-pane>
+            <el-tab-pane lazy label="LOG GATE KELUAR">
+                <GateLog type="out" />
+            </el-tab-pane>
+        </el-tabs>
     </div>
 </template>
 
 <script>
+import GateLog from './GateLog'
+
 import exportFromJSON from 'export-from-json'
 
 export default {
+    components: { GateLog },
     data() {
         return {
             keyword: '',

@@ -117,7 +117,7 @@ def gate_out_thread():
             while True:
                 try:
                     s.sendall(b'\xa6STAT\xa9')
-                    vehicle_detection = s.recv(64)
+                    vehicle_detection = s.recv(1024)
                 except Exception as e:
                     logging.error('Failed to detect vehicle ' + str(e))
                     send_notification(GATE['nama'] + ' : Gagal deteksi kendaraan')
@@ -132,7 +132,7 @@ def gate_out_thread():
                         logging.debug('Playing welcome')
                         time.sleep(.1)
                         s.sendall(b'\xa6MT00005\xa9')
-                        # logging.debug(GATE['nama'] + ' : ' + str(s.recv(64)))
+                        # logging.debug(GATE['nama'] + ' : ' + str(s.recv(1024)))
                     except Exception as e:
                         logging.error('Failed to play Selamat Datang ' + str(e))
                         send_notification(GATE['nama'] + ' : Gagal play Selamat Datang ')
@@ -352,7 +352,7 @@ def gate_out_thread():
                     while True:
                         try:
                             s.sendall(b'\xa6STAT\xa9')
-                            open_gate = s.recv(64)
+                            open_gate = s.recv(1024)
                             logging.debug(str(open_gate))
                         except Exception as e:
                             logging.error('Failed to sense loop 2 ' + str(e))
@@ -383,7 +383,7 @@ def gate_out_thread():
                 # play terimakasih
                 try:
                     s.sendall(b'\xa6MT00012\xa9')
-                    logging.debug(str(s.recv(64)))
+                    logging.debug(str(s.recv(1024)))
                 except Exception:
                     logging.error('Failed to play terimakasih. ' + str(e))
                     send_notification(GATE['nama'] + ' : Gagal play terimakasih')
@@ -404,7 +404,7 @@ def gate_out_thread():
 
                     try:
                         s.sendall(b'\xa6STAT\xa9')
-                        vehicle_in = s.recv(64)
+                        vehicle_in = s.recv(1024)
                         logging.debug(str(vehicle_in))
                     except Exception as e:
                         logging.error('Failed to sense loop 2 ' + str(e))
