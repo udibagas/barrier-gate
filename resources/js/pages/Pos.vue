@@ -183,11 +183,12 @@ export default {
         },
         resetForm() {
             this.formModel = { nomor_barcode: '' }
+            this.formModel.plat_nomor = this.setting.plat_nomor_default
             this.snapshot_in = ''
             this.snapshot_out = ''
             this.showUserInfo = false
             this.user = {}
-            document.getElementById('nomor-barcode').focus()
+            document.getElementById('plat-nomor').focus()
         },
         submit() {
             this.formModel.on_queue = 0;
@@ -313,7 +314,7 @@ export default {
     mounted() {
         this.getSetting()
         this.getGate()
-        document.getElementById('nomor-barcode').focus()
+        document.getElementById('plat-nomor').focus()
         this.getQueueInterval = setInterval(this.getQueue, 2000)
 
         document.getElementById('gate-out-app').onkeydown = (e) => {
