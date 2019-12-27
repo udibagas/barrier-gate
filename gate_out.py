@@ -236,7 +236,7 @@ def gate_out_thread():
 
                         break
 
-                    elif b'\xa6Y' or b'\xa6X' in r:
+                    elif b'\xa6Y' in r or b'\xa6X' in r:
                         if b'\xa6Y' in r:
                             nomor_barcode = str(r).split('Y')[1].split('\\xa9')[0]
                         elif b'\xa6X' in r:
