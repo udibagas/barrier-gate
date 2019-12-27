@@ -49,11 +49,12 @@
                         <h1>SNAPSHOT MASUK</h1>
                     </div>
                 </el-image>
-                <el-image :src="streaming" style="width:100%;height:100%" fit="cover">
+                <canvas></canvas>
+                <!-- <el-image :src="streaming" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
                         <h1>{{gate_out_camera_status}}</h1>
                     </div>
-                </el-image>
+                </el-image> -->
             </el-col>
         </el-row>
 
@@ -253,11 +254,11 @@ export default {
                 } else {
                     this.gateOut = gateOut;
                     this.connectToWebSocket()
-                    if (!!this.gateOut.camera_status) {
-                        this.streamingInterval = setInterval(this.getStream, 1000)
-                    } else {
-                        this.gate_out_camera_status = 'KAMERA GATE KELUAR TIDAK AKTIF'
-                    }
+                    // if (!!this.gateOut.camera_status) {
+                    //     this.streamingInterval = setInterval(this.getStream, 1000)
+                    // } else {
+                    //     this.gate_out_camera_status = 'KAMERA GATE KELUAR TIDAK AKTIF'
+                    // }
                 }
             }).catch(e => console.log(e))
         },
@@ -337,6 +338,11 @@ export default {
             }
 
         }
+
+        // cctv
+        var client = new WebSocket('ws://192.168.1.80:9999');
+        var canvas = document.querySelector('canvas');
+        var player = new jsmpeg(client, { canvas: canvas });
     },
     destroyed() {
         this.ws.close(1000, 'Leaving app')

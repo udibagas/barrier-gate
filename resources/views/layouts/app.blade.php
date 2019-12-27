@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name') }}</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jsmpeg/jsmpeg.min.js') }}"></script>
 </head>
 <body>
     <div id="app"></div>
