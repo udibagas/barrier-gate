@@ -49,12 +49,13 @@
                         <h1>SNAPSHOT MASUK</h1>
                     </div>
                 </el-image>
-                <canvas></canvas>
-                <!-- <el-image :src="streaming" style="width:100%;height:100%" fit="cover">
+                <!-- <canvas></canvas> -->
+                <el-image :src="snapshot_out" style="width:100%;height:100%" fit="cover">
                     <div slot="error" class="el-image__error">
-                        <h1>{{gate_out_camera_status}}</h1>
+                        <!-- <h1>{{gate_out_camera_status}}</h1> -->
+                        <h1>SNAPSHOT KELUAR</h1>
                     </div>
-                </el-image> -->
+                </el-image>
             </el-col>
         </el-row>
 
@@ -340,9 +341,9 @@ export default {
         }
 
         // cctv
-        var client = new WebSocket('ws://192.168.1.80:9999');
-        var canvas = document.querySelector('canvas');
-        var player = new jsmpeg(client, { canvas: canvas });
+        // var client = new WebSocket('ws://192.168.1.80:9999');
+        // var canvas = document.querySelector('canvas');
+        // var player = new jsmpeg(client, { canvas: canvas });
     },
     destroyed() {
         this.ws.close(1000, 'Leaving app')
