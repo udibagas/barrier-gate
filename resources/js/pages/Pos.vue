@@ -36,7 +36,7 @@
                 <el-card class="text-center" v-if="showUserInfo">
                     <el-avatar icon="el-icon-user-solid" :size="100"></el-avatar>
                     <div style="font-size:20px;margin-bottom:5px;margin-top:10px;font-weight:bold;">{{user.name}}</div>
-                    <div style="font-size:16px;"> NIP: {{user.nip}}<br> Dept. : {{user.department.nama}}</div>
+                    <div style="font-size:16px;"> NIP: {{user.nip}}<br> Dept. : {{user.department ? user.department.nama : ''}}</div>
                     <div style="margin:10px 0 20px 0;">
                         <el-tag effect="dark" type="success" style="font-size:20px;"> {{user.plat_nomor}} </el-tag>
                     </div>
