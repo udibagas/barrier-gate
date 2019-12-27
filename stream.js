@@ -1,4 +1,4 @@
-const Stream = require('./node-rtsp-stream');
+const Stream = require('node-rtsp-stream');
 const streamUrl = 'rtsp://admin:Admin123@192.168.1.108:554/cam/realmonitor?channel=1&subtype=1';
 
 stream = new Stream({
