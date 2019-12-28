@@ -318,7 +318,8 @@ def gate_in_thread():
                 # lengkapi data kemudian simpan
                 data['time_in'] = time.strftime('%Y-%m-%d %T')
                 data['nomor_barcode'] = generate_nomor_barcode()
-                threading.Thread(target=take_snapshot, args=(data)).start()
+                x = threading.Thread(target=take_snapshot, args=(data,))
+                x.start()
 
                 # kalau bukan staff cetak struk
                 if data['is_staff'] == 0:
