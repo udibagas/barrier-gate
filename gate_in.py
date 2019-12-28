@@ -40,24 +40,26 @@ def get_gate():
 
     return False
 
-def take_snapshot():
+def take_snapshot(data):
     if GATE['camera_status'] == 0:
         logging.info('Not taking snapshot. Camera not active')
-        return ''
+        filename = ''
 
     try:
         r = requests.get(API_URL + '/barrierGate/takeSnapshot/' + str(GATE['id']))
-
-        if r.status_code != 200:
+        if r.status_code == 200:
+            respons = r.json()
+            filename = respons['filename']
+        else:
             logging.error('Failed to take snapshot. Status code : ' + str(r.status_code))
-            return ''
-
-        respons = r.json()
-        return respons['filename']
+            filename = ''
     except Exception as e:
         logging.error('Failed to take snapshot ' + str(e))
         send_notification("Gagal mengambil snapshot di gate " + GATE['nama'] + " (" + str(e) + ")")
-        return ''
+        filename = ''
+
+    data['snapshot_in'] = filename
+    save_data(data)
 
 def generate_nomor_barcode():
     return ''.join([random.choice(string.digits) for n in range(5)])
@@ -316,8 +318,7 @@ def gate_in_thread():
                 # lengkapi data kemudian simpan
                 data['time_in'] = time.strftime('%Y-%m-%d %T')
                 data['nomor_barcode'] = generate_nomor_barcode()
-                data['snapshot_in'] = take_snapshot()
-                save_data(data)
+                threading.Thread(target=take_snapshot, args=(data)).start()
 
                 # kalau bukan staff cetak struk
                 if data['is_staff'] == 0:
