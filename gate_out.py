@@ -181,7 +181,7 @@ def gate_out_thread():
                     # ada input wiegand (W = card, Y = barcode)
                     if b'W' in r:
                         nomor_kartu = str(r).split('W')[1].split('\\xa9')[0]
-                        staff = check_card(str(int(nomor_kartu, 16)))
+                        staff = check_card(str(int(nomor_kartu[:8], 16)))
                         time.sleep(.1)
 
                         if not staff:
