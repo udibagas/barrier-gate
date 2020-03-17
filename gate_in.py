@@ -219,7 +219,7 @@ def gate_in_thread():
 
                     if b'W' in push_button_or_card:
                         nomor_kartu = str(push_button_or_card).split('W')[1].split('\\xa9')[0]
-                        staff = check_card(str(int(nomor_kartu, 16)))
+                        staff = check_card(str(int(nomor_kartu[:8], 16)))
                         time.sleep(.1) # kasih jeda biar audio bisa play
 
                         if not staff:
