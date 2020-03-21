@@ -4,7 +4,7 @@ import pyautogui
 import time
 from serial import Serial
 
-with Serial.open('/dev/ttyS1', 9600) as ser:
+with Serial('/dev/ttyUSB0', 9600) as ser:
     x = ''
     while True:
         # data will be *CD:ABC123#
