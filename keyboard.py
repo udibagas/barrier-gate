@@ -12,4 +12,4 @@ with Serial('/dev/ttyUSB0', 9600) as ser:
         x += ser.read().decode('utf-8')
         if '#' in x:
             pyautogui.typewrite(str(int(x[4:][:-1], 16)))
-        x = ''
+            x = ''
