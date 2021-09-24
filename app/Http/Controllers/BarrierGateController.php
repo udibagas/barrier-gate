@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\BarrierGateRequest;
 use App\BarrierGate;
+use App\Notifications\GateNotification;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
@@ -30,10 +31,10 @@ class BarrierGateController extends Controller
         $order = $request->order == 'ascending' ? 'asc' : 'desc';
 
         return BarrierGate::when($request->keyword, function ($q) use ($request) {
-                return $q->where('nama', 'LIKE', '%' . $request->keyword . '%')
-                    ->orWhere('controller_ip_address', 'LIKE', '%' . $request->keyword . '%');
-            })->orderBy($sort, $order)->paginate($request->pageSize);
-        }
+            return $q->where('nama', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('controller_ip_address', 'LIKE', '%' . $request->keyword . '%');
+        })->orderBy($sort, $order)->paginate($request->pageSize);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -47,9 +48,8 @@ class BarrierGateController extends Controller
         shell_exec('sudo systemctl restart gate_in');
         shell_exec('sudo systemctl restart gate_out');
 
-        if ($this->systemUser)
-        {
-            $message = 'User '.$request->user()->name.' menambahkan gate '.json_encode($gate);
+        if ($this->systemUser) {
+            $message = 'User ' . $request->user()->name . ' menambahkan gate ' . json_encode($gate);
             $this->systemUser->notify(new SettingChanged($request->user(), $message));
         }
 
@@ -64,9 +64,9 @@ class BarrierGateController extends Controller
      */
     public function search(Request $request)
     {
-        $gate = BarrierGate::when($request->jenis, function($q) use ($request) {
-                return $q->where('jenis', $request->jenis);
-            })->first();
+        $gate = BarrierGate::when($request->jenis, function ($q) use ($request) {
+            return $q->where('jenis', $request->jenis);
+        })->first();
 
         if (!$gate) {
             return response(['message' => 'Not found'], 404);
@@ -87,14 +87,12 @@ class BarrierGateController extends Controller
         $barrierGate->update($request->all());
         $changes = $barrierGate->getChanges();
 
-        if (!!$changes)
-        {
+        if (!!$changes) {
             shell_exec('sudo systemctl restart gate_in');
             shell_exec('sudo systemctl restart gate_out');
 
-            if ($this->systemUser)
-            {
-                $message = 'User '.$request->user()->name.' merubah setingan gate '.json_encode($changes);
+            if ($this->systemUser) {
+                $message = 'User ' . $request->user()->name . ' merubah setingan gate ' . json_encode($changes);
                 $this->systemUser->notify(new SettingChanged($request->user(), $message));
             }
         }
@@ -113,7 +111,7 @@ class BarrierGateController extends Controller
         $barrierGate->delete();
         shell_exec('sudo systemctl restart gate_in');
         shell_exec('sudo systemctl restart gate_out');
-        $message = 'User '.auth()->user()->name.' menghapus gate '.json_encode($barrierGate);
+        $message = 'User ' . auth()->user()->name . ' menghapus gate ' . json_encode($barrierGate);
         $this->systemUser->notify(new SettingChanged(auth()->user(), $message));
         return ['message' => 'Parking gate telah dihapus'];
     }
@@ -139,9 +137,8 @@ class BarrierGateController extends Controller
             if ($response->getHeader('Content-Type')[0] != 'image/jpeg') {
                 return response(['message' => 'GAGAL MENGAMBIL GAMBAR. URL SNAPSHOT KAMERA TIDAK SESUAI'], 500);
             }
-
         } catch (\Exception $e) {
-            return response(['message' => 'GAGAL MENGAMBIL GAMBAR. '. $e->getMessage()], 500);
+            return response(['message' => 'GAGAL MENGAMBIL GAMBAR. ' . $e->getMessage()], 500);
         }
 
         return [
@@ -197,10 +194,10 @@ class BarrierGateController extends Controller
 
         $client = new Client(['timeout' => 3]);
 
-        $fileName = 'snapshot/'.date('Y/m/d/H/').$barrierGate->nama.'-'.date('YmdHis').'.jpg';
+        $fileName = 'snapshot/' . date('Y/m/d/H/') . $barrierGate->nama . '-' . date('YmdHis') . '.jpg';
 
-        if (!is_dir('snapshot/'.date('Y/m/d/H'))) {
-            mkdir('snapshot/'.date('Y/m/d/H'), 0777, true);
+        if (!is_dir('snapshot/' . date('Y/m/d/H'))) {
+            mkdir('snapshot/' . date('Y/m/d/H'), 0777, true);
         }
 
         try {
@@ -214,17 +211,15 @@ class BarrierGateController extends Controller
 
             if ($response->getHeader('Content-Type')[0] == 'image/jpeg') {
                 file_put_contents($fileName, $response->getBody());
-            }
-
-            else {
-                $message = 'Gagal mengambil snapshot di gate '.$barrierGate->nama;
+            } else {
+                $message = 'Gagal mengambil snapshot di gate ' . $barrierGate->nama;
                 $this->systemUser->notify(new GateNotification($barrierGate, $message));
                 return response(['message' => 'GAGAL MENGAMBIL GAMBAR. URL SNAPSHOT KAMERA TIDAK SESUAI'], 500);
             }
         } catch (\Exception $e) {
-            $message = 'Gagal mengambil snapshot di gate '.$barrierGate->nama;
+            $message = 'Gagal mengambil snapshot di gate ' . $barrierGate->nama;
             $this->systemUser->notify(new GateNotification($barrierGate, $message));
-            return response(['message' => 'GAGAL MENGAMBIL GAMBAR. '. $e->getMessage()], 500);
+            return response(['message' => 'GAGAL MENGAMBIL GAMBAR. ' . $e->getMessage()], 500);
         }
 
         return ['filename' => $fileName];
