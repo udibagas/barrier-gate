@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\AccessLog;
 use Illuminate\Console\Command;
 
-class DeleteTransactionCommand extends Command
+class DeleteLogCommand extends Command
 {
     /**
      * The name and signature of the console command.

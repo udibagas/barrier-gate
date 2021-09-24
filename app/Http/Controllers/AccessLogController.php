@@ -6,7 +6,7 @@ use App\AccessLog;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use PDF;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class AccessLogController extends Controller
 {
@@ -20,11 +20,11 @@ class AccessLogController extends Controller
         $sort = $request->sort ? $request->sort : 'updated_at';
         $order = $request->order == 'ascending' ? 'asc' : 'desc';
 
-        $logs = AccessLog::when($request->dateRange, function($q) use ($request) {
+        $logs = AccessLog::when($request->dateRange, function ($q) use ($request) {
             $dateRange = is_array($request->dateRange) ? $request->dateRange : explode(',', $request->dateRange);
-            return $q->whereRaw('DATE(updated_at) BETWEEN "'.$dateRange[0].'" AND "'.$dateRange[1].'"');
+            return $q->whereRaw('DATE(updated_at) BETWEEN "' . $dateRange[0] . '" AND "' . $dateRange[1] . '"');
         })->when($request->keyword, function ($q) use ($request) {
-            return $q->where(function($qq) use ($request) {
+            return $q->where(function ($qq) use ($request) {
                 return $qq->where('nomor_barcode', 'LIKE', '%' . $request->keyword . '%')
                     ->orWhere('plat_nomor', 'LIKE', '%' . $request->keyword . '%')
                     ->orWhere('nomor_kartu', 'LIKE', '%' . $request->keyword . '%');
@@ -33,8 +33,7 @@ class AccessLogController extends Controller
             return $q->whereIn('is_staff', $request->is_staff);
         })->orderBy($sort, $order)->paginate($request->pageSize);
 
-        if ($request->action == 'print')
-        {
+        if ($request->action == 'print') {
             return view('pdf.log_akses', [
                 'logs' => $logs,
                 'action' => $request->action,
@@ -42,8 +41,7 @@ class AccessLogController extends Controller
             ]);
         }
 
-        if ($request->action == 'pdf')
-        {
+        if ($request->action == 'pdf') {
             $pdf = PDF::loadview('pdf.log_akses', [
                 'logs' => $logs,
                 'action' => $request->action,
@@ -96,9 +94,9 @@ class AccessLogController extends Controller
     // untuk di gate out
     public function search(Request $request)
     {
-        $data = AccessLog::when($request->nomor_kartu, function($q) use ($request) {
+        $data = AccessLog::when($request->nomor_kartu, function ($q) use ($request) {
             return $q->where('nomor_kartu', $request->nomor_kartu);
-        })->when($request->nomor_barcode, function($q) use ($request) {
+        })->when($request->nomor_barcode, function ($q) use ($request) {
             return $q->where('nomor_barcode', $request->nomor_barcode);
         })->where('time_out', null)->latest()->first();
 
@@ -114,7 +112,7 @@ class AccessLogController extends Controller
                 'nomor_barcode' => 'NOTAPIN',
                 'is_staff' => 1,
                 'nomor_kartu' => $request->nomor_kartu,
-                'user_id' => User::where('nomor_kartu', 'LIKE', '%'.$request->nomor_kartu)->first()->id
+                'user_id' => User::where('nomor_kartu', 'LIKE', '%' . $request->nomor_kartu)->first()->id
             ]);
         }
 
