@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { Message } from 'element-ui';
 import Home from './pages/Home'
+import Login from './pages/Login'
 import AccessLog from './pages/AccessLog'
 import KarcisHilang from './pages/KarcisHilang'
 import BukaManual from './pages/BukaManual'
@@ -17,6 +18,7 @@ Vue.use(VueRouter)
 const router = new VueRouter({
     routes: [
         { path: '/', component: Home, name: 'home' },
+        { path: '/login', component: Login, name: 'login', meta: { layout: 'login' } },
         { path: '/pos', component: Pos, name: 'pos' },
         { path: '/access-log', component: AccessLog, name: 'access-log' },
         { path: '/karcis-hilang', component: KarcisHilang, name: 'karcis-hilang' },
@@ -31,23 +33,37 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.path == '/') {
-        next()
-    }
-
-    else {
+    if (to.path != '/login') {
         let params = { route: to.path }
         axios.get('/checkAuth', { params: params }).then(r => {
             next()
         }).catch(e => {
+            var message = ''
+
+            if (e.response.status == 403) {
+                message = e.response.data.message
+                next(false)
+            }
+
+            else if (e.response.status == 401) {
+                message = 'Sesi Anda telah habis. Silakan login ulang'
+                next('/login')
+            }
+
+            else {
+                message = 'Unhandled error';
+                next(false);
+            }
+
             Message({
-                message: 'Anda tidak berhak mengakses halaman ini atau sesi Anda telah habis. Silakan login ulang',
+                message,
                 type: 'error',
                 showClose: true,
                 duration: 10000
             })
-            next(false)
         })
+    } else {
+        next()
     }
 });
 

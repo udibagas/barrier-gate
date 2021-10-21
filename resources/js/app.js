@@ -39,7 +39,12 @@ Vue.filter('formatNumber', function (v) {
 
 });
 
-Vue.component('App', require('./App').default)
+import DefaultLayout from "./layouts/default.vue";
+import LoginLayout from "./layouts/login.vue";
+
+Vue.component('default-layout', DefaultLayout);
+Vue.component('login-layout', LoginLayout);
+Vue.component('App', require('./App').default);
 
 const app = new Vue({
     el: '#app',
