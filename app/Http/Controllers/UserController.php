@@ -100,7 +100,7 @@ class UserController extends Controller
             return response(['message' => 'User system tidak boleh dihapus'], 500);
         }
 
-        return $user->delete();
+        $user->delete();
         return ['message' => 'Data berhasil dihapus'];
     }
 
