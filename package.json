@@ -27,7 +27,7 @@
         "echarts": "^4.5.0",
         "element-ui": "^2.12.0",
         "export-from-json": "^1.1.4",
-        "moment": "^2.24.0",
+        "moment": "^2.29.4",
         "node-rtsp-stream": "0.0.8",
         "v-mask": "^2.0.2",
         "vue-echarts": "^4.0.4",
